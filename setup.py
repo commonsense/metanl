@@ -2,10 +2,7 @@
 
 version_str = '0.5'
 
-try:
-    from setuptools import setup, find_packages
-except ImportError:
-    from distutils.core import setup
+from setuptools import setup
 
 classifiers=[
     'Intended Audience :: Developers',
@@ -40,6 +37,7 @@ setup(
     classifiers = classifiers,
     long_description = "\n".join(doclines[2:]),
     packages=['metanl'],
-    package_data = {'metanl': ['*.txt']},
-    install_requires=['csc-utils >= 0.6', 'simplenlp >= 1.1.1', 'nltk >= 2.0b9'],
+    package_data = {'metanl': ['data/*.txt']},
+    install_requires=['csc-utils >= 0.6', 'simplenlp >= 1.1.1',
+      'nltk >= 2.0b9', 'setuptools'],
 )
