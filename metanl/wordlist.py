@@ -19,7 +19,6 @@ class Wordlist(object):
         return self.worddict.iteritems()
 
     def get(self, word, default=0):
-        word = preprocess_text(word).upper()
         return self.worddict.get(word, default)
     
     def __getitem__(self, word):
@@ -30,8 +29,9 @@ class Wordlist(object):
         if filename in CACHE:
             return CACHE[filename]
         else:
-            stream = pkg_resources.get('data/%s' % filename)
+            stream = pkg_resources.resource_stream(__name__, 'data/%s' % filename)
             wordlist = cls._load_stream(stream)
+            CACHE[filename] = wordlist
         return wordlist
 
     @classmethod

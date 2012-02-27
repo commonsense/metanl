@@ -84,6 +84,10 @@ AMBIGUOUS_EXCEPTIONS = {
 }
 
 def _word_badness(word):
+    """
+    Assign a heuristic to possible outputs from Morphy. Minimizing this
+    heuristic avoids incorrect stems.
+    """
     if word.endswith('e'):
         return len(word) - 2
     elif word.endswith('ess'):
@@ -93,7 +97,11 @@ def _word_badness(word):
     else:
         return len(word)
 
-def morphy_best(word, pos=None):
+def _morphy_best(word, pos=None):
+    """
+    Get the most likely stem for a word using Morphy, once the input has been
+    pre-processed by morphy_stem().
+    """
     results = []
     if pos is None:
         pos = 'nvar'
@@ -105,6 +113,19 @@ def morphy_best(word, pos=None):
     return results[0]
 
 def morphy_stem(word, pos=None):
+    """
+    Get the most likely stem for a word. If a part of speech is supplied,
+    the stem will be more accurate.
+
+    Valid parts of speech are:
+
+    - 'n' or 'NN' for nouns
+    - 'v' or 'VB' for verbs
+    - 'a' or 'JJ' for adjectives
+    - 'r' or 'RB' for adverbs
+
+    Any other part of speech will be treated as unknown.
+    """
     word = word.lower()
     if pos is not None:
         if pos.startswith('NN'):
@@ -124,7 +145,7 @@ def morphy_stem(word, pos=None):
     if pos is None:
         if word in AMBIGUOUS_EXCEPTIONS:
             return AMBIGUOUS_EXCEPTIONS[word]
-    return morphy_best(word, pos) or word
+    return _morphy_best(word, pos) or word
 
 def tag_and_stem(text):
     """
@@ -149,6 +170,10 @@ def good_lemma(lemma):
     return lemma and lemma not in STOPWORDS and lemma[0].isalnum()
 
 def normalize_list(text):
+    """
+    Get a list of word stems that appear in the text. Stopwords and an initial
+    'to' will be stripped.
+    """
     pieces = [morphy_stem(word) for word in tokenize_list(text)]
     pieces = [piece for piece in pieces if good_lemma(piece)]
     if not pieces:
@@ -158,9 +183,21 @@ def normalize_list(text):
     return pieces
 
 def normalize(text):
+    """
+    Get a string made from the non-stopword word stems in the text. See
+    normalize_list().
+    """
     return untokenize_list(normalize_list(text))
 
 def normalize_topic(topic):
+    """
+    Get a canonical representation of a Wikipedia topic, which may include
+    a disambiguation string in parentheses.
+
+    Returns (name, disambig), where "name" is the normalized topic name,
+    and "disambig" is a string corresponding to the disambiguation text or
+    None.
+    """
     # find titles of the form Foo (bar)
     topic = topic.replace('_', ' ')
     match = re.match(r'([^(]+) \(([^)]+)\)', topic)
@@ -170,7 +207,33 @@ def normalize_topic(topic):
         return normalize(match.group(1)), 'n/'+match.group(2).strip(' _')
 
 def word_frequency(word):
+    """
+    Looks up the word's frequency in a modified version of the Google Books
+    1-grams list.
+
+    The characters may be in any case (they'll be case-smashed
+    to uppercase) and may include non-ASCII letters in UTF-8 or Unicode.
+
+    Words appear in the list if they meet these criteria, which improve the
+    compactness and accuracy of the list:
+
+    - They consist entirely of letters, digits and/or ampersands
+    - They contain at least one ASCII letter
+    - They appear at least 1000 times in Google Books OR
+      (they appear at least 40 times in Google Books and also appear in
+      Wiktionary or WordNet)
+    
+    Apostrophes are assumed to be at the edge of the word,
+    in which case they'll be stripped like they were in the Google data, or
+    in the special token "n't" which is treated as "not". This matches the
+    output of the tokenize() function.
+    """
     freqs = Wordlist.load('google-unigrams.txt')
+    if " " in word:
+        raise ValueError("word_frequency only can only look up single words, but %r contains a space" % word)
+    word = preprocess_text(word.strip("'")).upper()
+    if word == "N'T":
+        word = 'NOT'
     return freqs.get(word)
 
 if __name__ == '__main__':
