@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-version_str = '0.5'
+version_str = '0.5.1'
 
 from setuptools import setup
 
@@ -38,6 +38,5 @@ setup(
     long_description = "\n".join(doclines[2:]),
     packages=['metanl'],
     package_data = {'metanl': ['data/*.txt']},
-    install_requires=['csc-utils >= 0.6', 'simplenlp >= 1.1.1',
-      'nltk >= 2.0b9', 'setuptools'],
+    install_requires=['nltk >= 2.0b9', 'setuptools'],
 )
