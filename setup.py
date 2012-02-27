@@ -7,7 +7,7 @@ from setuptools import setup
 classifiers=[
     'Intended Audience :: Developers',
     'Intended Audience :: Science/Research',
-    'License :: OSI Approved :: GNU General Public License (GPL)',
+    'License :: OSI Approved :: MIT License',
     'Natural Language :: English',
     'Operating System :: MacOS',
     'Operating System :: Microsoft :: Windows',
@@ -31,7 +31,7 @@ setup(
     maintainer='MIT Media Lab, Digital Intuition group',
     maintainer_email='conceptnet@media.mit.edu',     
     url='http://github.com/commonsense/metanl/',
-    license = "http://www.gnu.org/copyleft/gpl.html",
+    license = "MIT",
     platforms = ["any"],
     description = doclines[0],
     classifiers = classifiers,

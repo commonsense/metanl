@@ -206,7 +206,7 @@ def normalize_topic(topic):
     else:
         return normalize(match.group(1)), 'n/'+match.group(2).strip(' _')
 
-def word_frequency(word):
+def word_frequency(word, default_freq=0):
     """
     Looks up the word's frequency in a modified version of the Google Books
     1-grams list.
@@ -234,7 +234,7 @@ def word_frequency(word):
     word = preprocess_text(word.strip("'")).upper()
     if word == "N'T":
         word = 'NOT'
-    return freqs.get(word)
+    return freqs.get(word, default_freq)
 
 if __name__ == '__main__':
     print normalize("this is a test")
