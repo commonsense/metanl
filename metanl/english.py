@@ -155,7 +155,7 @@ def tag_and_stem(text):
     - tag: the word's part of speech
     - token: the original word, so we can reconstruct it later
     """
-    tokens = tokenize(preprocess_text(text))
+    tokens = tokenize_list(preprocess_text(text))
     tagged = nltk.pos_tag(tokens)
     out = []
     for token, tag in tagged:
