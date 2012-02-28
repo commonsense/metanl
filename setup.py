@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-version_str = '0.5.1'
+version_str = '0.5.2'
 
 from setuptools import setup
 
