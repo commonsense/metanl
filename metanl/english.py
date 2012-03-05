@@ -83,6 +83,16 @@ AMBIGUOUS_EXCEPTIONS = {
     'won': 'win',
 }
 
+BRACKET_DIC = {
+    # Turn brackets into what the treebank expects.
+    '(': '-LRB-',
+    ')': '-RRB-',
+    '[': '-LSB-',
+    ']': '-RSB-',
+    '{': '-LCB-',
+    '}': '-RCB-'
+}
+
 def _word_badness(word):
     """
     Assign a heuristic to possible outputs from Morphy. Minimizing this
@@ -161,6 +171,8 @@ def tag_and_stem(text):
     for token, tag in tagged:
         if token.startswith('#'):
             out.append((token, 'TAG', token))
+        elif token in BRACKET_DIC:
+            out.append((token,BRACKET_DIC[token],token))
         else:
             stem = morphy_stem(token, tag)
             out.append((stem, tag, token))

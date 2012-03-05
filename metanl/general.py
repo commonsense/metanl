@@ -6,7 +6,7 @@ tokenizer_regexes = [
     ('"([^"]*)"', r" `` \1 '' "),         # transform quotation marks
     (r'([.,:;^_*?!%()\[\]{}][-.,:;^_*?!%()\[\]{}]*) ', r" \1 "),  # sequences of punctuation
     (r'([.,:;^_*?!%()\[\]{}][-.,:;^_*?!%()\[\]{}]*)$', r" \1"),   # final sequences of punctuation
-    (r'([*$(]+)(\w)', r"\1 \2"),          # word-preceding punctuation
+    (r'([*$({\[]+)(\w)', r"\1 \2"),          # word-preceding punctuation
     (r'(\.\.+)(\w)', r" \1 \2"),          # ellipses
     (r'(--+)(\w)', r" \1 \2"),            # long dashes
     (r' ([.?!])([()\[\]{}])', r" \1 \2"),   # ending punctuation + parentheses
