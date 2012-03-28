@@ -236,6 +236,9 @@ def word_frequency(word, default_freq=0):
         word = 'NOT'
     return freqs.get(word, default_freq)
 
+def get_wordlist():
+    return Wordlist.load('google-unigrams.txt')
+
 if __name__ == '__main__':
     print normalize("this is a test")
 

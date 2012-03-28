@@ -10,13 +10,27 @@ class Wordlist(object):
     """
     def __init__(self, worddict):
         self.worddict = worddict
+        self._sorted_words = None
+
+    @property
+    def sorted_words(self):
+        if self._sorted_words is None:
+          self._sorted_words = sorted(self.worddict.keys(),
+            key=lambda word: (-self.worddict[word], word))
+        return self._sorted_words
+
+    def words(self):
+        return list(self.sorted_words)
+    keys = words
 
     def iterwords(self):
-        return self.worddict.iterkeys()
+        return iter(self.sorted_words)
     iterkeys = iterwords
+    __iter__ = iterwords
 
     def iteritems(self):
-        return self.worddict.iteritems()
+        for word in self.sorted_words:
+            yield word, self.worddict[word]
 
     def get(self, word, default=0):
         return self.worddict.get(word, default)
