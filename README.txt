@@ -11,4 +11,8 @@ convenient natural language tools, such as:
 - Analyzers for East Asian languages (for example, we currently use a MeCab
   process to find word breaks in Japanese)
 
+For word frequencies in some language, metanl uses corpora from the University
+of Leeds Center for Translation Studies (http://corpus.leeds.ac.uk/list.html),
+whose data is released under the Creative Commons Attribution license.
+
 Author: Rob Speer

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from metanl.general import preprocess_text
+from metanl.wordlist import Wordlist
 import subprocess
 
 """
@@ -202,7 +203,37 @@ class MeCabWrapper(object):
 
         TODO: use the cache.
         """
-        return ' '.join(self.normalize_list(text))
+        return ' '.join(self.normalize_list(text, cache))
+
+    def tag_and_stem(self, text, cache=None):
+        """
+        Given some text, return a sequence of (stem, pos, text) triples as
+        appropriate for the reader. `pos` can be as general or specific as
+        necessary (for example, it might label all parts of speech, or it might
+        only distinguish function words from others).
+        """
+        analysis = self.analyze(text)
+        triples = []
+
+        tag_is_next = False
+        for record in analysis:
+            root = self.get_record_root(record)
+            token = record[0]
+            stopword = self.is_stopword_record(record)
+
+            if token:
+                if tag_is_next:
+                    triples.append((u'#'+token, 'TAG', u'#'+token))
+                    tag_is_next = False
+                elif token == u'#':
+                    tag_is_next = True
+                elif stopword:
+                    triples.append((root, 'STOP', token))
+                elif self.token_is_punctuation(token):
+                    triples.append((token, '.', token))
+                else:
+                    triples.append((root, 'TERM', token))
+        return triples
 
     def extract_phrases(self, text):
         """
@@ -225,7 +256,42 @@ class MeCabWrapper(object):
                         yield term, phrase
                         break
 
+def word_frequency(word, default_freq=0):
+    """
+    Looks up the word's frequency in a modified version of the Google Books
+    1-grams list.
+
+    The characters may be in any case (they'll be case-smashed
+    to uppercase) and may include non-ASCII letters in UTF-8 or Unicode.
+
+    Words appear in the list if they meet these criteria, which improve the
+    compactness and accuracy of the list:
+
+    - They consist entirely of letters, digits and/or ampersands
+    - They contain at least one ASCII letter
+    - They appear at least 1000 times in Google Books OR
+      (they appear at least 40 times in Google Books and also appear in
+      Wiktionary or WordNet)
+    
+    Apostrophes are assumed to be at the edge of the word,
+    in which case they'll be stripped like they were in the Google data, or
+    in the special token "n't" which is treated as "not". This matches the
+    output of the tokenize() function.
+    """
+    freqs = Wordlist.load('leeds-internet-ja.txt')
+    if " " in word:
+        raise ValueError("word_frequency only can only look up single words, but %r contains a space" % word)
+    # roman characters are in lowercase
+    word = preprocess_text(word).lower()
+    return freqs.get(word, default_freq)
+
+def get_wordlist():
+    return Wordlist.load('leeds-internet-ja.txt')
+
 MECAB = MeCabWrapper()
 normalize = MECAB.normalize
 normalize_list = MECAB.normalize_list
 tokenize = MECAB.tokenize
+analyze = MECAB.analyze
+tag_and_stem = MECAB.tag_and_stem
+is_stopword = MECAB.is_stopword
