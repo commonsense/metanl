@@ -226,3 +226,6 @@ class MeCabWrapper(object):
                         break
 
 MECAB = MeCabWrapper()
+normalize = MECAB.normalize
+normalize_list = MECAB.normalize_list
+tokenize = MECAB.tokenize
