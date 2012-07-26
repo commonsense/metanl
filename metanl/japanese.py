@@ -24,6 +24,7 @@ STOPWORD_CATEGORIES = set([
     u'接尾',          # fine: suffix
 ])
 
+
 # Forms of particular words are also stopwords.
 #
 # A thought: Should the rare kanji version of suru not be a stopword?
@@ -160,6 +161,9 @@ class MeCabWrapper(object):
         but if common_words is set to True it will also strip common verbs
         and nouns such as くる and よう.
         """
+        # preserve negations
+        if record[7] == u'ない':
+            return False
         return (record[1] in STOPWORD_CATEGORIES or
                 record[2] in STOPWORD_CATEGORIES or
                 (common_words and record[7] in STOPWORD_ROOTS))
