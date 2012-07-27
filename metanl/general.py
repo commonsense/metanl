@@ -115,23 +115,24 @@ def un_camel_case(text):
     Examples:
 
     >>> un_camel_case('1984ZXSpectrumGames')
-        '1984 ZX Spectrum Games'
+    '1984 ZX Spectrum Games'
 
     >>> un_camel_case('aaAa aaAaA 0aA AAAa!AAA')
-        'aa Aa aa Aa A 0 a A AA Aa! AAA'
+    'aa Aa aa Aa A 0 a A AA Aa! AAA'
 
     >>> un_camel_case(u'MotörHead')
-        u'Mot\xf6r Head'
+    u'Mot\xf6r Head'
 
     This should not significantly affect text that is not camel-cased:
+    
     >>> un_camel_case('ACM_Computing_Classification_System')
-        'ACM Computing Classification System'
+    'ACM Computing Classification System'
     
     >>> un_camel_case(u'Anne_Blunt,_15th_Baroness_Wentworth')
-        u'Anne Blunt, 15 th Baroness Wentworth'
+    u'Anne Blunt, 15 th Baroness Wentworth'
 
     >>> un_camel_case(u'Hindi-Urdu')
-        u'Hindi-Urdu'
+    u'Hindi-Urdu'
     """
     revtext = text[::-1]
     pieces = []
@@ -165,7 +166,74 @@ def asciify(text):
     if not isinstance(text, unicode):
         text = text.decode('utf-8', 'ignore')
     # Deal with annoying British vowel ligatures
+    text = bad_unicode_fixer(text)
     text = text.replace(u'Æ', 'AE').replace(u'Œ', 'OE')\
                .replace(u'æ', 'ae').replace(u'œ', 'oe')
     return unicodedata.normalize('NFKD', text).encode('ASCII', 'ignore')
+
+
+pairs_1 = u''.join(unichr(x) for x in xrange(194, 224))
+pairs_2 = u''.join(unichr(x) for x in xrange(128, 192))
+
+triples_1 = u''.join(unichr(x) for x in xrange(224, 240))
+triples_2 = u''.join(unichr(x) for x in xrange(160, 192))
+triples_3 = u''.join(unichr(x) for x in xrange(128, 192))
+
+BAD_UNICODE_RE = re.compile(u'([' + pairs_1 + u'][' + pairs_2 + u']|['
+    + triples_1 + u'][' + triples_2 + u'][' + triples_3 + u'])')
+
+def bad_unicode_fixer(text):
+    u"""
+    Something you will find all over the place, in real-world text, is text
+    that's mistakenly encoded as utf-8 and decoded as latin-1. This causes your
+    perfectly good Unicode-aware code to end up with garbage text.
+
+    This function looks for the evidence of that having happened and fixes it,
+    by looking for the latin-1 representations of all utf-8 characters in the
+    Basic Multilingual Plane and replacing them with the Unicode character they
+    were clearly meant to represent.
+
+    This does not handle the opposite case, where a string is provided as
+    latin-1 (or some other encoding) to a system that expects utf-8.
+
+    Astute observers will recognize that this makes certain character sequences
+    impossible to encode. I can say with confidence that currently, 100% of
+    these character sequences that appear in text are actually mis-encoded. But
+    we don't know how language will be used in the future, so this code is not
+    necessarily future-proof.
+    
+    In particular: If, in the future, the Euro collapses, and Germany and the
+    UK then form their own monetary union and introduce a currency called the
+    Deutschpound (Ð£), this function will become erroneous. In that case, we
+    can either add an exception or start a movement to write the Deutschpound
+    as У.
+
+    *Particularly* astute observers will notice that this function would also
+    erroneously encode its own documentation.
+
+    Do not ever run binary data through this function.
+
+    >>> print bad_unicode_fixer(u'This text is fine already :þ')
+    This text is fine already :þ
+    
+    >>> print bad_unicode_fixer(u'Ãºnico')
+    único
+
+    This even fixes multiple levels of badness:
+
+    >>> print bad_unicode_fixer(u'what the f\xc3\x83\xc2\x85\xc3\x82\xc2\xb1ck')
+    what the fűck
+    """
+    if isinstance(text, str):
+        unitext = text.decode('utf-8', errors='replace')
+    else:
+        unitext = text
+    match = BAD_UNICODE_RE.search(unitext)
+    if match:
+        before = unitext[0:match.start()]
+        fixed = unitext[match.start():match.end()].encode('latin-1').decode('utf-8')
+        after = bad_unicode_fixer(unitext[match.end():])
+        return bad_unicode_fixer(before + fixed + after)
+    else:
+        return unitext
 

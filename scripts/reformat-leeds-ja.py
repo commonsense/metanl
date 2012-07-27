@@ -2,7 +2,7 @@ import codecs
 from metanl import japanese
 from collections import defaultdict
 
-infile = codecs.open('leeds-internet-ja.num', encoding='utf-8')
+infile = codecs.open('leeds/internet-ja-forms.num', encoding='utf-8')
 outfile = codecs.open('../metanl/data/leeds-internet-ja.txt', 'w', encoding='utf-8')
 
 freqs = defaultdict(int)
