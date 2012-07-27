@@ -262,25 +262,7 @@ class MeCabWrapper(object):
 
 def word_frequency(word, default_freq=0):
     """
-    Looks up the word's frequency in a modified version of the Google Books
-    1-grams list.
-
-    The characters may be in any case (they'll be case-smashed
-    to uppercase) and may include non-ASCII letters in UTF-8 or Unicode.
-
-    Words appear in the list if they meet these criteria, which improve the
-    compactness and accuracy of the list:
-
-    - They consist entirely of letters, digits and/or ampersands
-    - They contain at least one ASCII letter
-    - They appear at least 1000 times in Google Books OR
-      (they appear at least 40 times in Google Books and also appear in
-      Wiktionary or WordNet)
-    
-    Apostrophes are assumed to be at the edge of the word,
-    in which case they'll be stripped like they were in the Google data, or
-    in the special token "n't" which is treated as "not". This matches the
-    output of the tokenize() function.
+    Looks up the word's frequency in the Leeds Internet Japanese corpus.
     """
     freqs = Wordlist.load('leeds-internet-ja.txt')
     if " " in word:
