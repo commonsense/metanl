@@ -166,7 +166,7 @@ def asciify(text):
     if not isinstance(text, unicode):
         text = text.decode('utf-8', 'ignore')
     # Deal with annoying British vowel ligatures
-    text = bad_unicode_fixer(text)
+    text = fix_bad_unicode(text)
     text = text.replace(u'Æ', 'AE').replace(u'Œ', 'OE')\
                .replace(u'æ', 'ae').replace(u'œ', 'oe')
     return unicodedata.normalize('NFKD', text).encode('ASCII', 'ignore')
@@ -182,7 +182,7 @@ triples_3 = u''.join(unichr(x) for x in xrange(128, 192))
 BAD_UNICODE_RE = re.compile(u'([%s][%s]|[%s][%s][%s])' % (pairs_1, pairs_2,
     triples_1, triples_2, triples_3))
 
-def bad_unicode_fixer(text):
+def fix_bad_unicode(text):
     u"""
     Something you will find all over the place, in real-world text, is text
     that's mistakenly encoded as utf-8, decoded as latin-1, and encoded as
@@ -209,15 +209,15 @@ def bad_unicode_fixer(text):
 
     Do not ever run binary data through this function.
 
-    >>> print bad_unicode_fixer(u'Ãºnico')
+    >>> print fix_bad_unicode(u'Ãºnico')
     único
 
-    >>> print bad_unicode_fixer(u'This text is fine already :þ')
+    >>> print fix_bad_unicode(u'This text is fine already :þ')
     This text is fine already :þ
     
     This even fixes multiple levels of badness:
 
-    >>> print bad_unicode_fixer(u'what the f\xc3\x83\xc2\x85\xc3\x82\xc2\xb1ck')
+    >>> print fix_bad_unicode(u'what the f\xc3\x83\xc2\x85\xc3\x82\xc2\xb1ck')
     what the fűck
     """
     if isinstance(text, str):
@@ -237,7 +237,7 @@ def bad_unicode_fixer(text):
             remaining = ''
     result = u''.join(chunks)
     if BAD_UNICODE_RE.search(result):
-        return bad_unicode_fixer(result)
+        return fix_bad_unicode(result)
     return result
 
 

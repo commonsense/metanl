@@ -1,3 +1,11 @@
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Arabic frequency list</title>
+</head>
+<body>
+<p>
+<pre>
 The frequency distribution for attribute 'word' in corpus 'i-ar'
 For more information visit http://corpus.leeds.ac.uk/list.html
  - corpus size: 165674718 tokens
