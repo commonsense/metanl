@@ -1,16 +1,18 @@
 # -*- coding: utf-8 -*-
-from metanl.general import preprocess_text, unicode_is_punctuation
-from metanl.wordlist import Wordlist
-import subprocess
+u"""
+Provide Japanese NLP functions by wrapping the output of MeCab.
 
-"""
-Japanese MeCab wrapper, being ported from simplenlp.
+Requires mecab to be installed separately.
 
 >>> print normalize(u'これはテストです')
 テスト
->>> print normalize(u'これはテストです')
-
+>>> tag_and_stem(u'これはテストです。')
+[(u'\\u3053\\u308c', 'STOP', u'\\u3053\\u308c'), (u'\\u306f', 'STOP', u'\\u306f'), (u'\\u30c6\\u30b9\\u30c8', 'TERM', u'\\u30c6\\u30b9\\u30c8'), (u'\\u3067\\u3059', 'STOP', u'\\u3067\\u3059'), (u'\\u3002', '.', u'\\u3002')]
 """
+
+from metanl.general import preprocess_text, unicode_is_punctuation
+from metanl.wordlist import Wordlist
+import subprocess
 
 class MeCabError(Exception): pass
 
@@ -236,10 +238,10 @@ class MeCabWrapper(object):
                     tag_is_next = False
                 elif token == u'#':
                     tag_is_next = True
-                elif stopword:
-                    triples.append((root, 'STOP', token))
                 elif unicode_is_punctuation(token):
                     triples.append((token, '.', token))
+                elif stopword:
+                    triples.append((root, 'STOP', token))
                 else:
                     triples.append((root, 'TERM', token))
         return triples

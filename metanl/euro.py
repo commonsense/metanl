@@ -1,11 +1,33 @@
 # -*- coding: utf-8 -*-
+"""
+This module provides NLP functions for various European languages. The
+supported languages are identified in EuropeanMetaNL.LANGUAGES by their ISO
+language code:
+
+- es: Spanish
+- fr: French
+- it: Italian
+- pt: Portuguese
+
+These are also made available as the objects `spanish`, `french`, etc.
+
+Stemming is provided by the Snowball stemmer, a generalization of the Porter
+stemmer. This means that the normalized text will be mangled to the point where
+it is difficult to recognize, and may conflate unrelated stems.
+
+>>> print spanish.normalize(u'esta es una prueba')
+esta es prueb
+>>> print spanish.word_frequency('prueba')
+18362
+"""
+
 from metanl.general import (preprocess_text, tokenize, untokenize,
         tokenize_list, untokenize_list, un_camel_case)
 from metanl.wordlist import Wordlist
 
 class EuropeanMetaNL(object):
     LANGUAGES = ['es', 'fr', 'it', 'pt']
-    STOPWORDS = {
+    STOPWORDS_BY_LANG = {
         'es': ['el', 'la', 'los', 'las', 'un', 'una', 'unos', 'unas', 'a', 'al'],
         'fr': ['la', 'le', 'l', 'les', 'un', 'une', 'à', 'au', 'aux'],
 
@@ -34,6 +56,7 @@ class EuropeanMetaNL(object):
     def __init__(self, lang):
         assert lang in self.LANGUAGES
         self.lang = lang
+        self.stopwords = self.STOPWORDS_BY_LANG[lang]
 
     @property
     def stemmer(self):
@@ -45,9 +68,12 @@ class EuropeanMetaNL(object):
     def snowball_stem(self, word):
         return self.stemmer.stemWord(word.strip("'").lower())
 
-    def is_stopword(self, word):
+    def good_lemma(self, word):
         word = word.strip("'").lower()
-        return word and word not in self.STOPWORDS and word[0].isalnum()
+        return word and word not in self.stopwords and word[0].isalnum()
+
+    def is_stopword(self, word):
+        return not self.good_lemma(word)
 
     def normalize_list(self, text):
         """
