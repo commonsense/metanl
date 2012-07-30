@@ -102,7 +102,7 @@ def untokenize_list(words):
     return untokenize(' '.join(words))
 
 def un_camel_case(text):
-    u"""
+    ur"""
     Splits apart words that are written in CamelCase.
 
     Bugs:
@@ -240,5 +240,31 @@ def fix_bad_unicode(text):
         return fix_bad_unicode(result)
     return result
 
+def unicode_is_punctuation(text):
+    u"""
+    Test if a token is made entirely of Unicode characters of the following
+    classes:
 
+    - P: punctuation
+    - S: symbols
+    - Z: separators
+    - M: combining marks
+    - C: control characters
+
+    >>> unicode_is_punctuation(u'word')
+    False
+    >>> unicode_is_punctuation(u'。')
+    True
+    >>> unicode_is_punctuation(u'-')
+    True
+    >>> unicode_is_punctuation(u'-3')
+    False
+    >>> unicode_is_punctuation(u'あ')
+    False
+    """
+    for char in unicode(text):
+        category = unicodedata.category(char)[0]
+        if category not in 'PSZMC':
+            return False
+    return True
 

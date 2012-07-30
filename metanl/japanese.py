@@ -1,10 +1,15 @@
 # -*- coding: utf-8 -*-
-from metanl.general import preprocess_text
+from metanl.general import preprocess_text, unicode_is_punctuation
 from metanl.wordlist import Wordlist
 import subprocess
 
 """
 Japanese MeCab wrapper, being ported from simplenlp.
+
+>>> print normalize(u'これはテストです')
+テスト
+>>> print normalize(u'これはテストです')
+
 """
 
 class MeCabError(Exception): pass
@@ -233,7 +238,7 @@ class MeCabWrapper(object):
                     tag_is_next = True
                 elif stopword:
                     triples.append((root, 'STOP', token))
-                elif self.token_is_punctuation(token):
+                elif unicode_is_punctuation(token):
                     triples.append((token, '.', token))
                 else:
                     triples.append((root, 'TERM', token))
