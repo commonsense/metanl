@@ -10,11 +10,11 @@ Requires mecab to be installed separately.
 [(u'\\u3053\\u308c', 'STOP', u'\\u3053\\u308c'), (u'\\u306f', 'STOP', u'\\u306f'), (u'\\u30c6\\u30b9\\u30c8', 'TERM', u'\\u30c6\\u30b9\\u30c8'), (u'\\u3067\\u3059', 'STOP', u'\\u3067\\u3059'), (u'\\u3002', '.', u'\\u3002')]
 """
 
-from metanl.general import preprocess_text, unicode_is_punctuation
+from metanl.general import preprocess_text
 from metanl.wordlist import Wordlist
-import subprocess
+from metanl.extprocess import ProcessWrapper, ProcessError
 
-class MeCabError(Exception): pass
+class MeCabError(ProcessError): pass
 
 # MeCab outputs the part of speech of its terms. We can simply identify
 # particular (coarse or fine) parts of speech as containing stopwords.
@@ -46,11 +46,11 @@ STOPWORD_ROOTS = set([
     u'行く',          # iku in kanji
     u'もの',          # mono: "thing"
     u'物',            # mono in kanji
-    u'よう',          # you: "way"
-    u'様',            # you in kanji
+    u'よう',          # yō: "way"
+    u'様',            # yō in kanji
 ])
 
-class MeCabWrapper(object):
+class MeCabWrapper(ProcessWrapper):
     """
     Handle Japanese text using the command-line version of MeCab.
     (mecab-python is convenient, but its installer is too flaky to rely on.)
@@ -59,55 +59,45 @@ class MeCabWrapper(object):
     additional dependencies. Using this tool for Japanese requires only
     MeCab to be installed and accepting UTF-8 text.
     """
-    def __init__(self):
-        """
-        Create a MeCabNL object by opening a pipe to the mecab command.
-        """
+    def _get_command(self):
+        return ['mecab']
+
+    def _get_process(self):
         try:
-            self.mecab = subprocess.Popen(['mecab'], bufsize=1, close_fds=True, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
-        except OSError:
-            raise MeCabError("`mecab` didn't start. See README.txt for details "
+            proc = ProcessWrapper._get_process(self)
+        except (OSError, ProcessError):
+            raise MeCabError("MeCab didn't start. See README.txt for details "
                              "about installing MeCab and other Japanese NLP tools.")
-        self.mecab_encoding = 'utf-8'
-        self._detect_mecab_encoding()
-        #self.input_log = open('mecab-in.txt', 'w')
-        #self.output_log = open('mecab-out.txt', 'w')
+        self.mecab_encoding = self._detect_mecab_encoding(proc)
+        return proc
     
-    def __del__(self):
-        """
-        Clean up by closing the pipe.
-        """
-        #self.input_log.close()
-        #self.output_log.close()
-        if hasattr(self, 'mecab'):
-            self.mecab.stdin.close()
-    
-    def _detect_mecab_encoding(self):
+    def _detect_mecab_encoding(self, proc):
         """
         Once we've found a MeCab binary, it may be installed in UTF-8 or it
         may be installed in EUC-JP. We need to determine which one by
         experimentation.
         """
-        self.mecab.stdin.write(u'a\n')
-        out = self.mecab.stdout.readline()
+        proc.stdin.write(u'a\n')
+        out = proc.stdout.readline()
         
         # out is now a string in an unknown encoding, and might not even be
         # valid in *any* encoding before the tab character. But after the
         # tab, it should all be in the encoding of the installed dictionary.
-
+        encoding = 'utf-8'
         try:
             out.decode('utf-8')
         except UnicodeDecodeError:
             try:
-                self.mecab_encoding = 'euc-jp'
                 out.decode('euc-jp')
+                encoding = 'euc-jp'
             except UnicodeDecodeError:
                 raise MeCabError("I can't understand MeCab in either UTF-8 or "
                                  "EUC-JP. Check the configuration of MeCab and "
                                  "its dictionary.")
-        if self.mecab.stdout.readline() != 'EOS\n':
+        if proc.stdout.readline() != 'EOS\n':
             raise MeCabError("Sorry! I got unexpected lines back from MeCab "
                              "and don't know what to do next.")
+        return encoding
     
     def get_record_root(self, record):
         """
@@ -117,6 +107,9 @@ class MeCabWrapper(object):
             return record[0]
         else:
             return record[7]
+
+    def get_record_token(self, record):
+        return record[0]
 
     def analyze(self, text):
         """
@@ -129,11 +122,11 @@ class MeCabWrapper(object):
         results = []
         for chunk in xrange(n_chunks):
             chunk_text = text[chunk*1024:(chunk+1)*1024].encode(self.mecab_encoding)
-            self.mecab.stdin.write(chunk_text+'\n')
+            self.process.stdin.write(chunk_text+'\n')
             #self.input_log.write(text+'\n')
             out_line = ''
             while True:
-                out_line = self.mecab.stdout.readline()
+                out_line = self.process.stdout.readline()
                 #self.output_log.write(out_line)
                 out_line = out_line.decode(self.mecab_encoding)
 
@@ -150,16 +143,6 @@ class MeCabWrapper(object):
                 results.append(record)
         return results
 
-    def tokenize_list(self, text):
-        """
-        Split a text into separate words.
-        
-        This does not de-agglutinate as much as ja_cabocha does, but the words
-        where they differ are likely to be stopwords anyway.
-        """
-        return [record[0] for record in self.analyze(text)]
-    tokenize = tokenize_list
-    
     def is_stopword_record(self, record, common_words=False):
         """
         Determine whether a single MeCab record represents a stopword.
@@ -174,98 +157,6 @@ class MeCabWrapper(object):
         return (record[1] in STOPWORD_CATEGORIES or
                 record[2] in STOPWORD_CATEGORIES or
                 (common_words and record[7] in STOPWORD_ROOTS))
-
-    def is_stopword(self, text):
-        """
-        Determine whether a single word is a stopword, or whether a short
-        phrase is made entirely of stopwords, disregarding context.
-
-        Use of this function should be avoided; it's better to give the text
-        in context and let MeCab determine which words are the stopwords.
-        """
-        found_content_word = False
-        for record in self.analyze(text):
-            if not self.is_stopword_record(record):
-                found_content_word = True
-                break
-        return not found_content_word
-
-    def normalize_list(self, text, cache=None):
-        """
-        Get a canonical list representation of Japanese text, with words
-        separated and reduced to their base forms.
-
-        TODO: use the cache.
-        """
-        words = []
-        analysis = self.analyze(text)
-        for record in analysis:
-            if not self.is_stopword_record(record):
-                words.append(self.get_record_root(record))
-        if not words:
-            # Don't discard stopwords if that's all you've got
-            words = [record[0] for record in analysis]
-        return words
-
-    def normalize(self, text, cache=None):
-        """
-        Get a canonical string representation of Japanese text, like
-        :meth:`normalize_list` but joined with spaces.
-
-        TODO: use the cache.
-        """
-        return ' '.join(self.normalize_list(text, cache))
-
-    def tag_and_stem(self, text, cache=None):
-        """
-        Given some text, return a sequence of (stem, pos, text) triples as
-        appropriate for the reader. `pos` can be as general or specific as
-        necessary (for example, it might label all parts of speech, or it might
-        only distinguish function words from others).
-        """
-        analysis = self.analyze(text)
-        triples = []
-
-        tag_is_next = False
-        for record in analysis:
-            root = self.get_record_root(record)
-            token = record[0]
-            stopword = self.is_stopword_record(record)
-
-            if token:
-                if tag_is_next:
-                    triples.append((u'#'+token, 'TAG', u'#'+token))
-                    tag_is_next = False
-                elif token == u'#':
-                    tag_is_next = True
-                elif unicode_is_punctuation(token):
-                    triples.append((token, '.', token))
-                elif stopword:
-                    triples.append((root, 'STOP', token))
-                else:
-                    triples.append((root, 'TERM', token))
-        return triples
-
-    def extract_phrases(self, text):
-        """
-        Given some text, extract phrases of up to 2 content words,
-        and map their normalized form to the complete phrase.
-        """
-        analysis = self.analyze(text)
-        for pos1 in xrange(len(analysis)):
-            rec1 = analysis[pos1]
-            if not self.is_stopword_record(rec1):
-                yield self.get_record_root(rec1), rec1[0]
-                for pos2 in xrange(pos1+1, len(analysis)):
-                    rec2 = analysis[pos2]
-                    if not self.is_stopword_record(rec2):
-                        roots = [self.get_record_root(rec1),
-                                 self.get_record_root(rec2)]
-                        pieces = [analysis[i][0] for i in xrange(pos1, pos2+1)]
-                        term = ' '.join(roots)
-                        phrase = ''.join(pieces)
-                        yield term, phrase
-                        break
 
 def word_frequency(word, default_freq=0):
     """
@@ -285,6 +176,7 @@ MECAB = MeCabWrapper()
 normalize = MECAB.normalize
 normalize_list = MECAB.normalize_list
 tokenize = MECAB.tokenize
+tokenize_list = MECAB.tokenize_list
 analyze = MECAB.analyze
 tag_and_stem = MECAB.tag_and_stem
 is_stopword = MECAB.is_stopword
