@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-This module provides NLP functions for various European languages. The
-supported languages are identified in EuropeanMetaNL.LANGUAGES by their ISO
-language code:
+This module provides NLP functions for various European languages using the
+Snowball stemmer. The supported languages are identified in
+MetaSnowball.LANGUAGES by their ISO language code:
 
 - es: Spanish
 - fr: French
@@ -25,7 +25,7 @@ from metanl.general import (preprocess_text, tokenize, untokenize,
         tokenize_list, untokenize_list, un_camel_case)
 from metanl.wordlist import Wordlist
 
-class EuropeanMetaNL(object):
+class MetaSnowball(object):
     LANGUAGES = ['es', 'fr', 'it', 'pt']
     STOPWORDS_BY_LANG = {
         'es': ['el', 'la', 'los', 'las', 'un', 'una', 'unos', 'unas', 'a', 'al'],
@@ -105,10 +105,10 @@ class EuropeanMetaNL(object):
         return freqs.get(word, default_freq)
 
 languages = {}
-french = languages['fr'] = EuropeanMetaNL('fr')
-spanish = languages['es'] = EuropeanMetaNL('es')
-italian = languages['it'] = EuropeanMetaNL('it')
-portuguese = languages['pt'] = EuropeanMetaNL('pt')
+french = languages['fr'] = MetaSnowball('fr')
+spanish = languages['es'] = MetaSnowball('es')
+italian = languages['it'] = MetaSnowball('it')
+portuguese = languages['pt'] = MetaSnowball('pt')
 
 if __name__ == '__main__':
     # put nifty demo here

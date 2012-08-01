@@ -11,7 +11,7 @@ Requires mecab to be installed separately.
 """
 
 from metanl.general import preprocess_text
-from metanl.wordlist import Wordlist
+from metanl.wordlist import Wordlist, get_frequency
 from metanl.extprocess import ProcessWrapper, ProcessError
 
 class MeCabError(ProcessError): pass
@@ -117,6 +117,7 @@ class MeCabWrapper(ProcessWrapper):
         list of lists ("records") that contain the MeCab analysis of each
         word.
         """
+        self.process  # make sure things are loaded
         text = preprocess_text(text).lower()
         n_chunks = (len(text)+1024)//1024
         results = []
@@ -162,12 +163,7 @@ def word_frequency(word, default_freq=0):
     """
     Looks up the word's frequency in the Leeds Internet Japanese corpus.
     """
-    freqs = Wordlist.load('leeds-internet-ja.txt')
-    if " " in word:
-        raise ValueError("word_frequency only can only look up single words, but %r contains a space" % word)
-    # roman characters are in lowercase
-    word = preprocess_text(word).lower()
-    return freqs.get(word, default_freq)
+    return get_frequency(word, 'ja', default_freq)
 
 def get_wordlist():
     return Wordlist.load('leeds-internet-ja.txt')

@@ -5,18 +5,20 @@ import subprocess
 class ProcessError(Exception): pass
 
 class ProcessWrapper(object):
-    def __init__(self):
-        """
-        Create the external process that we will communicate with.
-        """
-        self.process = self._get_process()
-
     def __del__(self):
         """
         Clean up by closing the pipe.
         """
-        if hasattr(self, 'process'):
-            self.process.stdin.close()
+        if hasattr(self, '_process'):
+            self._process.stdin.close()
+
+    @property
+    def process(self):
+        if hasattr(self, '_process'):
+            return self._process
+        else:
+            self._process = self._get_process()
+            return self._process
     
     def _get_command(self):
         raise NotImplementedError

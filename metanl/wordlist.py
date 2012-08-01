@@ -55,3 +55,24 @@ class Wordlist(object):
             word, freq = line.strip().split(',')
             worddict[word] = int(freq)
         return cls(worddict)
+
+def get_frequency(word, lang, default_freq=0):
+    """
+    Looks up a word's frequency in our preferred frequency list for the given
+    language.
+    """
+    word = preprocess_text(word)
+    if lang == 'en':
+        filename = 'google-unigrams.txt'
+        word = word.upper()
+    else:
+        filename = 'leeds-internet-%s.txt' % lang
+        word = word.lower()
+    freqs = Wordlist.load(filename)
+
+    if " " in word:
+        raise ValueError("word_frequency only can only look up single words, but %r contains a space" % word)
+    # roman characters are in lowercase
+    
+    return freqs.get(word, default_freq)
+
