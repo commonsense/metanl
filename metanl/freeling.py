@@ -8,7 +8,7 @@ UNSAFE_RE = re.compile('[' + UNSAFE_CHARS + ']')
 
 class FreelingWrapper(ProcessWrapper):
     """
-    Handle Spanish, Italian, Portuguese, or Welsh text by calling an
+    Handle English, Spanish, Italian, Portuguese, or Welsh text by calling an
     installed copy of FreeLing.
 
     The constructor takes one argument, which is the installed filename of the
@@ -34,7 +34,10 @@ class FreelingWrapper(ProcessWrapper):
         return record[0].lower()
 
     def get_record_pos(self, record):
-        return record[2][0]
+        if self.lang == 'en':
+            return record[2]
+        else:
+            return record[2][0]
 
     def is_stopword_record(self, record, common_words=False):
         return (record[2][0] == 'D')
@@ -73,12 +76,9 @@ class FreelingWrapper(ProcessWrapper):
         return get_frequency(word, self.lang, default_freq)
 
 languages = {}
-print 'spanish'
+english = languages['en'] = FreelingWrapper('en')
 spanish = languages['es'] = FreelingWrapper('es')
-print 'italian'
 italian = languages['it'] = FreelingWrapper('it')
-print 'portuguese'
 portuguese = languages['pt'] = FreelingWrapper('pt')
-print 'welsh'
 welsh = languages['cy'] = FreelingWrapper('cy')
 
