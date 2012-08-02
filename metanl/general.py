@@ -257,7 +257,7 @@ def fix_bad_unicode(text):
     what the fűck
     """
     if isinstance(text, str):
-        remaining = text.decode('utf-8', errors='replace')
+        remaining = text.decode('utf-8', 'replace')
     else:
         remaining = text
     chunks = []
