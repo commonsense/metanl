@@ -1,3 +1,4 @@
+import pkg_resources
 from metanl.general import preprocess_text
 from metanl.wordlist import get_frequency
 from metanl.extprocess import ProcessWrapper
@@ -16,7 +17,9 @@ class FreelingWrapper(ProcessWrapper):
     """
     def __init__(self, lang):
         self.lang = lang
-        self.configfile = lang+'.cfg'
+        self.configfile = pkg_resources.resource_filename(__name__, 'data/freeling/%s.cfg' % lang)
+        self.splitterfile = pkg_resources.resource_filename(__name__,
+                'data/freeling/generic_splitter.dat')
         #self.input_log = open('input.log', 'w')
         #self.output_log = open('output.log', 'w')
 
@@ -27,17 +30,13 @@ class FreelingWrapper(ProcessWrapper):
 
         The options we choose are:
 
-            -f <language>.cfg: use FreeLing's default config for that language
-            --nonumb: don't rephrase things like "a" and "five thousand" as
-                numbers
-            --noloc: don't collocate known two-word phrases
-            --nodate: don't translate time expressions into date objects
-            --noquant: don't identify quantities
-            --flush: give output after every line break, even if there is no
-                ending punctuation
+            -f data/freeling/<language>.cfg
+                load our custom configuration for the language
+            --fsplit data/freeling/generic_splitter.dat
+                don't do any special handling of ends of sentences
         """
-        return ['analyze', '-f', self.configfile,
-                '--nonumb', '--noloc', '--nodate', '--noquant', '--flush']
+        return ['analyze', '-f', self.configfile, '--fsplit',
+                self.splitterfile]
 
     def get_record_root(self, record):
         """
@@ -110,5 +109,6 @@ english = LANGUAGES['en'] = FreelingWrapper('en')
 spanish = LANGUAGES['es'] = FreelingWrapper('es')
 italian = LANGUAGES['it'] = FreelingWrapper('it')
 portuguese = LANGUAGES['pt'] = FreelingWrapper('pt')
+russian = LANGUAGES['ru'] = FreelingWrapper('ru')
 welsh = LANGUAGES['cy'] = FreelingWrapper('cy')
 
