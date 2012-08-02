@@ -172,7 +172,7 @@ def tag_and_stem(text):
         if token.startswith('#'):
             out.append((token, 'TAG', token))
         elif token in BRACKET_DIC:
-            out.append((token,BRACKET_DIC[token],token))
+            out.append((token, BRACKET_DIC[token], token))
         else:
             stem = morphy_stem(token, tag)
             out.append((stem, tag, token))

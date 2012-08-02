@@ -21,8 +21,7 @@ esta es prueb
 18362
 """
 
-from metanl.general import (preprocess_text, tokenize, untokenize,
-        tokenize_list, untokenize_list, un_camel_case)
+from metanl.general import (preprocess_text, tokenize_list, untokenize_list)
 from metanl.wordlist import Wordlist
 
 class MetaSnowball(object):

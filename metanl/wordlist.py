@@ -15,8 +15,8 @@ class Wordlist(object):
     @property
     def sorted_words(self):
         if self._sorted_words is None:
-          self._sorted_words = sorted(self.worddict.keys(),
-            key=lambda word: (-self.worddict[word], word))
+            self._sorted_words = sorted(self.worddict.keys(),
+                key=lambda word: (-self.worddict[word], word))
         return self._sorted_words
 
     def words(self):

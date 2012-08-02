@@ -1,10 +1,29 @@
 # -*- coding: utf-8 -*-
+"""
+Tools for using an external program as an NLP pipe. See, for example,
+freeling.py.
+"""
+
 from metanl.general import unicode_is_punctuation
 import subprocess
 
-class ProcessError(Exception): pass
+class ProcessError(IOError):
+    """
+    A subclass of IOError raised when we can't start the external process.
+    """
+    pass
 
 class ProcessWrapper(object):
+    """
+    A ProcessWrapper uses the `subprocess` module to keep a process open that
+    we can pipe stuff through to get NLP results.
+    
+    Instead of every instance immediately opening a process, however, it waits
+    until the first time it is needed, then starts the process.
+
+    Many methods are intended to be implemented by subclasses of ProcessWrapper
+    that actually know what program they're talking to.
+    """
     def __del__(self):
         """
         Clean up by closing the pipe.
@@ -14,6 +33,10 @@ class ProcessWrapper(object):
 
     @property
     def process(self):
+        """
+        Store the actual process in _process. If it doesn't exist yet, create
+        it.
+        """
         if hasattr(self, '_process'):
             return self._process
         else:
@@ -21,9 +44,16 @@ class ProcessWrapper(object):
             return self._process
     
     def _get_command(self):
+        """
+        This method should return the command to run, as a list
+        of arguments that can be used by subprocess.Popen.
+        """
         raise NotImplementedError
 
     def _get_process(self):
+        """
+        Create the process by running the specified command.
+        """
         command = self._get_command()
         try:
             return subprocess.Popen(command, bufsize=1, close_fds=True,
@@ -34,12 +64,25 @@ class ProcessWrapper(object):
                     command)
 
     def get_record_root(self, record):
+        """
+        Given a *record* (the data that the external process returns for a
+        given single token), this specifies how to extract its root word
+        (aka its lemma).
+        """
         raise NotImplementedError
 
     def get_record_token(self, record):
+        """
+        Given a record, this specifies how to extract the exact word or token
+        that was processed.
+        """
         raise NotImplementedError
 
     def analyze(self, text):
+        """
+        Take text as input, run it through the external process, and return a
+        list of *records* containing the results.
+        """
         raise NotImplementedError
 
     def tokenize_list(self, text):
@@ -49,9 +92,24 @@ class ProcessWrapper(object):
         return [self.get_record_token(record) for record in self.analyze(text)]
 
     def tokenize(self, text):
+        """
+        Yell at people who are still using simplenlp's bad idea of
+        tokenization.
+        """
         raise NotImplementedError("tokenize is deprecated. Use tokenize_list.")
     
     def is_stopword_record(self, record, common_words=False):
+        """
+        Given a record, return whether it represents a stopword (a word that
+        should be discarded in NLP results).
+        
+        Note that we want very few words to be stopwords. Words that are
+        meaningful but simply common can be recognized by their very high word
+        frequency, and handled appropriately. Often, we only want determiners
+        (such as 'a', 'an', and 'the' in English) to be stopwords.
+
+        Takes in a vestigial parameter, `common_words`, and ignores it.
+        """
         raise NotImplementedError
 
     def is_stopword(self, text):
@@ -70,6 +128,12 @@ class ProcessWrapper(object):
         return not found_content_word
 
     def get_record_pos(self, record):
+        """
+        Given a record, get the word's part of speech.
+
+        This default implementation simply distinguishes stopwords from
+        non-stopwords.
+        """
         if self.is_stopword_record(record):
             return 'STOP'
         else:

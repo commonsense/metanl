@@ -117,17 +117,17 @@ class MeCabWrapper(ProcessWrapper):
         list of lists ("records") that contain the MeCab analysis of each
         word.
         """
-        self.process  # make sure things are loaded
+        process = self.process  # make sure things are loaded
         text = preprocess_text(text).lower()
         n_chunks = (len(text)+1024)//1024
         results = []
         for chunk in xrange(n_chunks):
             chunk_text = text[chunk*1024:(chunk+1)*1024].encode(self.mecab_encoding)
-            self.process.stdin.write(chunk_text+'\n')
+            process.stdin.write(chunk_text+'\n')
             #self.input_log.write(text+'\n')
             out_line = ''
             while True:
-                out_line = self.process.stdout.readline()
+                out_line = process.stdout.readline()
                 #self.output_log.write(out_line)
                 out_line = out_line.decode(self.mecab_encoding)
 

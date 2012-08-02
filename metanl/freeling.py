@@ -21,6 +21,21 @@ class FreelingWrapper(ProcessWrapper):
         #self.output_log = open('output.log', 'w')
 
     def _get_command(self):
+        """
+        Get the command for running the basic FreeLing pipeline in the
+        specified language.
+
+        The options we choose are:
+
+            -f <language>.cfg: use FreeLing's default config for that language
+            --nonumb: don't rephrase things like "a" and "five thousand" as
+                numbers
+            --noloc: don't collocate known two-word phrases
+            --nodate: don't translate time expressions into date objects
+            --noquant: don't identify quantities
+            --flush: give output after every line break, even if there is no
+                ending punctuation
+        """
         return ['analyze', '-f', self.configfile,
                 '--nonumb', '--noloc', '--nodate', '--noquant', '--flush']
 
@@ -31,15 +46,30 @@ class FreelingWrapper(ProcessWrapper):
         return record[1].lower()
 
     def get_record_token(self, record):
+        """
+        The token of a FreeLing record is the first item on the line,
+        normalized to lowercase.
+        """
         return record[0].lower()
 
     def get_record_pos(self, record):
+        """
+        In English, return the third segment of the record.
+
+        In other languages, this segment contains one letter for the part of 
+        speech, plus densely-encoded features that we really have no way to
+        use. Return just the part-of-speech letter.
+        """
         if self.lang == 'en':
             return record[2]
         else:
             return record[2][0]
 
     def is_stopword_record(self, record, common_words=False):
+        """
+        Determiners are stopwords. Detect this by checking whether their POS
+        starts with 'D'.
+        """
         return (record[2][0] == 'D')
     
     def analyze(self, text):
@@ -75,10 +105,10 @@ class FreelingWrapper(ProcessWrapper):
         """
         return get_frequency(word, self.lang, default_freq)
 
-languages = {}
-english = languages['en'] = FreelingWrapper('en')
-spanish = languages['es'] = FreelingWrapper('es')
-italian = languages['it'] = FreelingWrapper('it')
-portuguese = languages['pt'] = FreelingWrapper('pt')
-welsh = languages['cy'] = FreelingWrapper('cy')
+LANGUAGES = {}
+english = LANGUAGES['en'] = FreelingWrapper('en')
+spanish = LANGUAGES['es'] = FreelingWrapper('es')
+italian = LANGUAGES['it'] = FreelingWrapper('it')
+portuguese = LANGUAGES['pt'] = FreelingWrapper('pt')
+welsh = LANGUAGES['cy'] = FreelingWrapper('cy')
 
