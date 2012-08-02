@@ -159,6 +159,15 @@ class MeCabWrapper(ProcessWrapper):
                 record[2] in STOPWORD_CATEGORIES or
                 (common_words and record[7] in STOPWORD_ROOTS))
 
+class NoStopwordMeCabWrapper(MeCabWrapper):
+    """
+    This version of the MeCabWrapper doesn't label anything as a stopword. It'
+    used in building ConceptNet because discarding stopwords based on MeCab
+    categories loses too much information.
+    """
+    def is_stopword_record(self, record, common_words=False):
+        return False
+
 def word_frequency(word, default_freq=0):
     """
     Looks up the word's frequency in the Leeds Internet Japanese corpus.
