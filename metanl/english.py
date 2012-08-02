@@ -172,7 +172,7 @@ def tag_and_stem(text):
         if token.startswith('#'):
             out.append((token, 'TAG', token))
         elif token in BRACKET_DIC:
-            out.append((token,BRACKET_DIC[token],token))
+            out.append((token, BRACKET_DIC[token], token))
         else:
             stem = morphy_stem(token, tag)
             out.append((stem, tag, token))
@@ -239,6 +239,12 @@ def word_frequency(word, default_freq=0):
     in which case they'll be stripped like they were in the Google data, or
     in the special token "n't" which is treated as "not". This matches the
     output of the tokenize() function.
+
+    >>> word_frequency('normalization')
+    223058
+
+    >>> word_frequency('budap', default_freq=100)
+    100
     """
     freqs = Wordlist.load('google-unigrams.txt')
     if " " in word:
