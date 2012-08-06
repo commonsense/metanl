@@ -1,6 +1,6 @@
 import codecs
 from collections import defaultdict
-from metanl.general import fix_bad_unicode
+from metanl.fixit import fix_bad_unicode
 import re
 
 NUMBER_RE = re.compile('[0-9]+')
