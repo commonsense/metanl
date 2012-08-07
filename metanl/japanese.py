@@ -117,32 +117,36 @@ class MeCabWrapper(ProcessWrapper):
         list of lists ("records") that contain the MeCab analysis of each
         word.
         """
-        process = self.process  # make sure things are loaded
-        text = preprocess_text(text).lower()
-        n_chunks = (len(text)+1024)//1024
-        results = []
-        for chunk in xrange(n_chunks):
-            chunk_text = text[chunk*1024:(chunk+1)*1024].encode(self.mecab_encoding)
-            process.stdin.write(chunk_text+'\n')
-            #self.input_log.write(text+'\n')
-            out_line = ''
-            while True:
-                out_line = process.stdout.readline()
-                #self.output_log.write(out_line)
-                out_line = out_line.decode(self.mecab_encoding)
+        try:
+            process = self.process  # make sure things are loaded
+            text = preprocess_text(text).lower()
+            n_chunks = (len(text)+1024)//1024
+            results = []
+            for chunk in xrange(n_chunks):
+                chunk_text = text[chunk*1024:(chunk+1)*1024].encode(self.mecab_encoding)
+                self.send_input(chunk_text+'\n')
+                #self.input_log.write(text+'\n')
+                out_line = ''
+                while True:
+                    out_line = self.receive_output_line()
+                    #self.output_log.write(out_line)
+                    out_line = out_line.decode(self.mecab_encoding)
 
-                if out_line == u'EOS\n':
-                    break
+                    if out_line == u'EOS\n':
+                        break
 
-                word, info = out_line.strip(u'\n').split(u'\t')
-                record = [word] + info.split(u',')
-                
-                # special case for detecting nai -> n
-                if record[0] == u'ん' and record[5] == u'不変化型':
-                    record[7] = record[1] = u'ない'
+                    word, info = out_line.strip(u'\n').split(u'\t')
+                    record = [word] + info.split(u',')
+                    
+                    # special case for detecting nai -> n
+                    if record[0] == u'ん' and record[5] == u'不変化型':
+                        record[7] = record[1] = u'ない'
 
-                results.append(record)
-        return results
+                    results.append(record)
+            return results
+        except ProcessError:
+            self.restart_process()
+            return self.analyze(text)
 
     def is_stopword_record(self, record, common_words=False):
         """

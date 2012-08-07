@@ -17,8 +17,6 @@ it is difficult to recognize, and may conflate unrelated stems.
 
 >>> print spanish.normalize(u'esta es una prueba')
 esta es prueb
->>> print spanish.word_frequency('prueba')
-18362
 """
 
 from metanl.general import (preprocess_text, tokenize_list, untokenize_list)
@@ -95,6 +93,9 @@ class MetaSnowball(object):
         """
         Looks up the word's frequency in the Leeds Internet corpus for the
         appropriate language.
+
+        FIXME: this returns 0 for words that stem differently in FreeLing when
+        we use FreeLing frequencies, and that's most of the words
         """
         freqs = Wordlist.load('leeds-internet-%s.txt' % self.lang)
         word = self.snowball_stem(word)

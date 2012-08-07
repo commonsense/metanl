@@ -85,6 +85,20 @@ class ProcessWrapper(object):
         """
         raise NotImplementedError
 
+    def send_input(self, data):
+        self.process.stdin.write(data)
+
+    def receive_output_line(self):
+        line = self.process.stdout.readline()
+        if not line:
+            raise ProcessError("reached end of output")
+        return line
+
+    def restart_process(self):
+        self._process.stdin.close()
+        self._process = self._get_process()
+        return self._process
+
     def tokenize_list(self, text):
         """
         Split a text into separate words.

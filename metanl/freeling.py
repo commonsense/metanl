@@ -1,7 +1,7 @@
 import pkg_resources
 from metanl.general import preprocess_text
 from metanl.wordlist import get_frequency
-from metanl.extprocess import ProcessWrapper
+from metanl.extprocess import ProcessWrapper, ProcessError
 import re
 
 UNSAFE_CHARS = ''.join(chr(n) for n in (range(0x00, 0x10) + range(0x11, 0x20) + range(0x7f, 0xa0)))
@@ -76,27 +76,31 @@ class FreelingWrapper(ProcessWrapper):
         Run text through the external process, and get a list of lists
         ("records") that contain the analysis of each word.
         """
-        text = UNSAFE_RE.sub('', preprocess_text(text)).strip()
-        if not text:
-            return []
-        chunks = text.split('\n')
-        results = []
-        for chunk_text in chunks:
-            text = chunk_text.encode('utf-8')
-            self.process.stdin.write(text+'\n')
-            #self.input_log.write(text+'\n')
-            out_line = ''
-            while True:
-                out_line = self.process.stdout.readline()
-                #self.output_log.write(out_line)
-                out_line = out_line.decode('utf-8')
+        try:
+            text = UNSAFE_RE.sub('', preprocess_text(text)).strip()
+            if not text:
+                return []
+            chunks = text.split('\n')
+            results = []
+            for chunk_text in chunks:
+                text = chunk_text.encode('utf-8')
+                self.send_input(text+'\n')
+                #self.input_log.write(text+'\n')
+                out_line = ''
+                while True:
+                    out_line = self.receive_output_line()
+                    #self.output_log.write(out_line)
+                    out_line = out_line.decode('utf-8')
 
-                if out_line == u'\n':
-                    break
+                    if out_line == u'\n':
+                        break
 
-                record = out_line.strip(u'\n').split(u' ')
-                results.append(record)
-        return results
+                    record = out_line.strip(u'\n').split(u' ')
+                    results.append(record)
+            return results
+        except ProcessError:
+            self.restart_process()
+            return self.analyze(text)
 
     def word_frequency(self, word, default_freq=0):
         """
