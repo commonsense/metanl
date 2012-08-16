@@ -1,104 +1,15 @@
 # -*- coding: utf-8 -*-
-"""
-This module deals with bad text, and aims to turn it into less-bad text.
 
-The interesting function in it is fix_bad_unicode, which corrects for two ugly
-things that unaware programs can do to Unicode text; see its documentation for
-details.
-"""
-import re
+import codecs
+import unicodedata
 
-# Start with an inventory of "gremlins", which are characters from all over
-# Unicode that Windows has instead assigned to the control characters
-# 0x80-0x9F. We might encounter them in their Unicode forms and have to figure
-# out what they were originally.
-
-CP1252_GREMLINS = u''.join([
-    # from http://www.microsoft.com/typography/unicode/1252.htm
-    # adapted from http://effbot.org/zone/unicode-gremlins.htm
-    u"\u20AC", # EURO SIGN
-    u"\u201A", # SINGLE LOW-9 QUOTATION MARK
-    u"\u0192", # LATIN SMALL LETTER F WITH HOOK
-    u"\u201E", # DOUBLE LOW-9 QUOTATION MARK
-    u"\u2020", # DAGGER
-    u"\u2021", # DOUBLE DAGGER
-    u"\u02C6", # MODIFIER LETTER CIRCUMFLEX ACCENT
-    u"\u2030", # PER MILLE SIGN
-    u"\u0160", # LATIN CAPITAL LETTER S WITH CARON
-    u"\u2039", # SINGLE LEFT-POINTING ANGLE QUOTATION MARK
-    u"\u0152", # LATIN CAPITAL LIGATURE OE
-    u"\u017D", # LATIN CAPITAL LETTER Z WITH CARON
-    u"\u2022", # BULLET
-    u"\u02DC", # SMALL TILDE
-    u"\u0161", # LATIN SMALL LETTER S WITH CARON
-    u"\u0153", # LATIN SMALL LIGATURE OE
-    u"\u017E", # LATIN SMALL LETTER Z WITH CARON
-    u"\u0178", # LATIN CAPITAL LETTER Y WITH DIAERESIS
-])
-
-# We've separated out these characters because they are actually punctuation
-# that could occur after, say, an accented letter. They appear in combinations
-# that could be intentional and meaningful, or could be misinterpretations of
-# other Unicode characters in UTF-8. So we treat them with caution, and only
-# convert them in one situation where they are very unilkely to be intentional.
-
-CP1252_MORE_GREMLINS = CP1252_GREMLINS + (u''.join([
-    u"\u2026", # HORIZONTAL ELLIPSIS
-    u"\u2018", # LEFT SINGLE QUOTATION MARK
-    u"\u2019", # RIGHT SINGLE QUOTATION MARK
-    u"\u201C", # LEFT DOUBLE QUOTATION MARK
-    u"\u201D", # RIGHT DOUBLE QUOTATION MARK
-    u"\u2013", # EN DASH
-    u"\u2014", # EM DASH
-    u"\u2122", # TRADE MARK SIGN
-    u"\u203A", # SINGLE RIGHT-POINTING ANGLE QUOTATION MARK
-]))
-
-# PAIRS_START contains the Latin-1 characters that are the first bytes of all
-# possible two-byte UTF-8 characters.
-PAIRS_START = u''.join(unichr(x) for x in xrange(0xc2, 0xe0))
-
-# PAIRS_SAFE_START contains Latin-1 characters that are the first bytes of
-# *very common* UTF-8 characters. We'll allow converting these when they appear
-# next to one of the more obscure gremlins.
-PAIRS_SAFE_START = u''.join(unichr(x) for x in xrange(0xc3, 0xca))
-
-# PAIRS_REST contains Latin-1 characters that are valid second bytes of UTF-8
-# characters.
-PAIRS_REST = u''.join(unichr(x) for x in xrange(0x80, 0xc0))
-
-# TRIPLES_START cointains Latin-1 characters that are valid first bytes of
-# three-byte UTF-8 characters.
-TRIPLES_START = u''.join(unichr(x) for x in xrange(0xe1, 0xf0))
-
-# TRIPLES_REST contains the valid second and third bytes.
-TRIPLES_REST = u''.join(unichr(x) for x in xrange(0x80, 0xc0))
-
-# TRIPLES_HIGH_SECOND contains the valid second bytes that can appear after the
-# byte 0xe0; any lower bytes than that would be invalid UTF-8.
-TRIPLES_HIGH_SECOND = u''.join(unichr(x) for x in xrange(0xa0, 0xc0))
-
-# Make a list of regexes representing sequences that we want to correct.
-BAD_UNICODE_SEQUENCES = [
-    u'[%s][%s]' % (PAIRS_START, PAIRS_REST),
-    u'[%s][%s]' % (PAIRS_SAFE_START, CP1252_GREMLINS),
-    u'\xc3[%s]' % (PAIRS_REST + CP1252_MORE_GREMLINS),
-    u'[%s][%s][%s]' % (TRIPLES_START, TRIPLES_REST, TRIPLES_REST),
-    u'\xe0[%s][%s]' % (TRIPLES_HIGH_SECOND, TRIPLES_REST),
-    u'\xe2[%s][%s]' % (TRIPLES_REST + CP1252_GREMLINS,
-        TRIPLES_REST + CP1252_MORE_GREMLINS),
-]
-
-# Join them all together into one big ugly regex, and compile it.
-BAD_UNICODE_REGEX = u'(' + (u'|'.join(BAD_UNICODE_SEQUENCES)) + u')'
-BAD_UNICODE_RE = re.compile(BAD_UNICODE_REGEX)
 
 def fix_bad_unicode(text):
     u"""
     Something you will find all over the place, in real-world text, is text
     that's mistakenly encoded as utf-8, decoded in some ugly format like
     latin-1 or even Windows codepage 1252, and encoded as utf-8 again.
-    
+
     This causes your perfectly good Unicode-aware code to end up with garbage
     text because someone else (or maybe "someone else") made a mistake.
 
@@ -108,7 +19,9 @@ def fix_bad_unicode(text):
     and replaces them with the Unicode character they were clearly meant to
     represent.
 
-    Do not ever run binary data through this function.
+    The input to the function must be Unicode. It's not going to try to
+    auto-decode bytes for you -- then it would just create the problems it's
+    supposed to fix.
 
         >>> print fix_bad_unicode(u'Ãºnico')
         único
@@ -129,80 +42,286 @@ def fix_bad_unicode(text):
     characters at the same time, especially when dealing with characters like
     \x81 that have no mapping in Windows.
 
-        >>> print fix_bad_unicode(u'This text is sad â\x81”..')
-        This text is sad ⁔..
-    
+        >>> print fix_bad_unicode(u'This text is sad .â\x81”.')
+        This text is sad .⁔.
+
     This function even fixes multiple levels of badness:
 
-        >>> print fix_bad_unicode(u'what the f\xc3\x83\xc2\x85\xc3\x82\xc2\xb1ck')
-        what the fűck
-    """
-    # Astute observers will recognize that this makes certain character
-    # sequences impossible to encode. This function takes various steps to make
-    # sure that it's not destroying meaningful sequences of characters. But we
-    # don't know how language will be used in the future, so this code is not
-    # necessarily future-proof.
-    #
-    # For example: If, in the future, the Euro collapses, and Germany and the
-    # UK then form their own monetary union and introduce a currency called the
-    # Deutschpound (Ð£), this function will be erroneous.
-    #
-    # Particularly astute observers will notice that this function would also
-    # erroneously encode its own documentation and test cases.
+        >>> wtf = u'\xc3\xa0\xc2\xb2\xc2\xa0_\xc3\xa0\xc2\xb2\xc2\xa0'
+        >>> print fix_bad_unicode(wtf)
+        ಠ_ಠ
 
-    # Make sure we're dealing with Unicode. Decode it from utf-8 if not.
-    if isinstance(text, str):
-        remaining = text.decode('utf-8', 'replace')
+    However, it has safeguards against sequences of letters and punctuation
+    that can occur in valid text:
+
+        >>> print fix_bad_unicode(u'“I’m not such a fan of Charlotte Brontë…”')
+        “I’m not such a fan of Charlotte Brontë…”
+
+        >>> print fix_bad_unicode(u'ÅHÅ™, the new couch from IKEA')
+        ÅHÅ™, the new couch from IKEA
+
+    """
+    if not isinstance(text, unicode):
+        raise TypeError("This isn't even decoded into Unicode yet. "
+                        "Decode it first.")
+
+    maxord = max(ord(char) for char in text)
+    tried_fixing = None
+    if maxord < 128:
+        # Hooray! It's ASCII!
+        return text
+    elif maxord < 256:
+        tried_fixing = reinterpret_latin1(text)
+    elif all(ord(char) in WINDOWS_1252_CODEPOINTS for char in text):
+        tried_fixing = reinterpret_windows1252(text)
     else:
-        remaining = text
+        # We can't imagine how this would be anything but valid text.
+        return text
 
-    # Collect chunks of text with Unicode glitches fixed. If there were no
-    # glitches in the first place, great, there will only be one chunk.
-    chunks = []
-    while remaining:
-        match = BAD_UNICODE_RE.search(remaining)
-        if match:
-            before = remaining[0:match.start()]
-            to_fix = remaining[match.start():match.end()]
-            try:
-                # We found some tell-tale nonsense! First get the bytes that
-                # result from encoding them as latin-1.
-                encoded = to_fix.encode('latin-1')
-            except UnicodeEncodeError:
-                # As we've seen, some nonsense characters you come across
-                # aren't even in latin-1. They've been run through a Microsoft
-                # product, so they're instead in Windows codepage 1252. That's
-                # where you get stuff like the euro and trademark sign.
-                encoded = recode_from_windows(to_fix).encode('latin-1')
-            
-            # Now that we've identified the nonsense and gotten the bytes out
-            # of it, decode those bytes as UTF-8 to get the character they were
-            # probably supposed to be.
-            fixed = encoded.decode('utf-8')
-            chunks.extend([before, fixed])
-            remaining = remaining[match.end():]
-        else:
-            chunks.append(remaining)
-            remaining = ''
-    result = u''.join(chunks)
+    if (text_badness(tried_fixing) + len(tried_fixing) <
+        text_badness(text) + len(text)):
+        return fix_bad_unicode(tried_fixing)
+    else:
+        return text
 
-    # Check the result to make sure we have no glitches left. If we do, then
-    # the text was probably incorrectly encoded *twice*, so we run the function
-    # again recursively.
-    if BAD_UNICODE_RE.search(result):
-        return fix_bad_unicode(result)
-    return result
 
-def recode_from_windows(text):
+def decode_utf8_as_latin1(bytestr):
     """
-    Take the high-unicode "gremlin" characters that show up as a result of
-    decoding Windows CP1252, and replace them with their equivalent characters
-    between 0x80 and 0x9F, which is what they would be if decoded as Latin-1.
+    If you *know* you have some mistakenly double-encoded text stored
+    as bytes, you can simply read it correctly with this codec.
+
+    This version assumes the intermediate step encodes the text as
+    Latin-1. If it has Windows-1252 characters in it, use
+    `reinterpret_windows1252` instead.
     """
-    chars = []
-    for char in text:
-        if char in CP1252_MORE_GREMLINS:
-            chars.append(char.encode('cp1252').decode('latin-1'))
+    wrongtext = bytestr.decode('utf-8', 'replace')
+    return reinterpret_latin1(wrongtext)
+
+
+def reinterpret_latin1(wrongtext):
+    newbytes = wrongtext.encode('latin-1', 'replace')
+    return newbytes.decode('utf-8', 'replace')
+
+
+def decode_utf8_as_windows1252(bytestr):
+    """
+    If you *know* you have some mistakenly double-encoded text stored
+    as bytes, you can simply read it correctly with this codec.
+    """
+    wrongtext = bytestr.decode('utf-8', 'replace')
+    return reinterpret_windows1252(wrongtext)
+
+
+def reinterpret_windows1252(wrongtext):
+    altered_bytes = []
+    for char in wrongtext:
+        if ord(char) in WINDOWS_1252_GREMLINS:
+            altered_bytes.append(char.encode('WINDOWS_1252'))
         else:
-            chars.append(char)
-    return u''.join(chars)
+            altered_bytes.append(char.encode('latin-1', 'replace'))
+    return ''.join(altered_bytes).decode('utf-8', 'replace')
+
+
+def please_dont_encode(text):
+    """
+    We're making codecs that can decode really bad encodings. There is no good
+    reason anyone would want to deliberately *produce* those encodings, so the
+    codecs do not work in the other direction.
+    """
+    raise UnicodeError("You really don't want to encode into this codec.")
+
+
+@codecs.register
+def codec_finder(name):
+    """
+    Register our bad-Unicode codecs with the Python codecs library.
+    """
+    if name == 'utf8_as_latin1':
+        return codecs.CodecInfo(please_dont_encode, decode_utf8_as_latin1)
+    elif name == 'utf8_as_windows1252':
+        return codecs.CodecInfo(please_dont_encode,
+            decode_utf8_as_windows1252)
+
+
+def text_badness(text):
+    u'''
+    Look for red flags that text is encoded incorrectly:
+
+    Obvious problems:
+    - The replacement character \ufffd, indicating a decoding error
+    - Unassigned or private-use Unicode characters
+
+    Very weird things:
+    - Adjacent letters from two different scripts
+    - Letters in scripts that are very rarely used on computers (and
+      therefore, someone who is using them will probably get Unicode right)
+    - Improbable control characters
+
+    Moderately weird things:
+    - Improbable single-byte characters
+    - Letters in somewhat rare scripts
+    '''
+    assert isinstance(text, unicode)
+    errors = 0
+    very_weird_things = 0
+    weird_things = 0
+    prev_letter_script = None
+    for pos in xrange(len(text)):
+        char = text[pos]
+        index = ord(char)
+        if index < 256:
+            # Deal quickly with the first 256 characters.
+            weird_things += SINGLE_BYTE_WEIRDNESS[index]
+            if SINGLE_BYTE_LETTERS[index]:
+                prev_letter_script = 'latin'
+            else:
+                prev_letter_script = None
+        else:
+            category = unicodedata.category(char)
+            if category == 'Co':
+                # Unassigned or private use
+                errors += 1
+            elif index == 0xfffd:
+                # Replacement character
+                errors += 1
+
+            if category.startswith('L'):
+                # It's a letter. What kind of letter? This is typically found
+                # in the first word of the letter's Unicode name.
+                name = unicodedata.name(char)
+                freq, script = SCRIPT_TABLE[name.split()[0]]
+                if prev_letter_script:
+                    if script != prev_letter_script:
+                        very_weird_things += 1
+                    if freq == 1:
+                        weird_things += 2
+                    elif freq == 0:
+                        very_weird_things += 1
+            else:
+                prev_letter_script = None
+
+    return 100 * errors + 10 * very_weird_things + weird_things
+
+#######################################################################
+# The rest of this file is esoteric info about characters, scripts, and their
+# frequencies.
+#
+# Start with an inventory of "gremlins", which are characters from all over
+# Unicode that Windows has instead assigned to the control characters
+# 0x80-0x9F. We might encounter them in their Unicode forms and have to figure
+# out what they were originally.
+
+WINDOWS_1252_GREMLINS = [
+    # from http://www.microsoft.com/typography/unicode/1252.htm
+    # adapted from http://effbot.org/zone/unicode-gremlins.htm
+    0x0152,  # LATIN CAPITAL LIGATURE OE
+    0x0153,  # LATIN SMALL LIGATURE OE
+    0x0160,  # LATIN CAPITAL LETTER S WITH CARON
+    0x0161,  # LATIN SMALL LETTER S WITH CARON
+    0x0178,  # LATIN CAPITAL LETTER Y WITH DIAERESIS
+    0x017E,  # LATIN SMALL LETTER Z WITH CARON
+    0x017D,  # LATIN CAPITAL LETTER Z WITH CARON
+    0x0192,  # LATIN SMALL LETTER F WITH HOOK
+    0x02C6,  # MODIFIER LETTER CIRCUMFLEX ACCENT
+    0x02DC,  # SMALL TILDE
+    0x2013,  # EN DASH
+    0x2014,  # EM DASH
+    0x201A,  # SINGLE LOW-9 QUOTATION MARK
+    0x201C,  # LEFT DOUBLE QUOTATION MARK
+    0x201D,  # RIGHT DOUBLE QUOTATION MARK
+    0x201E,  # DOUBLE LOW-9 QUOTATION MARK
+    0x2018,  # LEFT SINGLE QUOTATION MARK
+    0x2019,  # RIGHT SINGLE QUOTATION MARK
+    0x2020,  # DAGGER
+    0x2021,  # DOUBLE DAGGER
+    0x2022,  # BULLET
+    0x2026,  # HORIZONTAL ELLIPSIS
+    0x2030,  # PER MILLE SIGN
+    0x2039,  # SINGLE LEFT-POINTING ANGLE QUOTATION MARK
+    0x203A,  # SINGLE RIGHT-POINTING ANGLE QUOTATION MARK
+    0x20AC,  # EURO SIGN
+    0x2122,  # TRADE MARK SIGN
+]
+
+WINDOWS_1252_CODEPOINTS = range(256) + WINDOWS_1252_GREMLINS
+
+# Rank the characters typically represented by a single byte -- that is, in
+# Latin-1 or Windows-1252 -- by how weird it would be to see them in running
+# text.
+#
+#   0 = not weird at all
+#   1 = rare punctuation or rare letter that someone could certainly
+#       have a good reason to use. All Windows-1252 gremlins are at least
+#       weirdness 1.
+#   2 = things that probably don't appear next to letters or other
+#       symbols, such as math or currency symbols
+#   3 = obscure symbols that nobody would go out of their way to use
+#       (includes symbols that were replaced in ISO-8859-15)
+#   4 = why would you use this?
+#   5 = unprintable control character
+
+SINGLE_BYTE_WEIRDNESS = (
+#   0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
+    5, 5, 5, 5, 5, 5, 5, 5, 5, 0, 0, 5, 5, 5, 5, 5,  # 0x00
+    5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,  # 0x10
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  # 0x20
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  # 0x30
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  # 0x40
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  # 0x50
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  # 0x60
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5,  # 0x70
+    2, 5, 1, 4, 1, 1, 3, 3, 4, 3, 1, 1, 1, 5, 1, 5,  # 0x80
+    5, 1, 1, 1, 1, 3, 1, 1, 4, 1, 1, 1, 1, 5, 1, 1,  # 0x90
+    1, 0, 2, 2, 3, 2, 4, 2, 4, 2, 2, 0, 3, 1, 1, 4,  # 0xa0
+    2, 2, 3, 3, 4, 3, 3, 2, 4, 4, 4, 0, 3, 3, 3, 0,  # 0xb0
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  # 0xc0
+    1, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0,  # 0xd0
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  # 0xe0
+    1, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0,  # 0xf0
+)
+
+# Pre-cache the Unicode data saying which of these first 256 characters are
+# letters. We'll need it often.
+SINGLE_BYTE_LETTERS = [
+    unicodedata.category(unichr(i)).startswith('L')
+    for i in xrange(256)
+]
+
+# A table telling us how to interpret the first word of a letter's Unicode
+# name. The number indicates how frequently we expect this script to be used
+# on computers. Many scripts not included here are assumed to have a frequency
+# of "0" -- if you're going to write in Linear B using Unicode, you're
+# you're probably aware enough of encoding issues to get it right.
+#
+# The lowercase name is a general category -- for example, Han characters and
+# Hiragana characters are very frequently adjacent in Japanese, so they all go
+# into category 'cjk'. Letters of different categories are assumed not to
+# appear next to each other often.
+SCRIPT_TABLE = {
+    'LATIN': (3, 'latin'),
+    'CJK': (2, 'cjk'),
+    'ARABIC': (2, 'arabic'),
+    'CYRILLIC': (2, 'cyrillic'),
+    'GREEK': (2, 'greek'),
+    'HEBREW': (2, 'hebrew'),
+    'KATAKANA': (2, 'cjk'),
+    'HIRAGANA': (2, 'cjk'),
+    'HIRAGANA-KATAKANA': (2, 'cjk'),
+    'HANGUL': (2, 'cjk'),
+    'DEVANAGARI': (2, 'devanagari'),
+    'THAI': (2, 'thai'),
+    'FULLWIDTH': (2, 'cjk'),
+    'HALFWIDTH': (1, 'cjk'),
+    'BENGALI': (1, 'bengali'),
+    'LAO': (1, 'lao'),
+    'KHMER': (1, 'khmer'),
+    'TELUGU': (1, 'telugu'),
+    'MALAYALAM': (1, 'malayalam'),
+    'SINHALA': (1, 'sinhala'),
+    'TAMIL': (1, 'tamil'),
+    'GEORGIAN': (1, 'georgian'),
+    'ARMENIAN': (1, 'armenian'),
+    'KANNADA': (1, 'kannada'),  # mostly used for looks of disapproval
+    'MASCULINE': (1, 'latin'),
+    'FEMININE': (1, 'latin')
+}
