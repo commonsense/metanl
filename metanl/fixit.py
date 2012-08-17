@@ -51,38 +51,58 @@ def fix_bad_unicode(text):
         >>> print fix_bad_unicode(wtf)
         ಠ_ಠ
 
-    However, it has safeguards against sequences of letters and punctuation
-    that can occur in valid text:
+    However, it has safeguards against fixing sequences of letters and
+    punctuation that can occur in valid text:
 
-        >>> print fix_bad_unicode(u'“I’m not such a fan of Charlotte Brontë…”')
-        “I’m not such a fan of Charlotte Brontë…”
+        >>> print fix_bad_unicode(u'not such a fan of Charlotte Brontë…”')
+        not such a fan of Charlotte Brontë…”
 
-        >>> print fix_bad_unicode(u'ÅHÅ™, the new couch from IKEA')
-        ÅHÅ™, the new couch from IKEA
+    Cases of genuine ambiguity can sometimes be addressed by finding other
+    characters that are not double-encoding, and expecting the encoding to
+    be consistent:
 
+        >>> print fix_bad_unicode(u'AHÅ™, the new sofa from IKEA®')
+        AHÅ™, the new sofa from IKEA®
+
+    Finally, we handle the case where the text is in a single-byte encoding
+    that was intended as Windows-1252 all along but read as Latin-1:
+
+        >>> print fix_bad_unicode(u'This text was never Unicode at all\x85')
+        This text was never Unicode at all…
     """
     if not isinstance(text, unicode):
         raise TypeError("This isn't even decoded into Unicode yet. "
                         "Decode it first.")
+    if len(text) == 0:
+        return text
 
     maxord = max(ord(char) for char in text)
-    tried_fixing = None
+    tried_fixing = []
     if maxord < 128:
         # Hooray! It's ASCII!
         return text
-    elif maxord < 256:
-        tried_fixing = reinterpret_latin1(text)
-    elif all(ord(char) in WINDOWS_1252_CODEPOINTS for char in text):
-        tried_fixing = reinterpret_windows1252(text)
     else:
-        # We can't imagine how this would be anything but valid text.
-        return text
+        attempts = [(text, text_badness(text) + len(text))]
+        if maxord < 256:
+            tried_fixing = reinterpret_latin1_as_utf8(text)
+            tried_fixing2 = reinterpret_latin1_as_windows1252(text)
+            attempts.append((tried_fixing, text_cost(tried_fixing)))
+            attempts.append((tried_fixing2, text_cost(tried_fixing2)))
+        elif all(ord(char) in WINDOWS_1252_CODEPOINTS for char in text):
+            tried_fixing = reinterpret_windows1252_as_utf8(text)
+            attempts.append((tried_fixing, text_cost(tried_fixing)))
+        else:
+            # We can't imagine how this would be anything but valid text.
+            return text
 
-    if (text_badness(tried_fixing) + len(tried_fixing) <
-        text_badness(text) + len(text)):
-        return fix_bad_unicode(tried_fixing)
-    else:
-        return text
+        # Sort the results by badness
+        attempts.sort(key=lambda x: x[1])
+        #print attempts
+        goodtext = attempts[0][0]
+        if goodtext == text:
+            return goodtext
+        else:
+            return fix_bad_unicode(goodtext)
 
 
 def decode_utf8_as_latin1(bytestr):
@@ -92,13 +112,13 @@ def decode_utf8_as_latin1(bytestr):
 
     This version assumes the intermediate step encodes the text as
     Latin-1. If it has Windows-1252 characters in it, use
-    `reinterpret_windows1252` instead.
+    `reinterpret_windows1252_as_utf8` instead.
     """
     wrongtext = bytestr.decode('utf-8', 'replace')
-    return reinterpret_latin1(wrongtext)
+    return reinterpret_latin1_as_utf8(wrongtext)
 
 
-def reinterpret_latin1(wrongtext):
+def reinterpret_latin1_as_utf8(wrongtext):
     newbytes = wrongtext.encode('latin-1', 'replace')
     return newbytes.decode('utf-8', 'replace')
 
@@ -109,10 +129,10 @@ def decode_utf8_as_windows1252(bytestr):
     as bytes, you can simply read it correctly with this codec.
     """
     wrongtext = bytestr.decode('utf-8', 'replace')
-    return reinterpret_windows1252(wrongtext)
+    return reinterpret_windows1252_as_utf8(wrongtext)
 
 
-def reinterpret_windows1252(wrongtext):
+def reinterpret_windows1252_as_utf8(wrongtext):
     altered_bytes = []
     for char in wrongtext:
         if ord(char) in WINDOWS_1252_GREMLINS:
@@ -120,6 +140,14 @@ def reinterpret_windows1252(wrongtext):
         else:
             altered_bytes.append(char.encode('latin-1', 'replace'))
     return ''.join(altered_bytes).decode('utf-8', 'replace')
+
+
+def reinterpret_latin1_as_windows1252(wrongtext):
+    """
+    Maybe this was always meant to be in a single-byte encoding, and it
+    makes the most sense in Windows-1252.
+    """
+    return wrongtext.encode('latin-1').decode('WINDOWS_1252', 'replace')
 
 
 def please_dont_encode(text):
@@ -155,10 +183,10 @@ def text_badness(text):
     - Adjacent letters from two different scripts
     - Letters in scripts that are very rarely used on computers (and
       therefore, someone who is using them will probably get Unicode right)
-    - Improbable control characters
+    - Improbable control characters, such as 0x81
 
     Moderately weird things:
-    - Improbable single-byte characters
+    - Improbable single-byte characters, such as ƒ or ¬
     - Letters in somewhat rare scripts
     '''
     assert isinstance(text, unicode)
@@ -184,12 +212,16 @@ def text_badness(text):
             elif index == 0xfffd:
                 # Replacement character
                 errors += 1
+            elif index in WINDOWS_1252_GREMLINS:
+                lowchar = char.encode('WINDOWS_1252').decode('latin-1')
+                weird_things += SINGLE_BYTE_WEIRDNESS[ord(lowchar)] - 0.5
 
             if category.startswith('L'):
                 # It's a letter. What kind of letter? This is typically found
                 # in the first word of the letter's Unicode name.
                 name = unicodedata.name(char)
-                freq, script = SCRIPT_TABLE[name.split()[0]]
+                scriptname = name.split()[0]
+                freq, script = SCRIPT_TABLE.get(scriptname, (0, 'other'))
                 if prev_letter_script:
                     if script != prev_letter_script:
                         very_weird_things += 1
@@ -197,10 +229,18 @@ def text_badness(text):
                         weird_things += 2
                     elif freq == 0:
                         very_weird_things += 1
+                prev_letter_script = script
             else:
                 prev_letter_script = None
 
     return 100 * errors + 10 * very_weird_things + weird_things
+
+
+def text_cost(text):
+    """
+    Assign a cost function to the length plus weirdness of a text string.
+    """
+    return text_badness(text) + len(text)
 
 #######################################################################
 # The rest of this file is esoteric info about characters, scripts, and their
@@ -212,7 +252,6 @@ def text_badness(text):
 # out what they were originally.
 
 WINDOWS_1252_GREMLINS = [
-    # from http://www.microsoft.com/typography/unicode/1252.htm
     # adapted from http://effbot.org/zone/unicode-gremlins.htm
     0x0152,  # LATIN CAPITAL LIGATURE OE
     0x0153,  # LATIN SMALL LIGATURE OE
@@ -243,6 +282,7 @@ WINDOWS_1252_GREMLINS = [
     0x2122,  # TRADE MARK SIGN
 ]
 
+# a list of Unicode characters that might appear in Windows-1252 text
 WINDOWS_1252_CODEPOINTS = range(256) + WINDOWS_1252_GREMLINS
 
 # Rank the characters typically represented by a single byte -- that is, in
@@ -259,6 +299,10 @@ WINDOWS_1252_CODEPOINTS = range(256) + WINDOWS_1252_GREMLINS
 #       (includes symbols that were replaced in ISO-8859-15)
 #   4 = why would you use this?
 #   5 = unprintable control character
+#
+# The Portuguese letter Ã (0xc3) is marked as weird because it would usually
+# appear in the middle of a word in actual Portuguese, and meanwhile it
+# appears in the mis-encodings of many common characters.
 
 SINGLE_BYTE_WEIRDNESS = (
 #   0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
@@ -274,10 +318,10 @@ SINGLE_BYTE_WEIRDNESS = (
     5, 1, 1, 1, 1, 3, 1, 1, 4, 1, 1, 1, 1, 5, 1, 1,  # 0x90
     1, 0, 2, 2, 3, 2, 4, 2, 4, 2, 2, 0, 3, 1, 1, 4,  # 0xa0
     2, 2, 3, 3, 4, 3, 3, 2, 4, 4, 4, 0, 3, 3, 3, 0,  # 0xb0
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  # 0xc0
+    0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  # 0xc0
     1, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0,  # 0xd0
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  # 0xe0
-    1, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0,  # 0xf0
+    1, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0,  # 0xf0
 )
 
 # Pre-cache the Unicode data saying which of these first 256 characters are
@@ -311,6 +355,7 @@ SCRIPT_TABLE = {
     'DEVANAGARI': (2, 'devanagari'),
     'THAI': (2, 'thai'),
     'FULLWIDTH': (2, 'cjk'),
+    'MODIFIER': (2, None),
     'HALFWIDTH': (1, 'cjk'),
     'BENGALI': (1, 'bengali'),
     'LAO': (1, 'lao'),
