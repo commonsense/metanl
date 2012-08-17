@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import codecs
 import unicodedata
-
 
 def fix_bad_unicode(text):
     u"""
@@ -15,7 +13,7 @@ def fix_bad_unicode(text):
 
     This function looks for the evidence of that having happened and fixes it.
     It determines whether it should replace nonsense sequences of single-byte
-    characters that were really meant to be UTF-8 character, and if so, turns
+    characters that were really meant to be UTF-8 characters, and if so, turns
     them into the correctly-encoded Unicode character that they were meant to
     represent.
 
@@ -103,31 +101,9 @@ def fix_bad_unicode(text):
             return fix_bad_unicode(goodtext)
 
 
-def decode_utf8_in_latin1(bytestr):
-    """
-    If you *know* you have some mistakenly double-encoded text stored
-    as bytes, you can simply read it correctly with this codec.
-
-    This version assumes the intermediate step encodes the text as
-    Latin-1. If it has Windows-1252 characters in it, use
-    `decode_utf8_in_windows1252` instead.
-    """
-    wrongtext = bytestr.decode('utf-8', 'replace')
-    return reinterpret_latin1_as_utf8(wrongtext)
-
-
 def reinterpret_latin1_as_utf8(wrongtext):
     newbytes = wrongtext.encode('latin-1', 'replace')
     return newbytes.decode('utf-8', 'replace')
-
-
-def decode_utf8_in_windows1252(bytestr):
-    """
-    If you *know* you have some mistakenly double-encoded text stored
-    as bytes, you can simply read it correctly with this codec.
-    """
-    wrongtext = bytestr.decode('utf-8', 'replace')
-    return reinterpret_windows1252_as_utf8(wrongtext)
 
 
 def reinterpret_windows1252_as_utf8(wrongtext):
@@ -146,27 +122,6 @@ def reinterpret_latin1_as_windows1252(wrongtext):
     makes the most sense in Windows-1252.
     """
     return wrongtext.encode('latin-1').decode('WINDOWS_1252', 'replace')
-
-
-def please_dont_encode(text):
-    """
-    We're making codecs that can decode really bad encodings. There is no
-    good reason anyone would want to deliberately *produce* those encodings,
-    so the codecs do not work in the other direction.
-    """
-    raise UnicodeError("You really don't want to encode into this codec.")
-
-
-@codecs.register
-def codec_finder(name):
-    """
-    Register our bad-Unicode codecs with the Python codecs library.
-    """
-    if name == 'utf8_as_latin1':
-        return codecs.CodecInfo(please_dont_encode, decode_utf8_in_latin1)
-    elif name == 'utf8_as_windows1252':
-        return codecs.CodecInfo(please_dont_encode,
-            decode_utf8_in_windows1252)
 
 
 def text_badness(text):
@@ -333,7 +288,7 @@ SINGLE_BYTE_LETTERS = [
 # name. The number indicates how frequently we expect this script to be used
 # on computers. Many scripts not included here are assumed to have a frequency
 # of "0" -- if you're going to write in Linear B using Unicode, you're
-# you're probably aware enough of encoding issues to get it right.
+# probably aware enough of encoding issues to get it right.
 #
 # The lowercase name is a general category -- for example, Han characters and
 # Hiragana characters are very frequently adjacent in Japanese, so they all go
