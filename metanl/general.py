@@ -58,8 +58,10 @@ def preprocess_text(text):
     - Replace newlines and tabs with spaces.
     - Remove all other control characters.
     """
-    text = fix_bad_unicode(text)
-    return unicodedata.normalize('NFKC', text.translate(CONTROL_CHARS))
+    if isinstance(text, str):
+        text = text.decode('utf-8')
+    return fix_bad_unicode(unicodedata.normalize('NFKC',
+        text.translate(CONTROL_CHARS)))
 
 def tokenize(text):
     r"""
@@ -202,7 +204,7 @@ def asciify(text):
     if not isinstance(text, unicode):
         text = text.decode('utf-8', 'ignore')
     # Deal with annoying British vowel ligatures
-    text = fix_bad_unicode(text)
+    text = preprocess_text(text)
     text = text.replace(u'Æ', 'AE').replace(u'Œ', 'OE')\
                .replace(u'æ', 'ae').replace(u'œ', 'oe')
     return unicodedata.normalize('NFKD', text).encode('ASCII', 'ignore')
