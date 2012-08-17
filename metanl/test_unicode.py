@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
-from metanl.fixit import fix_bad_unicode
+from metanl.fixit import fix_bad_unicode, WINDOWS_1252_GREMLINS
 import unicodedata
 
 def test_all_bmp_characters():
-    for index in xrange(0, 65533):
+    for index in xrange(0xa0, 0xfffd):
         if not unicodedata.category(unichr(index)) == 'Co':
             garble = unichr(index).encode('utf-8').decode('latin-1')
-            assert fix_bad_unicode(garble) == unichr(index)
+            if index not in WINDOWS_1252_GREMLINS:
+                assert fix_bad_unicode(garble) == unichr(index)
 
 phrases = [
     u"\u201CI'm not such a fan of Charlotte Brontë\u2026\u201D",

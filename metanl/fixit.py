@@ -14,9 +14,9 @@ def fix_bad_unicode(text):
     text because someone else (or maybe "someone else") made a mistake.
 
     This function looks for the evidence of that having happened and fixes it.
-    It searches for the nonsense character sequences that are incorrect latin-1
-    representations of all UTF-8 characters in the Basic Multilingual Plane,
-    and replaces them with the Unicode character they were clearly meant to
+    It determines whether it should replace nonsense sequences of single-byte
+    characters that were really meant to be UTF-8 character, and if so, turns
+    them into the correctly-encoded Unicode character that they were meant to
     represent.
 
     The input to the function must be Unicode. It's not going to try to
@@ -29,11 +29,9 @@ def fix_bad_unicode(text):
         >>> print fix_bad_unicode(u'This text is fine already :þ')
         This text is fine already :þ
 
-    Because these characters often come from Microsoft products, we also allow
+    Because these characters often come from Microsoft products, we allow
     for the possibility that we get not just Unicode characters 128-255, but
-    also Windows's conflicting idea of what characters 128-160 are. However,
-    because some pairs of these characters are actually useful, we only correct
-    them in sets of three or more.
+    also Windows's conflicting idea of what characters 128-160 are.
 
         >>> print fix_bad_unicode(u'This â€” should be an em dash')
         This — should be an em dash
@@ -105,14 +103,14 @@ def fix_bad_unicode(text):
             return fix_bad_unicode(goodtext)
 
 
-def decode_utf8_as_latin1(bytestr):
+def decode_utf8_in_latin1(bytestr):
     """
     If you *know* you have some mistakenly double-encoded text stored
     as bytes, you can simply read it correctly with this codec.
 
     This version assumes the intermediate step encodes the text as
     Latin-1. If it has Windows-1252 characters in it, use
-    `reinterpret_windows1252_as_utf8` instead.
+    `decode_utf8_in_windows1252` instead.
     """
     wrongtext = bytestr.decode('utf-8', 'replace')
     return reinterpret_latin1_as_utf8(wrongtext)
@@ -123,7 +121,7 @@ def reinterpret_latin1_as_utf8(wrongtext):
     return newbytes.decode('utf-8', 'replace')
 
 
-def decode_utf8_as_windows1252(bytestr):
+def decode_utf8_in_windows1252(bytestr):
     """
     If you *know* you have some mistakenly double-encoded text stored
     as bytes, you can simply read it correctly with this codec.
@@ -152,9 +150,9 @@ def reinterpret_latin1_as_windows1252(wrongtext):
 
 def please_dont_encode(text):
     """
-    We're making codecs that can decode really bad encodings. There is no good
-    reason anyone would want to deliberately *produce* those encodings, so the
-    codecs do not work in the other direction.
+    We're making codecs that can decode really bad encodings. There is no
+    good reason anyone would want to deliberately *produce* those encodings,
+    so the codecs do not work in the other direction.
     """
     raise UnicodeError("You really don't want to encode into this codec.")
 
@@ -165,10 +163,10 @@ def codec_finder(name):
     Register our bad-Unicode codecs with the Python codecs library.
     """
     if name == 'utf8_as_latin1':
-        return codecs.CodecInfo(please_dont_encode, decode_utf8_as_latin1)
+        return codecs.CodecInfo(please_dont_encode, decode_utf8_in_latin1)
     elif name == 'utf8_as_windows1252':
         return codecs.CodecInfo(please_dont_encode,
-            decode_utf8_as_windows1252)
+            decode_utf8_in_windows1252)
 
 
 def text_badness(text):
