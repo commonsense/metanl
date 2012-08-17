@@ -1,16 +1,16 @@
 di,3297044
-essere,2316454
-e,2186522
+essere,2316817
+e,2187744
 che,1730420
 la,1634444
 il,1606078
 del,1396072
 in,1261195
-a,1194072
+a,1193800
 per,1048545
 un,1033639
 della,967735
-avere,927582
+avere,927904
 non,909703
 si,828399
 le,762509
@@ -24,7 +24,7 @@ alla,425546
 potere,389838
 fare,380258
 come,363878
-ma,359609
+ma,359708
 più,354267
 gli,296654
 o,294904
@@ -46,7 +46,7 @@ sul,167292
 cui,166295
 solo,158073
 venire,150832
-anno,150227
+anno,150449
 loro,142974
 su,142660
 stare,136910
@@ -71,7 +71,7 @@ tutto,110366
 prima,108995
 grande,107714
 ne,106001
-ora,105436
+ora,105535
 uno,105272
 io,105080
 così,101441
@@ -91,7 +91,7 @@ volta,88819
 dopo,88719
 li,88570
 ancora,86385
-altro,85828
+altro,85985
 quella,83881
 secondo,83510
 lavoro,83031
@@ -136,6 +136,7 @@ servizio,55790
 bene,55502
 oggi,55154
 usare,54836
+’,54815
 tutte,54154
 certo,54004
 lui,53602
@@ -144,8 +145,8 @@ fine,52883
 sentire,52743
 piccolo,52726
 qui,52652
+italia,51720
 via,51686
-italia,51629
 esempio,51340
 quel,51142
 meno,50217
@@ -162,7 +163,6 @@ momento,47773
 queste,47238
 tanto,47096
 cercare,46980
-’,46900
 sembrare,46032
 invece,45998
 the,45685
@@ -192,10 +192,10 @@ chiamare,40746
 leggere,40740
 nome,40649
 credere,40565
+informazione,40459
 utilizzare,40433
 base,40427
 lungo,40409
-informazione,40360
 senso,40344
 numero,40335
 progetto,40246
@@ -203,15 +203,15 @@ fra,40005
 altra,39989
 allora,39882
 diventare,39602
+uomo,39525
 sotto,39510
-uomo,39418
 lei,39369
 importante,39263
 forse,39137
 legge,39122
+interno,38809
 commento,38510
 buono,38495
-interno,38446
 politica,38214
 conoscere,38113
 tenere,37875
@@ -224,8 +224,8 @@ politico,37098
 quelli,36951
 trattare,36941
 bambino,36901
-–,36819
 forza,36629
+–,36571
 libro,36564
 rapporto,36561
 scuola,36448
@@ -234,8 +234,8 @@ capire,36395
 tale,36357
 quasi,36357
 quelle,36184
+amico,36142
 generale,36134
-amico,36068
 comune,36059
 mano,36034
 de,35951
@@ -271,17 +271,18 @@ rimanere,32865
 studio,32840
 piano,32683
 spesso,32302
+idea,32147
+l,32097
 provare,32021
 considerare,31938
-idea,31908
 soprattutto,31849
 comunque,31848
 mercato,31816
 condizione,31799
+unico,31404
 creare,31303
 sito,31255
 aprire,31227
-unico,31115
 meglio,31024
 centro,30802
 realtà,30718
@@ -292,7 +293,6 @@ insieme,30421
 esistere,30147
 ben,30065
 tutta,29984
-l,29761
 visto,29710
 s,29645
 qualcosa,29620
@@ -302,12 +302,12 @@ processo,29206
 vistare,29199
 luogo,29066
 of,29026
+uso,29016
 col,28976
 economico,28976
 iniziare,28821
 legare,28769
 risultato,28753
-uso,28719
 dato,28712
 cambiare,28704
 effetto,28654
@@ -355,9 +355,9 @@ periodo,25715
 cominciare,25681
 interesse,25618
 voce,25567
+c,25492
 voi,25345
 uscire,25187
-c,25129
 riguardare,25119
 corpo,25097
 contenere,25005
@@ -395,8 +395,8 @@ internet,23033
 inviare,23033
 nulla,22991
 intervento,22974
+acqua,22925
 decidere,22875
-acqua,22826
 postare,22785
 fronte,22702
 te,22687
@@ -405,11 +405,11 @@ vecchio,22561
 azienda,22521
 questione,22471
 and,22422
+area,22347
 fondo,22298
-area,22182
 egli,22157
 titolo,22099
-obiettivo,21951
+obiettivo,22025
 soggetto,21894
 controllo,21827
 settembre,21827
@@ -459,21 +459,21 @@ ritenere,20647
 conoscenza,20630
 gente,20614
 difficile,20580
+utente,20563
 formazione,20506
 cultura,20505
 soltanto,20490
-utente,20456
+euro,20440
 qualità,20399
 curare,20381
 ormai,20324
-euro,20192
 americano,20177
 oppure,20168
+inizio,20136
 consentire,20118
 materiale,20118
 stampa,20084
 essa,20060
-inizio,20053
 notare,20019
 posizione,20010
 bisognare,20003
@@ -513,15 +513,14 @@ chiaro,19061
 scegliere,19020
 quattro,19012
 serie,18954
+attenzione,18936
 pensiero,18913
 successo,18904
 accordo,18895
-attenzione,18845
 tuttavia,18814
 luce,18756
 molte,18739
 seguito,18739
-€,18721
 associazione,18697
 carta,18665
 sostenere,18655
@@ -557,6 +556,7 @@ morta,17658
 territorio,17649
 riconoscere,17586
 notte,17583
+d,17499
 essi,17485
 fila,17485
 soluzione,17469
@@ -571,7 +571,6 @@ diretto,17211
 disposizione,17163
 documento,17144
 regione,17136
-d,17136
 incontro,17130
 singolo,17039
 ufficio,17031
@@ -595,6 +594,7 @@ fisico,16617
 testo,16585
 zona,16584
 sé,16527
+unione,16527
 pur,16494
 risultare,16435
 studente,16379
@@ -615,7 +615,6 @@ economia,16065
 piuttosto,16040
 pochi,16039
 media,15999
-unione,15974
 dimostrare,15964
 aspettare,15897
 mare,15826
@@ -653,9 +652,9 @@ contratto,15248
 giungere,15236
 fondamentale,15198
 correre,15132
+ambito,15131
 differenza,15116
 dedicare,15082
-ambito,15024
 lavoratore,15016
 militare,14917
 opinione,14851
@@ -819,13 +818,13 @@ dettare,12463
 immagine,12456
 genitore,12284
 responsabilità,12275
+accesso,12226
 intorno,12218
 disporre,12218
 paura,12176
 semplicemente,12176
 osservare,12141
 fenomeno,12111
-accesso,12102
 pratica,12069
 direzione,12060
 rivolgere,12044
@@ -843,12 +842,13 @@ new,11830
 ente,11829
 grave,11813
 regolare,11797
+esterno,11787
+estero,11779
 ragazza,11754
 superare,11739
 direttore,11738
 ovviamente,11714
 finalmente,11714
-esterno,11713
 dichiarare,11705
 paolo,11681
 principio,11681
@@ -858,7 +858,6 @@ dubbio,11657
 sezione,11648
 pronto,11557
 scorso,11549
-estero,11548
 poiché,11541
 esigenza,11541
 voglia,11507
@@ -936,6 +935,7 @@ imparare,10516
 registrare,10494
 centrale,10492
 principe,10485
+dell,10478
 modalità,10476
 proposito,10476
 capitale,10476
@@ -992,13 +992,13 @@ costringere,10022
 mangiare,10021
 linguaggio,10006
 cadere,9997
+aumento,9990
 dolore,9988
 quota,9981
 collegare,9965
 paziente,9940
 sicuramente,9940
 girare,9925
-aumento,9907
 tratto,9906
 segreto,9873
 trasporto,9856
@@ -1015,6 +1015,7 @@ ricco,9757
 tutelare,9748
 ampio,9741
 fede,9725
+•,9716
 nessuna,9684
 desiderio,9683
 riprendere,9681
@@ -1058,10 +1059,10 @@ unire,9388
 cattivo,9386
 grosso,9385
 strategia,9370
+...,9362
 assolutamente,9328
 avanzare,9312
 fissare,9312
-dell,9298
 manifestazione,9296
 giudizio,9287
 componente,9279
@@ -1070,6 +1071,7 @@ fratello,9239
 quotidiano,9236
 straniero,9197
 g,9196
+istruzione,9195
 operativo,9187
 edizione,9180
 marco,9172
@@ -1080,7 +1082,6 @@ iraq,9122
 tal,9122
 sorta,9097
 origine,9097
-istruzione,9096
 tradizione,9090
 purtroppo,9081
 struttura,9080
@@ -1098,7 +1099,6 @@ ritrovare,8958
 concludere,8954
 profondo,8940
 maria,8924
-...,8916
 soldo,8906
 ordinare,8882
 nazione,8875
@@ -1114,6 +1114,7 @@ morale,8824
 certamente,8824
 evidente,8817
 sostanza,8816
+€,8808
 comando,8808
 continuo,8808
 frase,8800
@@ -1139,7 +1140,6 @@ compagno,8651
 lanciare,8645
 criterio,8644
 sguardo,8635
-•,8602
 consumare,8601
 bel,8585
 scendere,8585
@@ -1271,6 +1271,7 @@ vicenda,7669
 venerdì,7661
 visita,7645
 passione,7636
+all,7628
 setta,7628
 estate,7627
 fondare,7626
@@ -1390,7 +1391,6 @@ frutto,6909
 approvare,6893
 nascondere,6885
 tirare,6884
-all,6877
 cosiddetto,6868
 intanto,6867
 identità,6860
@@ -1934,7 +1934,6 @@ laureare,4622
 redazione,4614
 legnare,4590
 documentazione,4590
-1,4590
 emissione,4590
 ricchezza,4582
 progresso,4582
@@ -1966,6 +1965,7 @@ peggio,4516
 concezione,4515
 smettere,4507
 fiore,4507
+ue,4507
 an,4499
 personalità,4499
 previsione,4499
@@ -1985,6 +1985,7 @@ preparazione,4467
 trarre,4466
 mandato,4466
 soggiorno,4466
+1,4466
 giocatore,4465
 udire,4458
 venti,4458
@@ -2080,7 +2081,6 @@ decisamente,4244
 bordo,4243
 teorico,4243
 museo,4243
-ue,4243
 biologico,4243
 adattare,4234
 toscano,4227
@@ -2136,7 +2136,6 @@ formativo,4086
 incidente,4078
 certezza,4070
 contrasto,4070
-â,4070
 realmente,4061
 africo,4061
 cogliere,4061
@@ -2192,6 +2191,7 @@ batteria,3905
 allontanare,3905
 possesso,3904
 cerchio,3904
+po,3904
 terrorismo,3897
 adatto,3897
 animo,3896
@@ -2502,7 +2502,6 @@ sovietico,3236
 prode,3229
 anello,3228
 maggiormente,3228
-tm,3221
 rifugiare,3220
 musicista,3220
 ricercatore,3219
@@ -2606,7 +2605,6 @@ dente,3071
 sciopero,3071
 home,3070
 riempire,3070
-po,3070
 parziale,3063
 distinzione,3063
 utilità,3063
@@ -3097,7 +3095,6 @@ beare,2435
 ricercare,2427
 apparentemente,2427
 fumare,2427
-lâ,2427
 corda,2427
 lamentare,2420
 victor,2419
@@ -3111,7 +3108,6 @@ degno,2419
 profondità,2419
 regolarmente,2419
 cavo,2418
-2,2418
 tel,2418
 visivo,2418
 stradale,2418
@@ -3217,6 +3213,7 @@ rubare,2295
 sostanziare,2295
 maschile,2294
 viceversa,2294
+2,2294
 piegare,2287
 versamento,2286
 ugualmente,2286
@@ -3511,7 +3508,6 @@ salvatore,1988
 rame,1982
 dr,1981
 sindrome,1981
-¢,1981
 approfittare,1980
 distinto,1973
 latina,1973
@@ -4019,7 +4015,6 @@ irlandese,1619
 ape,1619
 metafisico,1618
 ripartire,1618
-câ,1618
 quesito,1618
 lazio,1618
 unix,1618
@@ -4613,7 +4608,6 @@ ottanta,1337
 atomico,1337
 meditazione,1336
 fragile,1330
-4,1330
 scudo,1330
 zia,1330
 tramonto,1329
@@ -4638,6 +4632,7 @@ colombo,1321
 porzione,1321
 soffitto,1321
 ingiustizia,1321
+nell,1321
 schmid,1321
 biografia,1321
 rafforzamento,1321
@@ -4785,8 +4780,8 @@ convento,1271
 comunemente,1271
 montaggio,1271
 assicurativo,1264
-procuratore,1264
 ultimamente,1264
+procuratore,1264
 spam,1263
 inconscio,1263
 consigliere,1263
@@ -4810,6 +4805,7 @@ adempimento,1255
 fiero,1255
 logistico,1255
 analitico,1255
+câ,1255
 infermiere,1255
 singolare,1255
 orgoglioso,1255
@@ -4908,7 +4904,6 @@ cemento,1222
 matrice,1222
 ð,1222
 telesforo,1222
-eâ,1222
 ecologico,1222
 affettivo,1222
 pensionistico,1222
@@ -4931,7 +4926,6 @@ dizionario,1214
 compensare,1214
 asl,1214
 luciano,1214
-nell,1214
 tabacco,1214
 avv,1214
 velivolo,1214
@@ -4947,6 +4941,7 @@ grato,1213
 settimo,1213
 previo,1213
 equivoco,1206
+4,1206
 romantico,1206
 custodia,1206
 esibire,1206
@@ -5037,7 +5032,6 @@ medaglia,1180
 adorare,1180
 confessare,1180
 istantaneo,1180
-dellâ,1180
 bottone,1180
 corredare,1180
 mafia,1180
@@ -5202,6 +5196,7 @@ analogia,1123
 serbia,1123
 college,1123
 piazzare,1123
+piu,1123
 funzionante,1123
 hoc,1122
 ö,1115
@@ -5244,6 +5239,7 @@ galassia,1106
 spettacolare,1106
 manoscritto,1106
 terroristico,1106
+â,1106
 meeting,1106
 coltura,1106
 dorare,1098
@@ -5469,17 +5465,16 @@ lotto,1032
 possibilmente,1032
 fidanzare,1032
 tribù,1032
+offensiva,1032
 statico,1032
 help,1032
 spiare,1032
 netscape,1032
 balla,1032
 armonico,1032
-offensiva,1032
 insolito,1032
 denso,1032
 sveglio,1032
-piu,1032
 fabbrica,1032
 compassione,1032
 donazione,1032
@@ -5619,7 +5614,6 @@ gomito,983
 uil,983
 servitore,983
 ago,983
-¦,983
 ceto,983
 sforzare,983
 ragazzina,982
@@ -5737,7 +5731,6 @@ fair,950
 affascinare,950
 mutazione,950
 bombardamento,950
-⁄,950
 sn,950
 serbo,950
 baby,949
@@ -5873,6 +5866,7 @@ sistematicamente,916
 frazione,916
 irregolare,916
 consigliabile,916
+ll,916
 mb,916
 mass,916
 intento,916
@@ -5995,6 +5989,7 @@ abolire,892
 stampante,892
 fassino,892
 periodicamente,892
+tm,892
 paradossalmente,892
 ottimizzare,892
 xx,892
@@ -6117,6 +6112,7 @@ addestrare,867
 fortezza,867
 emozionale,867
 extracomunitario,867
+¢,867
 ÷,867
 dionigi,867
 fatale,867
@@ -6138,6 +6134,7 @@ provocazione,866
 agricoltore,866
 white,866
 nocivo,866
+quest,865
 brindare,859
 climatico,859
 dolcezza,859
@@ -6298,7 +6295,6 @@ tool,834
 petrolifero,834
 agostino,834
 preventivamente,834
-poâ,834
 parrocchia,834
 spalancare,834
 telnet,834
@@ -6334,6 +6330,7 @@ action,826
 radiofonico,826
 tematica,826
 distratto,826
+⁄,826
 requisire,826
 tè,826
 egoismo,826
@@ -6462,7 +6459,6 @@ trascurabile,801
 imitazione,801
 ereditare,801
 pel,801
-ll,801
 contrappunto,801
 roberta,801
 sicché,801
@@ -6528,7 +6524,6 @@ lc,792
 liscio,792
 sommergere,792
 ciglio,792
-œ,792
 tattico,792
 release,792
 arcivescovo,792
@@ -6733,7 +6728,6 @@ oscar,751
 scetticismo,751
 luisa,751
 correlazione,751
-allâ,751
 convocazione,751
 affinità,751
 irene,751
@@ -6742,7 +6736,6 @@ wide,751
 avversare,750
 obsoleto,750
 stellare,750
-quest,750
 lucarelli,743
 links,743
 homo,743
@@ -7223,6 +7216,7 @@ leo,669
 chirac,669
 fascio,669
 rights,669
+perche,669
 pigliare,669
 filone,669
 deliberato,669
@@ -7272,6 +7266,7 @@ puttana,661
 rassegnare,661
 ud,661
 centralizzare,661
+“,661
 arteria,661
 tappo,661
 west,660
@@ -7411,6 +7406,7 @@ ghetto,644
 scontrare,643
 angolare,643
 pianista,643
+œ,643
 eccolo,643
 ardente,636
 heidegger,636
@@ -7568,7 +7564,6 @@ risposare,619
 volpe,619
 ormone,619
 tragitto,619
-‚,619
 spazzatura,619
 commercializzazione,619
 ada,619
@@ -7661,7 +7656,6 @@ basilea,603
 qualcuna,603
 stagno,603
 algeria,603
-¬,603
 zapatista,603
 sacramento,603
 tempestivamente,603
@@ -7817,7 +7811,6 @@ duecento,586
 flottare,586
 perverso,586
 giulietta,586
-perche,586
 banchetto,586
 arezzo,586
 lecce,586
@@ -8136,7 +8129,6 @@ comodino,553
 jessica,553
 divulgare,553
 irregolarità,553
-tmunione,553
 ardire,553
 ascendente,553
 mentalmente,553
@@ -8285,6 +8277,7 @@ vendicare,537
 auspicio,537
 darwin,537
 infondato,537
+¦,537
 normal,537
 mary,537
 pas,537
@@ -8736,7 +8729,6 @@ assise,487
 indubbio,487
 ricetta,487
 sondare,487
-‰,487
 scordare,487
 fragilità,487
 esca,487
@@ -9321,6 +9313,7 @@ occulto,438
 cartoncino,438
 maledizione,438
 saldare,438
+memorizzazione,438
 figliuola,438
 inquadramento,438
 concentramento,438
@@ -9340,7 +9333,6 @@ emozionare,438
 anticorpo,438
 segg,438
 parlato,438
-memorizzazione,438
 castel,438
 intestazione,438
 serial,438
@@ -9942,6 +9934,7 @@ eric,396
 debitamente,396
 ottavo,396
 kim,396
+‚,396
 caramella,396
 proprietaria,396
 fans,396
@@ -10122,6 +10115,7 @@ rositani,380
 praticante,380
 anidride,380
 cotta,380
+¬,380
 lessico,380
 aristocratico,380
 evviva,380
@@ -10392,7 +10386,6 @@ ch,363
 atlante,363
 deprimente,363
 consiliare,363
-dâ,363
 spread,363
 francoforte,363
 goal,363
@@ -10445,7 +10438,6 @@ riporre,363
 debitore,363
 ç,363
 incongruenza,363
-tminterno,363
 abbonato,363
 friends,363
 ferragosto,363
@@ -10601,7 +10593,6 @@ stento,355
 massaggio,355
 johan,355
 templi,355
-unâ,355
 accingere,355
 sentinella,355
 prolungato,355
@@ -10694,7 +10685,6 @@ intenzionalmente,347
 confortevole,347
 arancio,347
 intel,347
-tmaltra,347
 olimpio,347
 ein,347
 indegno,347
@@ -11290,6 +11280,7 @@ pool,314
 sgomento,314
 orma,314
 timone,314
+scaglia,314
 ucraino,314
 supposizione,314
 sterilità,314
@@ -11356,7 +11347,6 @@ quoziente,314
 aveano,314
 rivalutare,314
 arciere,314
-scaglia,314
 friedrich,314
 spinello,314
 finzi,314
@@ -11646,7 +11636,6 @@ detentivo,297
 ingranaggio,297
 gif,297
 nicole,297
-tmuso,297
 orbita,297
 friday,297
 lamina,297
@@ -12235,7 +12224,6 @@ clark,272
 slide,272
 terraferma,272
 indiscriminato,272
-tmera,272
 confinato,272
 capolino,272
 bonifico,272
@@ -12304,6 +12292,7 @@ ripeté,272
 dissidente,272
 contenzioso,272
 planning,272
+≪,272
 layer,272
 rivalità,272
 spettrale,272
@@ -12445,7 +12434,6 @@ celtico,264
 keplero,264
 mutuare,264
 sviluppatore,264
-tmue,264
 cash,264
 football,264
 antiquario,264
@@ -12737,7 +12725,6 @@ cod_corpo,256
 infuori,256
 ferroviere,256
 amatoriale,256
-giovine,256
 renis,256
 beatrice,256
 programming,256
@@ -12768,6 +12755,7 @@ focolare,256
 bucare,256
 curiosamente,256
 cirio,256
+giovine,256
 insalata,256
 rieti,256
 undicesimo,256
@@ -12924,7 +12912,6 @@ rings,248
 percuotere,248
 inside,248
 limbo,248
-tmeuro,248
 obiettare,248
 devastazione,248
 cornetta,248
@@ -13215,7 +13202,6 @@ corporatura,239
 aiutante,239
 saziare,239
 beethoven,239
-tmidea,239
 sbloccare,239
 grimm,239
 cantonale,239
@@ -13417,7 +13403,6 @@ macellare,231
 agrume,231
 viscere,231
 mx,231
-tmestero,231
 god,231
 mammifero,231
 strutturalmente,231
@@ -13728,7 +13713,6 @@ dirottare,223
 posseggono,223
 accellerare,223
 azzeramento,223
-œla,223
 gelli,223
 deus,223
 opengl,223
@@ -13825,7 +13809,6 @@ sudamericano,222
 tiratore,222
 wine,222
 infiammabile,222
-tmanno,222
 propenso,222
 mandante,222
 mag,222
@@ -13880,6 +13863,7 @@ livido,215
 multidisciplinare,215
 psicologa,215
 corazza,215
+‰,215
 turn,215
 tranquillizzare,215
 malthus,215
@@ -14663,7 +14647,6 @@ cardoso,198
 siam,198
 considerevolmente,198
 commistione,198
-tmho,198
 sbirciare,198
 bobby,198
 fregatura,198
@@ -15923,7 +15906,6 @@ subwoofer,165
 quà,165
 baule,165
 sexual,165
-tmarea,165
 ingegniere,165
 tirreno,165
 minchia,165
@@ -16083,7 +16065,6 @@ alleggerire,165
 vo,165
 cozza,165
 trascendenza,165
-louie,165
 zildo,165
 rna,165
 obi,165
@@ -16094,6 +16075,7 @@ teleborsa,165
 bitti,165
 univocamente,165
 arrigo,165
+louie,165
 antidepressivo,165
 clown,165
 moulins,165
@@ -16271,7 +16253,6 @@ movente,157
 chic,157
 pnl,157
 orwell,157
-tmunica,157
 snack,157
 ombrellaio,157
 avidamente,157
@@ -16438,7 +16419,6 @@ def,157
 sodium,157
 braccetto,157
 slovacchia,157
-tmaltro,157
 imboscata,157
 ivana,157
 serpere,157
@@ -17697,7 +17677,6 @@ prodezza,132
 oprare,132
 expertise,132
 drop,132
-tmunico,132
 pseudopersone,132
 mommsen,132
 month,132
@@ -18322,6 +18301,7 @@ smoking,124
 litania,124
 fernanda,124
 fioco,124
+▼,124
 lipsia,124
 met,124
 intruso,124
@@ -18438,7 +18418,6 @@ querelare,124
 commessione,124
 impalcatura,124
 stravolgimento,124
-pettinare,124
 intercambiabile,124
 galateo,124
 trambusto,124
@@ -18493,6 +18472,7 @@ dannata,124
 anticamente,124
 primordio,124
 astante,124
+pettinare,124
 ic,124
 niccolino,124
 lennon,124
@@ -18546,6 +18526,7 @@ mst,124
 sterno,124
 campobasso,124
 bigliettino,124
+▲,124
 follow,124
 normalizzazione,124
 alloggiamento,124
@@ -18625,7 +18606,6 @@ sproporzione,124
 cisco,124
 pecorelli,124
 edera,124
-tmaccesso,124
 deborah,124
 ripugnante,124
 estintore,124
@@ -18746,7 +18726,6 @@ suocero,124
 bundesbank,124
 disertore,124
 disonestà,124
-tmha,124
 spicciolare,124
 busy,124
 temperare,124
@@ -19106,7 +19085,6 @@ privativa,115
 pennarello,115
 okin,115
 archetto,115
-questâ,115
 fait,115
 motivazionale,115
 cospargere,115
@@ -19115,7 +19093,6 @@ artifizio,115
 comun,115
 mostruosità,115
 darwiniano,115
-tmll,115
 arendt,115
 convenientemente,115
 archivista,115
@@ -19181,7 +19158,6 @@ enne,115
 fotonegoziante,115
 abraham,115
 quattromila,115
-screenshot,115
 osservabile,115
 soia,115
 riscuotendo,115
@@ -19216,7 +19192,6 @@ matter,115
 feriale,115
 gagliardo,115
 brandire,115
-iâ,115
 prepotentemente,115
 ib,115
 0px,115
@@ -19544,6 +19519,7 @@ certain,115
 smagliante,115
 trattamentale,115
 sfasciare,115
+screenshot,115
 consorella,115
 impresso,115
 interface,115
@@ -20030,7 +20006,6 @@ semilibertà,107
 newsweek,107
 gucci,107
 elettrizzante,107
-tmutente,107
 nausica,107
 dynamic,107
 corteccia,107
@@ -20235,7 +20210,6 @@ aragona,107
 etnografico,107
 traduttrice,107
 guccini,107
-nellâ,107
 être,107
 dardo,107
 believed,107
@@ -20369,14 +20343,12 @@ aus,107
 tetro,107
 propiziare,107
 calippo,107
-tmambito,107
 agglomerato,107
 2nd,107
 sfigurare,107
 telos,107
 olivieri,107
 tamburino,107
-œun,107
 interpellare,107
 osmosi,107
 galilea,107
@@ -20390,7 +20362,6 @@ loris,107
 sebo,107
 mich,107
 improduttivo,107
-tmuomo,107
 soundtrack,107
 fagiano,107
 kobe,107
@@ -20699,7 +20670,6 @@ bastione,99
 alberga,99
 fieramente,99
 indisturbato,99
-tmacqua,99
 windows98,99
 sketch,99
 indubitabile,99
@@ -20708,7 +20678,6 @@ videoteca,99
 serbia-montenegro,99
 fûr,99
 muffo,99
-tmistruzione,99
 combattivo,99
 mareografico,99
 ricupero,99
@@ -20720,7 +20689,6 @@ varii,99
 necessary,99
 devoluzione,99
 laureando,99
-tracia,99
 stat,99
 pancetta,99
 kidman,99
@@ -21052,7 +21020,6 @@ abominio,99
 cont,99
 mossul,99
 m4,99
-sorteggio,99
 cesario,99
 merchandising,99
 took,99
@@ -21074,7 +21041,7 @@ editorialista,99
 giuffrè,99
 zebra,99
 anticomunismo,99
-tmora,99
+sorteggio,99
 8mm,99
 baudrillard,99
 tania,99
@@ -21111,7 +21078,6 @@ contemplativo,99
 disorganizzazione,99
 sislej,99
 patients,99
-tminformazione,99
 combat,99
 cuffaro,99
 andromeda,99
@@ -21268,6 +21234,7 @@ havre,99
 ping-pong,99
 quaresima,99
 retequattro,99
+tracia,99
 destrutturazione,99
 rusconi,99
 biohazard,99
@@ -21433,7 +21400,6 @@ psychiatry,99
 accentare,99
 calrissian,99
 interiorizzazione,99
-œma,99
 scarpone,99
 cciaa,99
 amendue,99
@@ -21676,7 +21642,6 @@ demenza,91
 linguista,91
 hash,91
 saracinesca,91
-tmerano,91
 adalberto,91
 birmania,91
 tirannide,91
@@ -21955,7 +21920,6 @@ vistosamente,91
 sognante,91
 10baset,91
 metamorfico,91
-oppressore,91
 laboratory,91
 carbonato,91
 quattrocchi,91
@@ -22006,7 +21970,6 @@ mesto,91
 pinerolo,91
 tettoia,91
 jewish,91
-tmitalia,91
 walker,91
 tibetano,91
 bird,91
@@ -22173,6 +22136,7 @@ six,91
 marsa,91
 stefanopz,91
 berliner,91
+lâ,91
 rev,91
 ictp,91
 goku,91
@@ -22638,7 +22602,7 @@ testardaggine,91
 mesopotamica,91
 bremer,91
 ristampatore,91
-piuâ,91
+oppressore,91
 ciampino,91
 vid,91
 vin,91
@@ -22675,7 +22639,6 @@ loader,91
 kurzweil,91
 bolis,91
 eucarestia,91
-tmattenzione,91
 marianna,91
 biesuz,91
 paracadutista,91
@@ -23239,7 +23202,6 @@ calvez,83
 centocinquanta,83
 varj,83
 spendibile,83
-tmaumento,83
 truman,83
 allocuzione,83
 smi,83
@@ -23279,7 +23241,6 @@ gershwin,83
 configure,83
 cpp,83
 facsimile,83
-œil,83
 termostati,83
 termodinamiche,83
 pico,83
@@ -24163,7 +24124,6 @@ fanta,83
 zuccone,83
 trader,83
 cannuccia,83
-tminizio,83
 doctor,83
 firuláis,83
 dumézil,83
@@ -24186,7 +24146,6 @@ py,83
 ariete,83
 taschino,83
 leslie,83
-percheâ,83
 connotare,83
 archeologa,83
 costituzionalismo,83
@@ -24420,7 +24379,6 @@ circonvallazione,74
 cupolino,74
 spegnare,74
 bentornato,74
-tmesterno,74
 isolazionismo,74
 netzapping,74
 sfs,74
@@ -24706,7 +24664,6 @@ monocratico,74
 programmabile,74
 stefana,74
 transazionali,74
-tmamico,74
 ammaniti,74
 deflazione,74
 quibus,74
@@ -24840,7 +24797,6 @@ indissolubile,74
 artigliere,74
 carbide,74
 peluria,74
-tmobiettivo,74
 slai-cobas,74
 trasmutazione,74
 atlas,74

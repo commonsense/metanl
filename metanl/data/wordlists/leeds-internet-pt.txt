@@ -1,19 +1,19 @@
 de,7860998
-o,3704498
-a,3697326
+o,3700875
+a,3693847
 e,2358130
 que,2042523
 ser,1608319
 em,1436461
 para,902049
-um,776549
-os,772665
+um,775967
+os,771752
 com,698312
 não,691442
-uma,657921
+uma,657634
 se,645057
 por,622799
-as,550607
+as,550210
 ter,524623
 ir,497190
 como,414465
@@ -43,7 +43,6 @@ isso,124897
 eu,123104
 dia,123048
 quando,120966
-,115773
 dar,113397
 ainda,108021
 até,105998
@@ -111,6 +110,7 @@ dois,58442
 melhor,57588
 outro,56774
 aqui,56769
+–,56564
 the,56224
 esse,55980
 c,55295
@@ -342,10 +342,10 @@ povo,25878
 apoio,25822
 aí,25797
 membro,25583
+água,25535
 determinar,25423
 procurar,25395
 $,25339
-água,25317
 senhor,25301
 amigo,25301
 causa,25268
@@ -468,6 +468,7 @@ data,19915
 pagar,19895
 om,19850
 função,19844
+,19814
 arte,19766
 responsável,19723
 século,19700
@@ -478,12 +479,12 @@ dinheiro,19412
 natureza,19409
 algum,19394
 dessar,19364
+d,19341
 portanto,19339
 época,19281
 ministério,19277
 possibilidade,19258
 terceiro,19226
-d,19123
 rua,19122
 produzir,19082
 junto,19081
@@ -515,6 +516,7 @@ lisboa,18277
 contrato,18266
 opinião,18128
 sul,18126
+“,18111
 mensagem,18104
 antigo,18092
 envolver,18083
@@ -840,6 +842,7 @@ rádio,11508
 carro,11475
 eleição,11473
 agente,11444
+”,11423
 ambiental,11412
 competência,11404
 sobretudo,11392
@@ -875,6 +878,7 @@ matar,10991
 link,10978
 aquela,10945
 identificar,10941
+—,10939
 cargo,10926
 tarefa,10915
 elevar,10914
@@ -1123,7 +1127,6 @@ partida,8391
 nomeadamente,8385
 intervenção,8352
 apresentação,8339
-â,8338
 tendência,8337
 sessão,8334
 on,8326
@@ -1259,6 +1262,7 @@ argumento,7294
 potencial,7292
 dívida,7292
 universo,7290
+â,7285
 semelhante,7278
 especialista,7272
 cooperação,7260
@@ -1913,6 +1917,7 @@ trás,4345
 abranger,4336
 competir,4334
 deter,4334
+•,4329
 fome,4322
 formal,4321
 comprometer,4318
@@ -2778,6 +2783,7 @@ derivar,2473
 contemplar,2463
 encerramento,2461
 consumir,2460
+tm,2460
 my,2460
 ilustrar,2458
 especificamente,2458
@@ -3072,7 +3078,6 @@ burguês,2126
 naval,2126
 electrónico,2125
 temático,2124
-tm,2119
 conseguinte,2117
 ênfase,2114
 agrário,2114
@@ -3613,8 +3618,8 @@ expressivo,1640
 html,1640
 joana,1639
 vôo,1639
-sacerdote,1638
 inédito,1638
+sacerdote,1638
 jun,1638
 autêntico,1637
 flexibilidade,1636
@@ -3921,6 +3926,7 @@ alheio,1441
 charlar,1441
 dificultar,1441
 lucrativo,1439
+’,1439
 atacante,1435
 assis,1435
 actualizar,1434
@@ -4246,8 +4252,8 @@ burocracia,1268
 assalto,1268
 regulador,1268
 manoel,1267
-detentor,1266
 escolaridade,1266
+detentor,1266
 ouvinte,1266
 bloqueio,1265
 distribuidor,1265
@@ -4595,6 +4601,7 @@ dobro,1099
 piano,1098
 music,1097
 impressionar,1097
+€,1096
 recrutamento,1096
 concessionário,1096
 fixação,1095
@@ -5920,6 +5927,7 @@ infraestrutura,691
 construtivo,691
 contaminação,690
 plantel,690
+š,690
 duzentos,690
 ajustamento,690
 haiti,690
@@ -5933,6 +5941,7 @@ coreia,688
 sensibilização,687
 desgaste,687
 ufrj,687
+ž,687
 mai,686
 havano,686
 explodir,686
@@ -5992,6 +6001,7 @@ mendonça,677
 recolhimento,677
 ultimamente,677
 fitar,677
+œ,677
 superação,676
 pirataria,676
 conversação,676
@@ -6694,8 +6704,8 @@ arterial,547
 prá,547
 escuridão,546
 velhice,546
-suor,546
 view,546
+suor,546
 cascar,545
 elétrico,545
 aspa,545
@@ -6809,6 +6819,7 @@ loteamento,531
 pinho,531
 virtualmente,531
 lúcio,531
+‘,530
 patrocinar,530
 next,530
 associativo,530
@@ -7473,6 +7484,7 @@ violão,440
 elizabeth,440
 donald,440
 otimismo,440
+†,438
 transparente,438
 alfabetização,438
 cicv,438
@@ -7783,6 +7795,7 @@ entendido,401
 molécula,401
 amigável,401
 dialética,401
+‚,401
 ciberespaço,401
 efetivas,401
 milan,401
@@ -7800,6 +7813,7 @@ bico,400
 pentágono,400
 falsidade,400
 plantão,400
+‰,400
 fiat,400
 sir,400
 own,400
@@ -8031,6 +8045,7 @@ sopro,375
 brain,375
 tecto,374
 provocação,374
+‹,373
 evo,373
 erosão,373
 alegadamente,373
@@ -8339,6 +8354,7 @@ nomenclatura,348
 mozilla,348
 inventor,348
 cigano,348
+ÿ,348
 mui,348
 charlie,348
 desvendar,348
@@ -8574,6 +8590,7 @@ ps2,331
 grevista,331
 leopoldo,331
 sarmento,331
+„,331
 haia,331
 schumacher,331
 egoísta,331
@@ -8582,6 +8599,7 @@ silvestre,331
 romeu,331
 abono,330
 nature,330
+ˆ,330
 ipanema,330
 modelagem,330
 semanalmente,330
@@ -8660,6 +8678,7 @@ amazon,325
 hamilton,325
 enigma,325
 empurrar,325
+‡,325
 semanário,325
 massivo,324
 monitorização,324
@@ -8670,6 +8689,7 @@ apud,324
 road,324
 abstrata,324
 ruth,324
+ƒ,324
 numeração,324
 domingues,323
 culinária,323
@@ -8740,6 +8760,7 @@ colombiano,319
 pulmonar,319
 normalização,319
 curriculum,319
+›,319
 isaías,319
 admissível,319
 alicerce,319
@@ -8756,13 +8777,13 @@ amd,318
 change,318
 department,318
 ginásio,318
-comparativamente,318
 recíproca,318
 kim,318
 quântico,318
 encenação,318
 toar,318
 encarnação,318
+comparativamente,318
 consultório,318
 coordenadoria,317
 lacan,317
@@ -8807,6 +8828,7 @@ oct,315
 reeleito,315
 fresca,315
 nick,315
+ƒa,314
 optimista,314
 ðh4,314
 consecução,314
@@ -8935,6 +8957,7 @@ saharauis,306
 ressarcimento,306
 nike,306
 wide,306
+̃,306
 paginar,306
 find,306
 telescópio,306
@@ -10929,7 +10952,6 @@ negociador,218
 referenciar,218
 corvo,218
 elitista,218
-dágua,218
 formigar,218
 ângela,218
 cezar,218

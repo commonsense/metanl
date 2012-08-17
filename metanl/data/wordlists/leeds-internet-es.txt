@@ -1,8 +1,8 @@
 de,6455345
-la,3471625
+la,3471434
 que,2491244
 y,2438529
-el,2317083
+el,2316953
 en,2236758
 a,1978500
 ser,1538381
@@ -32,7 +32,6 @@ pero,231270
 sus,223820
 si,217384
 decir,194342
-,182711
 me,181425
 esta,171717
 sobre,167626
@@ -105,10 +104,12 @@ otra,63571
 cual,62873
 parecer,62711
 crear,62277
+”,61973
 aunque,59285
 mayor,59269
 gran,59036
 tratar,58898
+“,58312
 llevar,57735
 tan,57631
 humano,57408
@@ -461,6 +462,7 @@ ningún,19194
 trabajador,19182
 mirar,19077
 mil,19044
+–,18955
 cuatro,18945
 profesional,18862
 representar,18784
@@ -589,6 +591,7 @@ privar,15424
 junto,15383
 ganar,15367
 tampoco,15328
+—,15232
 tarde,15170
 ii,15099
 ahí,15093
@@ -1270,6 +1273,7 @@ vuelta,6947
 lógica,6941
 árbol,6937
 latinar,6936
+’,6929
 preciso,6923
 fiesta,6920
 tabla,6919
@@ -1375,6 +1379,7 @@ virtud,6421
 rama,6412
 poema,6401
 igualmente,6401
+‘,6395
 académico,6387
 cuidado,6384
 costa,6380
@@ -1386,7 +1391,6 @@ crítico,6368
 pago,6368
 carne,6361
 distinguir,6356
-â,6356
 administrativo,6344
 dificultad,6336
 atender,6333
@@ -1406,6 +1410,7 @@ reservar,6269
 habitante,6267
 morar,6262
 semejante,6259
+â,6256
 teléfono,6256
 generalmente,6253
 secundario,6252
@@ -1905,6 +1910,7 @@ motor,4255
 asi,4250
 municipio,4247
 gratuito,4242
+•,4240
 institucional,4239
 tensión,4237
 montaña,4236
@@ -2542,6 +2548,7 @@ parámetro,2845
 acostumbrar,2844
 indispensable,2841
 devolver,2840
+,2839
 artificial,2833
 prolongar,2833
 estabilidad,2832
@@ -4474,6 +4481,7 @@ audio,1197
 viable,1197
 provecho,1197
 comandar,1197
+„,1196
 especulación,1196
 tropical,1195
 izquierda,1195
@@ -4673,6 +4681,7 @@ will,1106
 rueda,1105
 legalidad,1105
 rodrigar,1105
+‚,1105
 à,1105
 one,1103
 admirable,1103
@@ -4777,8 +4786,8 @@ discreto,1070
 hegel,1070
 institute,1069
 imperativo,1069
-embrión,1068
 holanda,1068
+embrión,1068
 society,1068
 acierto,1068
 hemisferio,1067
@@ -4923,6 +4932,7 @@ exhaustivo,1020
 nodo,1020
 constructor,1020
 impunidad,1019
+‡,1019
 triple,1019
 sucesivamente,1018
 jesuita,1018
@@ -4973,6 +4983,7 @@ estúpido,1003
 colón,1003
 comarcar,1003
 paloma,1002
+‹,1002
 rescatar,1002
 eva,1001
 inevitablemente,1001
@@ -5165,6 +5176,7 @@ donante,952
 subsistencia,952
 trasero,952
 pragmático,952
+†,951
 hostil,951
 entrenar,951
 naranja,951
@@ -5373,6 +5385,7 @@ fraternidad,889
 jurar,888
 solemne,888
 pulmonar,888
+›,888
 viena,888
 nasa,888
 miami,888
@@ -5597,6 +5610,7 @@ leibniz,834
 holandés,834
 patricio,833
 afección,833
+€,833
 monto,832
 plagar,831
 fachada,831
@@ -6083,6 +6097,7 @@ diarrea,725
 balanza,725
 magisterio,725
 ramírez,725
+‰,725
 transcripción,725
 inquisición,724
 consecuentemente,723
@@ -9630,6 +9645,7 @@ little,323
 risk,323
 casal,323
 mareo,323
+̃,323
 aura,322
 medianoche,322
 inalienable,322
@@ -10212,6 +10228,7 @@ impresora,291
 redimir,291
 ceremonial,291
 ilegalmente,291
+evacuar,291
 telediario,291
 malasio,291
 canada,291
@@ -10223,7 +10240,6 @@ blue,291
 milenario,291
 indistintamente,291
 faq,291
-evacuar,291
 sabotaje,291
 incomprensión,291
 departamental,290
@@ -11659,6 +11675,7 @@ impermeable,228
 descarar,228
 hacked,227
 elástico,227
+basto,227
 congelación,227
 barça,227
 har,227
@@ -11687,7 +11704,6 @@ niza,227
 austriaco,227
 hermes,227
 propensión,227
-basto,227
 hunnired,227
 duplicación,227
 rompecabezas,227
@@ -12136,6 +12152,7 @@ condenación,211
 escalofrío,211
 hamburgués,211
 rabo,211
+declinar,211
 planificador,211
 torcer,211
 aforismo,211
@@ -12148,7 +12165,6 @@ hinchar,211
 epopeya,211
 papeleta,211
 inalcanzable,211
-declinar,211
 astrólogo,211
 contact,211
 acantilar,211
@@ -13099,8 +13115,8 @@ predilección,182
 convergente,182
 recien,182
 manuela,182
-20minutos,182
 sres,182
+20minutos,182
 emiliano,182
 mariguana,182
 farol,182
@@ -13143,8 +13159,8 @@ dühring,181
 conf,181
 deserción,181
 nous,181
-nuria,181
 opci,181
+nuria,181
 pio,181
 ansiar,181
 caducar,181
@@ -13199,7 +13215,6 @@ butaca,179
 crecientemente,179
 guiso,179
 permeabilidad,179
-bergson,179
 mad-max_2000,179
 aflicción,179
 holístico,179
@@ -13220,6 +13235,7 @@ deus,179
 espartinas,179
 bugs,179
 damasco,179
+bergson,179
 medular,179
 ethernet,179
 database,179
@@ -13338,6 +13354,7 @@ friedman,176
 regio,176
 menstruación,176
 mecanicista,176
+ž,176
 politico,176
 hemeroteca,176
 sanación,176
@@ -14091,6 +14108,7 @@ vulgaridad,157
 poblamiento,157
 tendria,157
 beatificación,157
+atajar,157
 estribillo,157
 oceanía,157
 altiplano,157
@@ -14101,7 +14119,6 @@ hd,157
 transposición,157
 estara,157
 baraja,157
-atajar,157
 judith,157
 unit,157
 plebiscito,157
@@ -15014,7 +15031,6 @@ coli,136
 dd,136
 checoslovaquia,136
 cookie,136
-investigacion,136
 reorganizar,136
 mitchell,136
 meteoro,136
@@ -15034,6 +15050,7 @@ moratorio,136
 predilecto,136
 magistralmente,136
 celso,136
+investigacion,136
 division,136
 desagüe,136
 traste,136
@@ -15903,7 +15920,6 @@ folk,121
 mississippi,121
 zola,120
 aguila,120
-anfetamina,120
 antebrazo,120
 iñigo,120
 falun,120
@@ -15971,6 +15987,7 @@ ns,120
 sacrilegio,120
 desbordamiento,120
 montse,120
+anfetamina,120
 trillo,120
 monóxido,120
 pompeyo,120
@@ -16414,7 +16431,6 @@ clientelismo,112
 bajista,112
 desamor,112
 nino,112
-reestructurar,112
 dead,112
 jordan,112
 hinchazón,112
@@ -16450,6 +16466,7 @@ opa,112
 propóleo,112
 causa-efecto,112
 quebranto,112
+reestructurar,112
 distribution,112
 chemical,112
 nutr,112
@@ -16724,7 +16741,6 @@ angina,109
 laborable,109
 milano,109
 xxvi,109
-carabobo,109
 valero,109
 objetivación,109
 willis,109
@@ -16787,6 +16803,7 @@ solear,109
 corresponsabilidad,109
 destacamento,109
 miga,109
+carabobo,109
 subvertir,108
 editions,108
 hedonismo,108
@@ -16809,6 +16826,7 @@ cáucaso,108
 leica,108
 upon,108
 matización,108
+canadian,108
 vallès,108
 maat,108
 products,108
@@ -16818,7 +16836,6 @@ beyond,108
 lux,108
 revisionismo,108
 orleáns,108
-canadian,108
 multiplicador,108
 humorista,108
 sardina,108
@@ -16884,6 +16901,7 @@ urls,107
 rasero,107
 rigurosidad,107
 sagaz,107
+catastro,107
 putrefacción,107
 christ,107
 trolls,107
@@ -16898,7 +16916,6 @@ opiáceo,107
 position,107
 gorbachov,107
 rotterdam,107
-catastro,107
 densamente,107
 impostura,107
 fetiche,107
@@ -16957,6 +16974,7 @@ disparador,106
 neurotransmisor,106
 subfemtómetro,106
 imaginería,106
+jzjzššaoêúêú,106
 cisma,106
 cursi,106
 incisión,106
@@ -17003,7 +17021,6 @@ paranoico,106
 elfo,106
 including,106
 racionamiento,106
-jzjzaoêúêú,106
 mbito,106
 meleno,106
 aymara,106
@@ -17500,7 +17517,6 @@ louisiana,100
 antifascista,100
 zozobrar,100
 galia,100
-¢,100
 granel,100
 musicalmente,100
 nanómetro,100
@@ -18135,6 +18151,7 @@ suisse,93
 consortium,93
 thing,93
 toca,93
+perea,93
 tamara,93
 monitorear,93
 ayo,93
@@ -18245,7 +18262,6 @@ incauto,93
 novalis,93
 benavides,93
 manganeso,93
-perea,93
 andalusí,93
 fresar,93
 able,93
@@ -18402,6 +18418,7 @@ alpha,91
 inmaduro,91
 utc,91
 daga,91
+tokyo,91
 müller,91
 trasplantar,91
 virgo,91
@@ -18425,7 +18442,6 @@ irradiar,91
 arnau,91
 ccaa,91
 shareware,91
-tokyo,91
 plotino,91
 bachelet,91
 castel,91
@@ -18745,6 +18761,7 @@ carroll,88
 olympus,88
 dafa,88
 desvirtuar,88
+idiotez,88
 portabilidad,88
 aplastamiento,88
 alvear,88
@@ -18788,7 +18805,6 @@ palpitación,88
 esencialismo,88
 prismático,88
 lla,88
-idiotez,88
 critics,88
 js,88
 rothbard,88
@@ -18890,6 +18906,7 @@ benveniste,87
 consorte,87
 prince,87
 eslora,87
+kay,87
 ecum,87
 greenspan,87
 compaq,87
@@ -18983,7 +19000,6 @@ leguminoso,87
 hamaca,87
 symploké,87
 cinematografía,87
-kay,87
 tarima,86
 epo,86
 chema,86
@@ -19401,6 +19417,7 @@ drácula,83
 chang,83
 torácico,83
 volkswagen,83
+cartero,83
 teorización,83
 conama,83
 polibio,83
@@ -19416,7 +19433,6 @@ vericueto,83
 maná,83
 smart,83
 balmis,83
-cartero,83
 herazo,83
 maletero,83
 geek,83
@@ -19991,6 +20007,7 @@ pesquería,79
 teñen,79
 paráfrasis,79
 entreguerras,79
+œ,79
 brocha,79
 yoruba,79
 adecua,79
@@ -20300,6 +20317,7 @@ emulador,77
 altivo,77
 cambiario,77
 hidromasaje,77
+ƒ,77
 coñazo,77
 goebbels,77
 desconsuelo,77
@@ -20405,6 +20423,7 @@ teatre,76
 psiquedélicos,76
 arcano,76
 carrete,76
+campiña,76
 orgánicamente,76
 born,76
 consabido,76
@@ -20435,7 +20454,6 @@ genovés,76
 asaltante,76
 impresion,76
 lucanor,76
-mach,76
 ceño,76
 literalidad,76
 biarritz,76
@@ -20514,6 +20532,7 @@ malograr,76
 sinóptico,76
 hum,76
 ingratitud,76
+mach,76
 fch,76
 relojero,76
 escupir,76
@@ -20524,7 +20543,6 @@ eiffel,76
 mitocondria,76
 arg,76
 texts,76
-campiña,76
 disonancia,76
 canoa,76
 developed,76
@@ -20725,7 +20743,6 @@ xxxi,74
 expedicionario,74
 escaramuza,74
 psychoanalytic,74
-pont,74
 victimario,74
 inseparablemente,74
 nasser,74
@@ -20850,6 +20867,7 @@ socio-político,74
 culata,74
 citoquina,74
 cumplimentación,74
+pont,74
 concienzudo,74
 enfáticamente,74
 vallés,74
@@ -20978,7 +20996,6 @@ cnv,73
 reescritura,73
 relanzar,73
 mosquera,73
-ppd,73
 elkarri,73
 dario,73
 purga,73
@@ -20991,6 +21008,7 @@ strategy,73
 champions,73
 caoba,73
 bidón,73
+ppd,73
 numéricamente,73
 brenda,73
 maruja,73
