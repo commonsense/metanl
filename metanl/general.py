@@ -5,6 +5,7 @@ Useful NLP functions that are not language-specific.
 
 import re
 import unicodedata
+import htmlentitydefs
 from metanl.fixit import fix_bad_unicode
 
 TOKENIZER_REGEXES = [
@@ -45,6 +46,9 @@ def preprocess_text(text):
       necessary.
     - Detect whether the text was incorrectly encoded into UTF-8 and fix it,
       as defined in `fix_bad_unicode`.
+    - Replace HTML entities with their equivalent characters.
+    - Replace newlines and tabs with spaces.
+    - Remove all other control characters.
     - Normalize it with Unicode normalization form KC, which applies the
       following relevant transformations:
       - Combine characters and diacritics that are written using separate
@@ -55,13 +59,40 @@ def preprocess_text(text):
         common form: for example, half-width katakana will be replaced with
         full-width, and full-width Roman characters will be replaced with
         ASCII characters.
-    - Replace newlines and tabs with spaces.
-    - Remove all other control characters.
     """
     if isinstance(text, str):
         text = text.decode('utf-8')
-    return fix_bad_unicode(unicodedata.normalize('NFKC',
-        text.translate(CONTROL_CHARS)))
+    text = fix_bad_unicode(text)
+    text = unescape_html(text)
+    text = text.translate(CONTROL_CHARS)
+    return unicodedata.normalize('NFKC', text)
+
+HTML_ENTITY_RE = re.compile("&#?\w+;")
+def unescape_html(text):
+    """
+    Decode all three types of HTML entities/character references.
+
+    Code by Fredrik Lundh of effbot.org.
+    """
+    def fixup(m):
+        text = m.group(0)
+        if text[:2] == "&#":
+            # character reference
+            try:
+                if text[:3] == "&#x":
+                    return unichr(int(text[3:-1], 16))
+                else:
+                    return unichr(int(text[2:-1]))
+            except ValueError:
+                pass
+        else:
+            # named entity
+            try:
+                text = unichr(htmlentitydefs.name2codepoint[text[1:-1]])
+            except KeyError:
+                pass
+        return text  # leave as is
+    return HTML_ENTITY_RE.sub(fixup, text)
 
 def tokenize(text):
     r"""
