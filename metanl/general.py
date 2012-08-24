@@ -6,7 +6,8 @@ Useful NLP functions that are not language-specific.
 import re
 import unicodedata
 import htmlentitydefs
-from metanl.fixit import fix_bad_unicode
+from ftfy import fix_bad_encoding, fix_text
+fix_bad_unicode = fix_bad_encoding
 
 TOKENIZER_REGEXES = [
     # transform quotation marks
@@ -191,12 +192,12 @@ def un_camel_case(text):
 
     >>> un_camel_case(u'MSWindows3.11ForWorkgroups')
     u'MS Windows 3.11 For Workgroups'
-    
+
     This should not significantly affect text that is not camel-cased:
-    
+
     >>> un_camel_case('ACM_Computing_Classification_System')
     'ACM Computing Classification System'
-    
+
     >>> un_camel_case(u'Anne_Blunt,_15th_Baroness_Wentworth')
     u'Anne Blunt, 15th Baroness Wentworth'
 
