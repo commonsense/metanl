@@ -53,7 +53,7 @@ class Wordlist(object):
         worddict = {}
         for line in stream:
             word, freq = line.strip().split(',')
-            worddict[word] = int(freq)
+            worddict[word] = float(freq)
         return cls(worddict)
 
 def get_frequency(word, lang, default_freq=0):
