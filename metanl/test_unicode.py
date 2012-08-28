@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from metanl.fixit import fix_bad_unicode, WINDOWS_1252_GREMLINS
+from ftfy import fix_bad_encoding, WINDOWS_1252_GREMLINS
 import unicodedata
 
 def test_all_bmp_characters():
@@ -7,7 +7,7 @@ def test_all_bmp_characters():
         if not unicodedata.category(unichr(index)) == 'Co':
             garble = unichr(index).encode('utf-8').decode('latin-1')
             if index not in WINDOWS_1252_GREMLINS:
-                assert fix_bad_unicode(garble) == unichr(index)
+                assert fix_bad_encoding(garble) == unichr(index)
 
 phrases = [
     u"\u201CI'm not such a fan of Charlotte Brontë\u2026\u201D",
@@ -25,6 +25,6 @@ def test_valid_phrases():
         yield check_phrase, phrase[1:]
 
 def check_phrase(text):
-    assert fix_bad_unicode(text) == text, text
+    assert fix_bad_encoding(text) == text, text
 
 

@@ -241,10 +241,10 @@ def word_frequency(word, default_freq=0):
     output of the tokenize() function.
 
     >>> word_frequency('normalization')
-    223058
+    223058.0
 
-    >>> word_frequency('budap', default_freq=100)
-    100
+    >>> word_frequency('budap', default_freq=100.)
+    100.0
     """
     freqs = Wordlist.load('google-unigrams.txt')
     if " " in word:

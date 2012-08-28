@@ -1,6 +1,6 @@
 import codecs
 from collections import defaultdict
-from metanl.fixit import fix_bad_unicode
+from ftfy import ftfy
 import re
 
 NUMBER_RE = re.compile('[0-9]+')
@@ -13,7 +13,7 @@ def leeds_corpus_frequencies(corpusfile, stemmer):
 
     freqs = defaultdict(int)
     for line in infile:
-        line = fix_bad_unicode(line.strip())
+        line = ftfy(line.strip())
         if line:
             rank = line.split(' ')[0]
             if NUMBER_RE.match(rank) and line.count(' ') == 2:
