@@ -38,5 +38,5 @@ setup(
     long_description = "\n".join(doclines[2:]),
     packages=['metanl'],
     package_data = {'metanl': ['data/*.txt']},
-    install_requires=['nltk >= 2.0b9', 'setuptools'],
+    install_requires=['nltk >= 2.0b9', 'setuptools', 'pystemmer'],
 )
