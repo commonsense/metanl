@@ -8,12 +8,16 @@ UNSAFE_CHARS = ''.join(chr(n) for n in (range(0x00, 0x10) + range(0x11, 0x20) + 
 UNSAFE_RE = re.compile('[' + UNSAFE_CHARS + ']')
 
 class FreelingWrapper(ProcessWrapper):
-    """
+    r"""
     Handle English, Spanish, Italian, Portuguese, or Welsh text by calling an
     installed copy of FreeLing.
 
     The constructor takes one argument, which is the installed filename of the
     language-specific config file, such as 'en.cfg'.
+
+        >>> english.tag_and_stem("This is a test.\n\nIt has two paragraphs, and that's okay.")
+        [(u'this', u'DT', u'this'), (u'be', u'VBZ', u'is'), (u'a', u'DT', u'a'), (u'test', u'NN', u'test'), (u'.', '.', u'.'), (u'it', u'PRP', u'it'), (u'have', u'VBZ', u'has'), (u'two', u'DT', u'two'), (u'paragraph', u'NNS', u'paragraphs'), (u',', '.', u','), (u'and', u'CC', u'and'), (u'that', u'PRP', u'that'), (u'be', u'VBZ', u"'s"), (u'okay', u'JJ', u'okay'), (u'.', '.', u'.')]
+
     """
     def __init__(self, lang):
         self.lang = lang
