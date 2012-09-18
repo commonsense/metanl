@@ -1,6 +1,6 @@
 <General>
-AllowBetweenMarkers 0
-MaxWords 0
+AllowBetweenMarkers 1
+MaxWords 1000
 </General>
 <Markers>
 " "
