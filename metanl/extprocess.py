@@ -95,7 +95,8 @@ class ProcessWrapper(object):
         return line
 
     def restart_process(self):
-        self._process.stdin.close()
+        if hasattr(self, '_process'):
+            self._process.stdin.close()
         self._process = self._get_process()
         return self._process
 
@@ -111,7 +112,7 @@ class ProcessWrapper(object):
         tokenization.
         """
         raise NotImplementedError("tokenize is deprecated. Use tokenize_list.")
-    
+
     def is_stopword_record(self, record, common_words=False):
         """
         Given a record, return whether it represents a stopword (a word that

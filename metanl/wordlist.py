@@ -119,7 +119,7 @@ def multilingual_wordlist(langs, scale=1e9):
 
     >>> en_fr = multilingual_wordlist(['en', 'fr'])
     >>> int(en_fr['normalization|en'])
-    223058
+    25673
     >>> int(en_fr['normalis|fr'])
     91650
     """
