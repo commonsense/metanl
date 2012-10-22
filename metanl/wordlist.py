@@ -117,7 +117,7 @@ def multilingual_wordlist(langs, scale=1e9):
     """
     Get a wordlist that combines wordlists from multiple languages.
 
-    >>> en_fr = get_multi_wordlist(['en', 'fr'])
+    >>> en_fr = multilingual_wordlist(['en', 'fr'])
     >>> int(en_fr['normalization|en'])
     223058
     >>> int(en_fr['normalis|fr'])
