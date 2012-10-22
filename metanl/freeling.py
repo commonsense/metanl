@@ -59,7 +59,7 @@ class FreelingWrapper(ProcessWrapper):
         """
         In English, return the third segment of the record.
 
-        In other languages, this segment contains one letter for the part of 
+        In other languages, this segment contains one letter for the part of
         speech, plus densely-encoded features that we really have no way to
         use. Return just the part-of-speech letter.
         """
@@ -74,7 +74,7 @@ class FreelingWrapper(ProcessWrapper):
         starts with 'D'.
         """
         return (record[2][0] == 'D')
-    
+
     def analyze(self, text):
         """
         Run text through the external process, and get a list of lists
@@ -88,7 +88,7 @@ class FreelingWrapper(ProcessWrapper):
             results = []
             for chunk_text in chunks:
                 text = chunk_text.encode('utf-8')
-                self.send_input(text+'\n')
+                self.send_input(text + '\n')
                 #self.input_log.write(text+'\n')
                 out_line = ''
                 while True:
@@ -119,4 +119,3 @@ italian = LANGUAGES['it'] = FreelingWrapper('it')
 portuguese = LANGUAGES['pt'] = FreelingWrapper('pt')
 russian = LANGUAGES['ru'] = FreelingWrapper('ru')
 welsh = LANGUAGES['cy'] = FreelingWrapper('cy')
-

@@ -1,5 +1,6 @@
 import pkg_resources
 from metanl.general import preprocess_text
+from collections import defaultdict
 
 CACHE = {}
 
@@ -19,6 +20,9 @@ class Wordlist(object):
                 key=lambda word: (-self.worddict[word], word))
         return self._sorted_words
 
+    def __len__(self):
+        return len(self.worddict)
+
     def words(self):
         return list(self.sorted_words)
     keys = words
@@ -34,16 +38,31 @@ class Wordlist(object):
 
     def get(self, word, default=0):
         return self.worddict.get(word, default)
-    
+
     def __getitem__(self, word):
         return self.get(word)
 
+    def max_freq(self):
+        """
+        Get the highest frequency in this wordlist.
+        """
+        if len(self) == 0:
+            raise ValueError("This list is empty.")
+        return self.worddict[self.sorted_words[0]]
+
     @classmethod
     def load(cls, filename):
+        """
+        Load a wordlist stored in metanl's data directory, and cache it so that
+        it only has to be loaded once.
+        """
         if filename in CACHE:
             return CACHE[filename]
         else:
-            stream = pkg_resources.resource_stream(__name__, 'data/wordlists/%s' % filename)
+            stream = pkg_resources.resource_stream(
+                __name__,
+                'data/wordlists/%s' % filename
+            )
             wordlist = cls._load_stream(stream)
             CACHE[filename] = wordlist
         return wordlist
@@ -53,26 +72,78 @@ class Wordlist(object):
         worddict = {}
         for line in stream:
             word, freq = line.strip().split(',')
+            word = preprocess_text(word).lower()
             worddict[word] = float(freq)
         return cls(worddict)
+
+
+def merge_lists(weighted_lists):
+    """
+    Make a list out of the union of multiple wordlists.
+
+    Each entry in `weighted_lists` should be a pair (wordlist, suffix, max).
+
+    `suffix` is a string that should be appended to each item in this list.
+    If non-empty, it serves to distinguish which list a word came from.
+
+    `max` indicates what the maximum value in that list should be
+    scaled to. If `max` is None, the scaling will not be changed.
+
+    >>> from metanl import english
+    >>> from metanl import freeling
+    """
+    totals = defaultdict(float)
+    for sublist, suffix, weight in weighted_lists:
+        factor = 1
+        if weight is not None and len(sublist) > 0:
+            factor = weight / sublist.max_freq()
+        for word, freq in sublist.iteritems():
+            totals[word + suffix] += freq * factor
+    return Wordlist(totals)
+
+
+def get_wordlist(lang):
+    """
+    Get the preferred frequency list for a language.
+    """
+    if lang == 'en':
+        filename = 'google-unigrams.txt'
+    else:
+        filename = 'leeds-internet-%s.txt' % lang
+    return Wordlist.load(filename)
+
+
+def multilingual_wordlist(langs, scale=1e9):
+    """
+    Get a wordlist that combines wordlists from multiple languages.
+
+    >>> en_fr = get_multi_wordlist(['en', 'fr'])
+    >>> int(en_fr['normalization|en'])
+    223058
+    >>> int(en_fr['normalis|fr'])
+    91650
+    """
+    weighted_lists = [(get_wordlist(lang), '|' + lang, scale)
+                      for lang in langs]
+    return merge_lists(weighted_lists)
+
 
 def get_frequency(word, lang, default_freq=0):
     """
     Looks up a word's frequency in our preferred frequency list for the given
     language.
+
+    >>> get_frequency('normalization', 'en')
+    223058.0
+    >>> get_frequency('Normalization', 'en')
+    223058.0
+    >>> get_frequency('weirdification', 'en', 100.0)
+    100.0
     """
-    word = preprocess_text(word)
-    if lang == 'en':
-        filename = 'google-unigrams.txt'
-        word = word.upper()
-    else:
-        filename = 'leeds-internet-%s.txt' % lang
-        word = word.lower()
-    freqs = Wordlist.load(filename)
+    freqs = get_wordlist(lang)
 
     if " " in word:
-        raise ValueError("word_frequency only can only look up single words, but %r contains a space" % word)
-    # roman characters are in lowercase
-    
-    return freqs.get(word, default_freq)
+        raise ValueError("word_frequency only can only look up single words, "
+                         "but %r contains a space" % word)
 
+    return freqs.get(preprocess_text(word).lower(), default_freq)

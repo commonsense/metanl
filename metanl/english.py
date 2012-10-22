@@ -216,7 +216,8 @@ def normalize_topic(topic):
     if not match:
         return normalize(topic), None
     else:
-        return normalize(match.group(1)), 'n/'+match.group(2).strip(' _')
+        return normalize(match.group(1)), 'n/' + match.group(2).strip(' _')
+
 
 def word_frequency(word, default_freq=0):
     """
@@ -234,7 +235,7 @@ def word_frequency(word, default_freq=0):
     - They appear at least 1000 times in Google Books OR
       (they appear at least 40 times in Google Books and also appear in
       Wiktionary or WordNet)
-    
+
     Apostrophes are assumed to be at the edge of the word,
     in which case they'll be stripped like they were in the Google data, or
     in the special token "n't" which is treated as "not". This matches the
@@ -248,10 +249,11 @@ def word_frequency(word, default_freq=0):
     """
     freqs = Wordlist.load('google-unigrams.txt')
     if " " in word:
-        raise ValueError("word_frequency only can only look up single words, but %r contains a space" % word)
-    word = preprocess_text(word.strip("'")).upper()
-    if word == "N'T":
-        word = 'NOT'
+        raise ValueError("word_frequency only can only look up single words, "
+                         "but %r contains a space" % word)
+    word = preprocess_text(word.strip("'")).lower()
+    if word == "n't":
+        word = 'not'
     return freqs.get(word, default_freq)
 
 def get_wordlist():
@@ -259,4 +261,3 @@ def get_wordlist():
 
 if __name__ == '__main__':
     print normalize("this is a test")
-
