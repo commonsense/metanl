@@ -1,7 +1,7 @@
 import pkg_resources
 from metanl.general import preprocess_text
 from collections import defaultdict
-
+import codecs
 CACHE = {}
 
 class Wordlist(object):
@@ -76,6 +76,12 @@ class Wordlist(object):
             worddict[word] = float(freq)
         return cls(worddict)
 
+    def save(self, filename):
+        out = codecs.open(filename, 'w', encoding='utf-8')
+        for word in self.sorted_words:
+            print >> out, "%s,%s" % (word, self.get(word))
+        out.close()
+
 
 def merge_lists(weighted_lists):
     """
@@ -108,6 +114,12 @@ def get_wordlist(lang):
     """
     if lang == 'en':
         filename = 'google-unigrams.txt'
+    elif lang == 'twitter':
+        filename = 'twitter.txt'
+    elif lang == 'multi':
+        # this pre-combined wordlist is a bit of a hack until we know how
+        # we will be using multilingual sets of languages
+        filename = 'multilingual.txt'
     else:
         filename = 'leeds-internet-%s.txt' % lang
     return Wordlist.load(filename)
@@ -123,7 +135,7 @@ def multilingual_wordlist(langs, scale=1e9):
     >>> int(en_fr['normalis|fr'])
     91650
     """
-    weighted_lists = [(get_wordlist(lang), '|' + lang, scale)
+    weighted_lists = [(get_wordlist(lang), '|en' if lang == 'twitter' else ('|' + lang), scale)
                       for lang in langs]
     return merge_lists(weighted_lists)
 
@@ -143,7 +155,10 @@ def get_frequency(word, lang, default_freq=0):
     freqs = get_wordlist(lang)
 
     if " " in word:
-        raise ValueError("word_frequency only can only look up single words, "
+        raise ValueError("get_frequency only can only look up single words, "
                          "but %r contains a space" % word)
 
     return freqs.get(preprocess_text(word).lower(), default_freq)
+
+def multilingual_word_frequency(word, default_freq=0):
+    return get_frequency(word, 'multi', default_freq)

@@ -12,6 +12,7 @@ def leeds_corpus_frequencies(corpusfile, stemmer):
     infile = codecs.open(corpusfile, encoding='utf-8')
 
     freqs = defaultdict(int)
+    tokenfreqs = defaultdict(int)
     for line in infile:
         line = ftfy(line.strip())
         if line:
@@ -19,11 +20,17 @@ def leeds_corpus_frequencies(corpusfile, stemmer):
             if NUMBER_RE.match(rank) and line.count(' ') == 2:
                 rank, freq, token = line.split(' ')
                 stemmed = stemmer(token)
+                print "%s -> %s" % (token, stemmed)
                 freq = float(freq)
                 freq_int = int(freq*100)
                 for word in stemmed.split(' '):
                     if ',' not in word:
                         freqs[word] += freq_int
+                if ',' not in token:
+                    tokenfreqs[token.lower()] += freq_int
+    for key in tokenfreqs:
+        if tokenfreqs[key] > freqs[key]:
+            freqs[key] = tokenfreqs[key]
     return freqs
 
 def translate_leeds_corpus(infile, outfile, stemmer):

@@ -117,7 +117,7 @@ class ProcessWrapper(object):
         """
         Given a record, return whether it represents a stopword (a word that
         should be discarded in NLP results).
-        
+
         Note that we want very few words to be stopwords. Words that are
         meaningful but simply common can be recognized by their very high word
         frequency, and handled appropriately. Often, we only want determiners
