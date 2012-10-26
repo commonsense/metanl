@@ -79,7 +79,7 @@ class Wordlist(object):
     def save(self, filename):
         out = codecs.open(filename, 'w', encoding='utf-8')
         for word in self.sorted_words:
-            print >> out, "%s,%s" % (word, self.get(word))
+            print >> out, "%s,%1.1f" % (word, self.get(word))
         out.close()
 
 
