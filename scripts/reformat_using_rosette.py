@@ -16,8 +16,7 @@ def make_rosette_normalizer(lcode):
     return normalizer
 
 def main():
-    #for language in ('pt', 'ru', 'es', 'fr', 'it', 'zh', 'de'):
-    for language in ('zh', 'de'):
+    for language in ('pt', 'ru', 'es', 'fr', 'it', 'zh', 'de', 'ar'):
         print language
         translate_leeds_corpus(
             '../metanl/data/source-data/internet-%s-forms.num' % language,
