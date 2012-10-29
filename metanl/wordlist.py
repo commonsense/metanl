@@ -132,8 +132,8 @@ def multilingual_wordlist(langs, scale=1e9):
     >>> en_fr = multilingual_wordlist(['en', 'fr'])
     >>> int(en_fr['normalization|en'])
     25673
-    >>> int(en_fr['normalis|fr'])
-    91650
+    >>> int(en_fr['normalisation|fr'])
+    52142
     """
     weighted_lists = [(get_wordlist(lang), '|en' if lang == 'twitter' else ('|' + lang), scale)
                       for lang in langs]
