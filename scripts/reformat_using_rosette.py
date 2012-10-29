@@ -11,12 +11,13 @@ def make_rosette_normalizer(lcode):
             time.sleep(1)
             print 'backing off'
             return normalizer(text)
-        normalized = u' '.join(lemma for lemma, pos, token in triples)
+        normalized = u' '.join(lemma.rsplit('|', 1)[0] for lemma, pos, token in triples)
         return normalized
     return normalizer
 
 def main():
-    for language in ('pt', 'ru', 'es', 'fr', 'it'):
+    #for language in ('pt', 'ru', 'es', 'fr', 'it', 'zh', 'de'):
+    for language in ('zh', 'de'):
         print language
         translate_leeds_corpus(
             '../metanl/data/source-data/internet-%s-forms.num' % language,
