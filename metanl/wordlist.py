@@ -140,25 +140,32 @@ def multilingual_wordlist(langs, scale=1e9):
     return merge_lists(weighted_lists)
 
 
-def get_frequency(word, lang, default_freq=0):
+def get_frequency(word, lang, default_freq=0, scale=1e9):
     """
     Looks up a word's frequency in our preferred frequency list for the given
     language.
 
-    >>> get_frequency('normalization', 'en')
-    223058.0
-    >>> get_frequency('Normalization', 'en')
-    223058.0
+    >>> get_frequency('the', 'en', scale=42)
+    42.0
+    >>> int(get_frequency('normalization', 'en'))
+    25673
+    >>> int(get_frequency('Normalization', 'en'))
+    25673
     >>> get_frequency('weirdification', 'en', 100.0)
     100.0
     """
     freqs = get_wordlist(lang)
+    factor = scale / freqs.max_freq()
 
     if " " in word:
         raise ValueError("get_frequency only can only look up single words, "
                          "but %r contains a space" % word)
 
-    return freqs.get(preprocess_text(word).lower(), default_freq)
+    lookup = preprocess_text(word).lower()
+    if lookup not in freqs:
+        return default_freq
+    else:
+        return factor * freqs[lookup]
 
 def multilingual_word_frequency(word, default_freq=0):
     return get_frequency(word, 'multi', default_freq)
