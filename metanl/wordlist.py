@@ -82,6 +82,16 @@ class Wordlist(object):
             print >> out, "%s,%1.1f" % (word, self.get(word))
         out.close()
 
+    def save_zipf(self, filename):
+        """
+        A format I'm experimenting with, representing the inverse word
+        frequency.
+        """
+        out = codecs.open(filename, 'w', encoding='utf-8')
+        for word in self.sorted_words:
+            print >> out, "%s/%1.1f" % (word, self.max_freq() / self.get(word))
+        out.close()
+
 
 def merge_lists(weighted_lists):
     """
@@ -113,12 +123,14 @@ def get_wordlist(lang):
     Get the preferred frequency list for a language.
     """
     if lang == 'en':
+        filename = 'multi-en.txt'
+    elif lang == 'en-books':
         filename = 'google-unigrams.txt'
-    elif lang == 'twitter':
+    elif lang == 'en-twitter':
         filename = 'twitter.txt'
     elif lang == 'multi':
-        # this pre-combined wordlist is a bit of a hack until we know how
-        # we will be using multilingual sets of languages
+        # this pre-combined wordlist is slow, and you're better off
+        # loading languages separately
         filename = 'multilingual.txt'
     else:
         filename = 'leeds-internet-%s.txt' % lang
@@ -130,12 +142,10 @@ def multilingual_wordlist(langs, scale=1e9):
     Get a wordlist that combines wordlists from multiple languages.
 
     >>> en_fr = multilingual_wordlist(['en', 'fr'])
-    >>> int(en_fr['normalization|en'])
-    25673
     >>> int(en_fr['normalisation|fr'])
     52142
     """
-    weighted_lists = [(get_wordlist(lang), '|en' if lang == 'twitter' else ('|' + lang), scale)
+    weighted_lists = [(get_wordlist(lang), '|' + lang, scale)
                       for lang in langs]
     return merge_lists(weighted_lists)
 
@@ -145,16 +155,19 @@ def get_frequency(word, lang, default_freq=0, scale=1e9):
     Looks up a word's frequency in our preferred frequency list for the given
     language.
 
-    >>> get_frequency('the', 'en', scale=42)
-    42.0
+    >>> int(get_frequency('the', 'en', scale=42))
+    42
     >>> int(get_frequency('normalization', 'en'))
-    25673
+    22969
     >>> int(get_frequency('Normalization', 'en'))
-    25673
+    22969
     >>> get_frequency('weirdification', 'en', 100.0)
     100.0
     """
-    freqs = get_wordlist(lang)
+    try:
+        freqs = get_wordlist(lang)
+    except ZeroDivisionError:
+        return default_freq
     factor = scale / freqs.max_freq()
 
     if " " in word:
@@ -167,5 +180,15 @@ def get_frequency(word, lang, default_freq=0, scale=1e9):
     else:
         return factor * freqs[lookup]
 
-def multilingual_word_frequency(word, default_freq=0):
-    return get_frequency(word, 'multi', default_freq)
+def multilingual_word_frequency(multiword, default_freq=0):
+    """
+    Splits a token into a word and language at the rightmost vertical bar,
+    then looks up that word's frequency in that language.
+
+    >>> int(multilingual_word_frequency('normalization|en'))
+    22969
+    >>> int(multilingual_word_frequency('normalisation|fr'))
+    52142
+    """
+    word, lang = multiword.rsplit('|', 1)
+    return get_frequency(word, lang, default_freq)
