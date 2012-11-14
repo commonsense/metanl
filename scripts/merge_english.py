@@ -5,7 +5,7 @@ def merge_english():
     twitter = get_wordlist('en-twitter')
     combined = merge_lists([(books, '', 1e9), (twitter, '', 1e9)])
     combined.save('multi-en.txt')
-    combined.save_zipf('multi-en.zipf.txt')
+    combined.save_logarithmic('multi-en.db.txt')
 
 if __name__ == '__main__':
     merge_english()

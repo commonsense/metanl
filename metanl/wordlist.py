@@ -2,6 +2,7 @@ import pkg_resources
 from metanl.general import preprocess_text
 from collections import defaultdict
 import codecs
+import math
 CACHE = {}
 
 class Wordlist(object):
@@ -82,14 +83,17 @@ class Wordlist(object):
             print >> out, "%s,%1.1f" % (word, self.get(word))
         out.close()
 
-    def save_zipf(self, filename):
+    def save_logarithmic(self, filename):
         """
-        A format I'm experimenting with, representing the inverse word
-        frequency.
+        A format I'm experimenting with, representing the word frequency
+        logarithmically.
         """
         out = codecs.open(filename, 'w', encoding='utf-8')
+        logmax = math.log10(self.max_freq())
         for word in self.sorted_words:
-            print >> out, "%s/%1.1f" % (word, self.max_freq() / self.get(word))
+            logfreq = math.log10(self.get(word))
+            db = (logfreq - logmax) * 10
+            print >> out, u"%s\t%3.1f" % (word, db)
         out.close()
 
 
