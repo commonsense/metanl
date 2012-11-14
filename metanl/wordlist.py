@@ -71,10 +71,29 @@ class Wordlist(object):
     @classmethod
     def _load_stream(cls, stream):
         worddict = {}
+        mode = None
+        # We need to distinguish between two modes, to handle old and new
+        # files:
+        # 1. comma-separated linear frequency values
+        # 2. tab-separated logarithmic values in dB
         for line in stream:
-            word, freq = line.strip().split(',')
+            if mode is None:
+                if '\t' in line:
+                    mode = 2
+                elif ',' in line:
+                    mode = 1
+                else:
+                    raise ValueError(
+                        "I don't recognize the format of this wordlist file."
+                    )
+            if mode == 1:
+                word, freq = line.rstrip().split(',')
+                freq = float(freq)
+            elif mode == 2:
+                word, freq = line.rstrip().split('\t')
+                freq = 10**(float(freq)/10)
             word = preprocess_text(word).lower()
-            worddict[word] = float(freq)
+            worddict[word] = freq
         return cls(worddict)
 
     def save(self, filename):
