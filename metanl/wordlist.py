@@ -181,9 +181,9 @@ def get_frequency(word, lang, default_freq=0, scale=1e9):
     >>> int(get_frequency('the', 'en', scale=42))
     42
     >>> int(get_frequency('normalization', 'en'))
-    22969
+    19566
     >>> int(get_frequency('Normalization', 'en'))
-    22969
+    19566
     >>> get_frequency('weirdification', 'en', 100.0)
     100.0
     """
@@ -209,7 +209,7 @@ def multilingual_word_frequency(multiword, default_freq=0):
     then looks up that word's frequency in that language.
 
     >>> int(multilingual_word_frequency('normalization|en'))
-    22969
+    19566
     >>> int(multilingual_word_frequency('normalisation|fr'))
     52142
     """
