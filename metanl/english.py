@@ -184,12 +184,20 @@ def good_lemma(lemma):
 def normalize_list(text):
     """
     Get a list of word stems that appear in the text. Stopwords and an initial
-    'to' will be stripped.
+    'to' will be stripped, unless this leaves nothing in the stem.
+
+    >>> normalize_list('the dog')
+    [u'dog']
+    >>> normalize_list('big dogs')
+    [u'big', u'dog']
+    >>> normalize_list('the')
+    [u'the']
     """
+    text = preprocess_text(text)
     pieces = [morphy_stem(word) for word in tokenize_list(text)]
     pieces = [piece for piece in pieces if good_lemma(piece)]
     if not pieces:
-        return text
+        return [text]
     if pieces[0] == 'to':
         pieces = pieces[1:]
     return pieces
