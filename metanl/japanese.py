@@ -13,6 +13,7 @@ Requires mecab to be installed separately.
 from metanl.general import preprocess_text
 from metanl.wordlist import Wordlist, get_frequency
 from metanl.extprocess import ProcessWrapper, ProcessError
+import unicodedata
 
 class MeCabError(ProcessError): pass
 
@@ -49,6 +50,19 @@ STOPWORD_ROOTS = set([
     u'よう',          # yō: "way"
     u'様',            # yō in kanji
 ])
+
+HEPBURN_TABLE = {
+    'SI': 'shi',
+    'Sy': 'sh',
+    'TI': 'chi',
+    'TU': 'tsu',
+    'Ty': 'ch',
+    'HU': 'fu',
+    'Zy': 'j',
+    'ZI': 'ji',
+    'DI': 'ji',
+    'Dy': 'j',
+}
 
 class MeCabWrapper(ProcessWrapper):
     """
@@ -148,6 +162,55 @@ class MeCabWrapper(ProcessWrapper):
             self.restart_process()
             return self.analyze(text)
 
+    def to_kana(self, text):
+        records = self.analyze(text)
+        kana = []
+        for record in records:
+            if len(record) > 8:
+                kana.append(record[8])
+            else:
+                kana.append(record[0])
+        return ' '.join(k for k in kana if k)
+    
+    def romanize(self, text):
+        kana = self.to_kana(text)
+        pieces = []
+        currently_japanese = False
+        for char in kana:
+            name = unicodedata.name(char)
+            if name.startswith('HIRAGANA') or name.startswith('KATAKANA'):
+                names = name.split()
+                charname = names[-1]
+                if name.endswith('SMALL TU'):
+                    pieces.append(u'っ')
+                elif names[1] == 'PROLONGED':
+                    if currently_japanese:
+                        pieces.append(pieces[-1][-1])
+                    else:
+                        pieces.append(u'-')
+                else:
+                    if names[-2] == 'SMALL':
+                        if not currently_japanese:
+                            pieces.append('xx')
+                        pieces[-1] = pieces[-1][:-1] + charname.lower()
+                    else:
+                        pieces.append(charname)
+                currently_japanese = True
+
+            else:
+                pieces.append(char)
+                currently_japanese = False
+        for i in xrange(len(pieces)):
+            if pieces[i] == u'っ':
+                if i == len(pieces) - 1 or not ('A' <= pieces[i+1][0] <= 'Z'):
+                    pieces[i] = 't'
+                else:
+                    pieces[i] = pieces[i+1][0]
+            else:
+                while pieces[i][:2] in HEPBURN_TABLE:
+                    pieces[i] = HEPBURN_TABLE[pieces[i][:2]] + pieces[i][2:]
+        return u''.join(pieces).lower()
+
     def is_stopword_record(self, record, common_words=False):
         """
         Determine whether a single MeCab record represents a stopword.
@@ -187,5 +250,6 @@ normalize_list = MECAB.normalize_list
 tokenize = MECAB.tokenize
 tokenize_list = MECAB.tokenize_list
 analyze = MECAB.analyze
+romanize = MECAB.romanize
 tag_and_stem = MECAB.tag_and_stem
 is_stopword = MECAB.is_stopword
