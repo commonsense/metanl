@@ -142,7 +142,7 @@ def untokenize(text):
     Ideally, `untokenize(tokenize(text))` should be identical to `text`,
     except for line breaks.
     """
-    step1 = text.replace("`` ", '"').replace(" ''", '"')
+    step1 = text.replace("`` ", '"').replace(" ''", '"').replace('. . .', '...')
     step2 = step1.replace(" ( ", " (").replace(" ) ", ") ")
     step3 = re.sub(r' ([.,:;?!%]+)([ \'"`])', r"\1\2", step2)
     step4 = re.sub(r' ([.,:;?!%]+)$', r"\1", step3)

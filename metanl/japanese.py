@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 u"""
-Provide Japanese NLP functions by wrapping the output of MeCab.
+This module provides some basic Japanese NLP by wrapping the output of MeCab.
+It can tokenize and normalize Japanese words, detect and remove stopwords,
+and it can even respell words in kana or romaji.
 
-Requires mecab to be installed separately.
+This requires mecab to be installed separately. On Ubuntu:
+    sudo apt-get install mecab mecab-ipadic-utf8
 
 >>> print normalize(u'これはテストです')
 テスト
@@ -10,12 +13,15 @@ Requires mecab to be installed separately.
 [(u'\\u3053\\u308c', 'STOP', u'\\u3053\\u308c'), (u'\\u306f', 'STOP', u'\\u306f'), (u'\\u30c6\\u30b9\\u30c8', 'TERM', u'\\u30c6\\u30b9\\u30c8'), (u'\\u3067\\u3059', 'STOP', u'\\u3067\\u3059'), (u'\\u3002', '.', u'\\u3002')]
 """
 
-from metanl.general import preprocess_text
+from metanl.general import preprocess_text, untokenize
 from metanl.wordlist import Wordlist, get_frequency
 from metanl.extprocess import ProcessWrapper, ProcessError
 import unicodedata
 
-class MeCabError(ProcessError): pass
+
+class MeCabError(ProcessError):
+    pass
+
 
 # MeCab outputs the part of speech of its terms. We can simply identify
 # particular (coarse or fine) parts of speech as containing stopwords.
@@ -33,7 +39,7 @@ STOPWORD_CATEGORIES = set([
 ])
 
 
-# Forms of particular words are also stopwords.
+# Forms of particular words should also be considered stopwords sometimes.
 #
 # A thought: Should the rare kanji version of suru not be a stopword?
 # I'll need to ask someone who knows more Japanese, but it may be
@@ -51,18 +57,6 @@ STOPWORD_ROOTS = set([
     u'様',            # yō in kanji
 ])
 
-HEPBURN_TABLE = {
-    'SI': 'shi',
-    'Sy': 'sh',
-    'TI': 'chi',
-    'TU': 'tsu',
-    'Ty': 'ch',
-    'HU': 'fu',
-    'Zy': 'j',
-    'ZI': 'ji',
-    'DI': 'ji',
-    'Dy': 'j',
-}
 
 class MeCabWrapper(ProcessWrapper):
     """
@@ -162,55 +156,6 @@ class MeCabWrapper(ProcessWrapper):
             self.restart_process()
             return self.analyze(text)
 
-    def to_kana(self, text):
-        records = self.analyze(text)
-        kana = []
-        for record in records:
-            if len(record) > 8:
-                kana.append(record[8])
-            else:
-                kana.append(record[0])
-        return ' '.join(k for k in kana if k)
-    
-    def romanize(self, text):
-        kana = self.to_kana(text)
-        pieces = []
-        currently_japanese = False
-        for char in kana:
-            name = unicodedata.name(char)
-            if name.startswith('HIRAGANA') or name.startswith('KATAKANA'):
-                names = name.split()
-                charname = names[-1]
-                if name.endswith('SMALL TU'):
-                    pieces.append(u'っ')
-                elif names[1] == 'PROLONGED':
-                    if currently_japanese:
-                        pieces.append(pieces[-1][-1])
-                    else:
-                        pieces.append(u'-')
-                else:
-                    if names[-2] == 'SMALL':
-                        if not currently_japanese:
-                            pieces.append('xx')
-                        pieces[-1] = pieces[-1][:-1] + charname.lower()
-                    else:
-                        pieces.append(charname)
-                currently_japanese = True
-
-            else:
-                pieces.append(char)
-                currently_japanese = False
-        for i in xrange(len(pieces)):
-            if pieces[i] == u'っ':
-                if i == len(pieces) - 1 or not ('A' <= pieces[i+1][0] <= 'Z'):
-                    pieces[i] = 't'
-                else:
-                    pieces[i] = pieces[i+1][0]
-            else:
-                while pieces[i][:2] in HEPBURN_TABLE:
-                    pieces[i] = HEPBURN_TABLE[pieces[i][:2]] + pieces[i][2:]
-        return u''.join(pieces).lower()
-
     def is_stopword_record(self, record, common_words=False):
         """
         Determine whether a single MeCab record represents a stopword.
@@ -235,21 +180,189 @@ class NoStopwordMeCabWrapper(MeCabWrapper):
     def is_stopword_record(self, record, common_words=False):
         return False
 
+
 def word_frequency(word, default_freq=0):
     """
     Looks up the word's frequency in the Leeds Internet Japanese corpus.
     """
     return get_frequency(word, 'ja', default_freq)
 
+
 def get_wordlist():
     return Wordlist.load('leeds-internet-ja.txt')
 
+
+# Define the classes of characters we'll be trying to transliterate
+NOT_KANA, KANA, NN, SMALL, SMALL_Y, SMALL_TSU, PROLONG = range(7)
+
+
+def to_kana(text):
+    """
+    Use MeCab to turn any text into its phonetic spelling, as katakana
+    separated by spaces.
+    """
+    records = MECAB.analyze(text)
+    kana = []
+    for record in records:
+        if len(record) > 8:
+            kana.append(record[8])
+        else:
+            kana.append(record[0])
+    return ' '.join(k for k in kana if k)
+
+
+def get_kana_info(char):
+    """
+    Return two things about each character:
+    
+    - Its transliterated value (in Roman characters, if it's a kana)
+    - A class of characters indicating how it affects the romanization
+    """
+    try:
+        name = unicodedata.name(char)
+    except ValueError:
+        return char, NOT_KANA
+    
+    # The names we're dealing with will probably look like
+    # "KATAKANA CHARACTER ZI".
+    if (name.startswith('HIRAGANA LETTER') or name.startswith('KATAKANA LETTER')
+    or name.startswith('KATAKANA-HIRAGANA')):
+        names = name.split()
+        syllable = names[-1].lower()
+
+        if name.endswith('SMALL TU'):
+            # The small tsu (っ) doubles the following consonant.
+            # It'll show up as 't' on its own.
+            return u't', SMALL_TSU
+        elif names[-1] == 'N':
+            return u'n', NN
+        elif names[1] == 'PROLONGED':
+            # The prolongation marker doubles the previous vowel.
+            # It'll show up as '-' on its own.
+            return u'--', PROLONG
+        elif names[-2] == 'SMALL':
+            # Small characters tend to modify the sound of the previous
+            # kana. If they can't modify anything, they're appended to
+            # the letter 'x' instead.
+            if syllable.startswith('y'):
+                return u'x' + syllable, SMALL_Y
+            else:
+                return u'x' + syllable, SMALL
+
+        return syllable, KANA
+    else:
+        if char in ROMAN_PUNCTUATION_TABLE:
+            char = ROMAN_PUNCTUATION_TABLE[char]
+        return char, NOT_KANA
+
+
+def respell_hepburn(syllable):
+    while syllable[:2] in HEPBURN_TABLE:
+        syllable = HEPBURN_TABLE[syllable[:2]] + syllable[2:]
+    return syllable
+
+
+def romanize(text, respell=respell_hepburn):
+    if respell is None:
+        respell = lambda x: x
+
+    kana = to_kana(unicode(text))
+    pieces = []
+    prevgroup = NOT_KANA
+
+    for char in kana:
+        roman, group = get_kana_info(char)
+        if prevgroup == NN:
+            # When the previous syllable is 'n' and the next syllable would
+            # make it ambiguous, add an apostrophe.
+            if group != KANA or roman[0] in 'aeinouy':
+                if unicodedata.category(roman[0])[0] == 'L':
+                    pieces[-1] += "'"
+        
+        # Determine how to spell the current character 
+        if group == NOT_KANA:
+            pieces.append(roman)
+        elif group == SMALL_TSU or group == NN:
+            pieces.append(roman)
+        elif group == SMALL_Y:
+            if prevgroup == KANA:
+                # Modify the previous syllable, if that makes sense. For example,
+                # 'ni' + 'ya' becomes 'nya'.
+                if not pieces[-1].endswith('i'):
+                    pieces.append(roman)
+                else:
+                    modifier = roman[1:]
+                    modified = pieces[-1]
+                    pieces[-1] = modified[:-1] + modifier
+            else:
+                pieces.append(roman)
+        elif group == SMALL:
+            # We don't respell other kinds of small vowels, because the result would
+            # be ambiguous. The word for "tea", which is "te" + small "i", will show
+            # up as "texi", which is what you'd type into a word processor anyway.
+            pieces.append(roman)
+        elif group == PROLONG:
+            if prevgroup in (KANA, SMALL_Y, SMALL):
+                pieces.append(pieces[-1])
+            else:
+                pieces.append(roman)
+        else:  # this is a normal kana
+            if prevgroup == SMALL_TSU:
+                if roman[0] in 'aeiouy':
+                    # wait, there's no consonant there; cope by respelling the
+                    # previous kana as 'xtu'
+                    pieces[-1] = 'xtu'
+                else:
+                    # Turn the previous 't' into a copy of the first consonant
+                    pieces[-1] = roman[0]
+            elif prevgroup == NN:
+                # Let Hepburn respell 'n' as 'm' in words such as 'shimbun'.
+                try_respell = respell(pieces[-1] + roman[0])
+                if try_respell[:-1] != pieces[-1]:
+                    pieces[-1] = try_respell[:-1]
+            pieces.append(roman)
+        prevgroup = group
+    
+    return untokenize(u''.join(respell(piece) for piece in pieces))
+
+
+# Hepburn romanization is the most familiar to English speakers. It involves
+# respelling certain parts of romanized words to better match their
+# pronunciation. For example, the name for Mount Fuji is respelled from
+# "huzi-san" to "fuji-san".
+HEPBURN_TABLE = {
+    'si': 'shi',
+    'sy': 'sh',
+    'ti': 'chi',
+    'ty': 'ch',
+    'tu': 'tsu',
+    'hu': 'fu',
+    'zi': 'ji',
+    'di': 'ji',
+    'zy': 'j',
+    'dy': 'j',
+    'nm': 'mm',
+    'nb': 'mb',
+    'np': 'mp'
+}
+ROMAN_PUNCTUATION_TABLE = {
+    u'・': u'.',
+    u'。': u'.',
+    u'、': u',',
+    u'！': u'!',
+    u'「': u'``',
+    u'」': u"''",
+    u'？': u'?',
+    u'〜': u'~'
+}
+
+# Provide externally available functions.
 MECAB = MeCabWrapper()
+
 normalize = MECAB.normalize
 normalize_list = MECAB.normalize_list
 tokenize = MECAB.tokenize
 tokenize_list = MECAB.tokenize_list
 analyze = MECAB.analyze
-romanize = MECAB.romanize
 tag_and_stem = MECAB.tag_and_stem
 is_stopword = MECAB.is_stopword
