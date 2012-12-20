@@ -50,10 +50,9 @@ class FreelingWrapper(ProcessWrapper):
 
     def get_record_token(self, record):
         """
-        The token of a FreeLing record is the first item on the line,
-        normalized to lowercase.
+        The token of a FreeLing record is the first item on the line.
         """
-        return record[0].lower()
+        return record[0]
 
     def get_record_pos(self, record):
         """
