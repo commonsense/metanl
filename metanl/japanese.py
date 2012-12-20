@@ -78,7 +78,7 @@ class MeCabWrapper(ProcessWrapper):
                              "about installing MeCab and other Japanese NLP tools.")
         self.mecab_encoding = self._detect_mecab_encoding(proc)
         return proc
-    
+
     def _detect_mecab_encoding(self, proc):
         """
         Once we've found a MeCab binary, it may be installed in UTF-8 or it
@@ -87,7 +87,7 @@ class MeCabWrapper(ProcessWrapper):
         """
         proc.stdin.write(u'a\n')
         out = proc.stdout.readline()
-        
+
         # out is now a string in an unknown encoding, and might not even be
         # valid in *any* encoding before the tab character. But after the
         # tab, it should all be in the encoding of the installed dictionary.
@@ -106,7 +106,7 @@ class MeCabWrapper(ProcessWrapper):
             raise MeCabError("Sorry! I got unexpected lines back from MeCab "
                              "and don't know what to do next.")
         return encoding
-    
+
     def get_record_root(self, record):
         """
         Given a MeCab record, return the root word.
@@ -126,9 +126,9 @@ class MeCabWrapper(ProcessWrapper):
         word.
         """
         try:
-            process = self.process  # make sure things are loaded
+            self.process  # make sure things are loaded
             text = preprocess_text(text).lower()
-            n_chunks = (len(text)+1024)//1024
+            n_chunks = (len(text) + 1024) // 1024
             results = []
             for chunk in xrange(n_chunks):
                 chunk_text = text[chunk*1024:(chunk+1)*1024].encode(self.mecab_encoding)
@@ -145,7 +145,7 @@ class MeCabWrapper(ProcessWrapper):
 
                     word, info = out_line.strip(u'\n').split(u'\t')
                     record = [word] + info.split(u',')
-                    
+
                     # special case for detecting nai -> n
                     if record[0] == u'ん' and record[5] == u'不変化型':
                         record[7] = record[1] = u'ない'
@@ -195,7 +195,6 @@ def get_wordlist():
 # Define the classes of characters we'll be trying to transliterate
 NOT_KANA, KANA, NN, SMALL, SMALL_Y, SMALL_TSU, PROLONG = range(7)
 
-
 def to_kana(text):
     """
     Use MeCab to turn any text into its phonetic spelling, as katakana
@@ -204,7 +203,9 @@ def to_kana(text):
     records = MECAB.analyze(text)
     kana = []
     for record in records:
-        if len(record) > 8:
+        if len(record) > 9:
+            kana.append(record[9])
+        elif len(record) > 8:
             kana.append(record[8])
         else:
             kana.append(record[0])
@@ -214,7 +215,7 @@ def to_kana(text):
 def get_kana_info(char):
     """
     Return two things about each character:
-    
+
     - Its transliterated value (in Roman characters, if it's a kana)
     - A class of characters indicating how it affects the romanization
     """
@@ -222,13 +223,13 @@ def get_kana_info(char):
         name = unicodedata.name(char)
     except ValueError:
         return char, NOT_KANA
-    
+
     # The names we're dealing with will probably look like
     # "KATAKANA CHARACTER ZI".
     if (name.startswith('HIRAGANA LETTER') or name.startswith('KATAKANA LETTER')
     or name.startswith('KATAKANA-HIRAGANA')):
         names = name.split()
-        syllable = names[-1].lower()
+        syllable = unicode(names[-1].lower())
 
         if name.endswith('SMALL TU'):
             # The small tsu (っ) doubles the following consonant.
@@ -238,8 +239,8 @@ def get_kana_info(char):
             return u'n', NN
         elif names[1] == 'PROLONGED':
             # The prolongation marker doubles the previous vowel.
-            # It'll show up as '-' on its own.
-            return u'--', PROLONG
+            # It'll show up as '_' on its own.
+            return u'_', PROLONG
         elif names[-2] == 'SMALL':
             # Small characters tend to modify the sound of the previous
             # kana. If they can't modify anything, they're appended to
@@ -278,8 +279,8 @@ def romanize(text, respell=respell_hepburn):
             if group != KANA or roman[0] in 'aeinouy':
                 if unicodedata.category(roman[0])[0] == 'L':
                     pieces[-1] += "'"
-        
-        # Determine how to spell the current character 
+
+        # Determine how to spell the current character
         if group == NOT_KANA:
             pieces.append(roman)
         elif group == SMALL_TSU or group == NN:
@@ -303,7 +304,7 @@ def romanize(text, respell=respell_hepburn):
             pieces.append(roman)
         elif group == PROLONG:
             if prevgroup in (KANA, SMALL_Y, SMALL):
-                pieces.append(pieces[-1])
+                pieces[-1] = pieces[-1][:-1] + respell(pieces[-1][-1] + '_')
             else:
                 pieces.append(roman)
         else:  # this is a normal kana
@@ -322,7 +323,7 @@ def romanize(text, respell=respell_hepburn):
                     pieces[-1] = try_respell[:-1]
             pieces.append(roman)
         prevgroup = group
-    
+
     return untokenize(u''.join(respell(piece) for piece in pieces))
 
 
@@ -331,19 +332,24 @@ def romanize(text, respell=respell_hepburn):
 # pronunciation. For example, the name for Mount Fuji is respelled from
 # "huzi-san" to "fuji-san".
 HEPBURN_TABLE = {
-    'si': 'shi',
-    'sy': 'sh',
-    'ti': 'chi',
-    'ty': 'ch',
-    'tu': 'tsu',
-    'hu': 'fu',
-    'zi': 'ji',
-    'di': 'ji',
-    'zy': 'j',
-    'dy': 'j',
-    'nm': 'mm',
-    'nb': 'mb',
-    'np': 'mp'
+    u'si': u'shi',
+    u'sy': u'sh',
+    u'ti': u'chi',
+    u'ty': u'ch',
+    u'tu': u'tsu',
+    u'hu': u'fu',
+    u'zi': u'ji',
+    u'di': u'ji',
+    u'zy': u'j',
+    u'dy': u'j',
+    u'nm': u'mm',
+    u'nb': u'mb',
+    u'np': u'mp',
+    u'a_': u'aa',
+    u'e_': u'ee',
+    u'i_': u'ii',
+    u'o_': u'ou',
+    u'u_': u'uu'
 }
 ROMAN_PUNCTUATION_TABLE = {
     u'・': u'.',
