@@ -1,1 +1,3 @@
 recursive-include metanl *.txt
+recursive-include metanl *.dat
+recursive-include metanl *.cfg
