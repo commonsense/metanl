@@ -16,7 +16,7 @@ class FreelingWrapper(ProcessWrapper):
     language-specific config file, such as 'en.cfg'.
 
         >>> english.tag_and_stem("This is a test.\n\nIt has two paragraphs, and that's okay.")
-        [(u'this', u'DT', u'this'), (u'be', u'VBZ', u'is'), (u'a', u'DT', u'a'), (u'test', u'NN', u'test'), (u'.', '.', u'.'), (u'it', u'PRP', u'it'), (u'have', u'VBZ', u'has'), (u'two', u'DT', u'two'), (u'paragraph', u'NNS', u'paragraphs'), (u',', '.', u','), (u'and', u'CC', u'and'), (u'that', u'PRP', u'that'), (u'be', u'VBZ', u"'s"), (u'okay', u'JJ', u'okay'), (u'.', '.', u'.')]
+        [(u'this', u'DT', u'This'), (u'be', u'VBZ', u'is'), (u'a', u'DT', u'a'), (u'test', u'NN', u'test'), (u'.', '.', u'.'), (u'it', u'PRP', u'It'), (u'have', u'VBZ', u'has'), (u'two', u'DT', u'two'), (u'paragraph', u'NNS', u'paragraphs'), (u',', '.', u','), (u'and', u'CC', u'and'), (u'that', u'PRP', u'that'), (u'be', u'VBZ', u"'s"), (u'okay', u'JJ', u'okay'), (u'.', '.', u'.')]
 
     """
     def __init__(self, lang):
