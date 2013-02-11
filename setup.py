@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-version_str = '0.5.4'
+version_str = '0.5.5'
 
 from setuptools import setup
 
@@ -37,6 +37,6 @@ setup(
     classifiers = classifiers,
     long_description = "\n".join(doclines[2:]),
     packages=['metanl'],
-    package_data = {'metanl': ['data/wordlists/*.txt', 'data/freeling/*.cfg']},
+    package_data = {'metanl': ['data/wordlists/*.txt', 'data/freeling/*.cfg', 'data/freeling/*.dat']},
     install_requires=['nltk >= 2.0b9', 'setuptools', 'pystemmer', 'ftfy'],
 )
