@@ -43,6 +43,9 @@ class Wordlist(object):
     def __getitem__(self, word):
         return self.get(word)
 
+    def __contains__(self, word):
+        return word in self.worddict
+
     def max_freq(self):
         """
         Get the highest frequency in this wordlist.

@@ -4,7 +4,7 @@ import unicodedata
 
 def test_all_bmp_characters():
     for index in xrange(0xa0, 0xfffd):
-        if not unicodedata.category(unichr(index)) == 'Co':
+        if unicodedata.category(unichr(index)) not in ('Co', 'Cn'):
             garble = unichr(index).encode('utf-8').decode('latin-1')
             if index not in WINDOWS_1252_GREMLINS:
                 assert fix_bad_encoding(garble) == unichr(index)
