@@ -63,10 +63,7 @@ def preprocess_text(text):
     """
     if isinstance(text, str):
         text = text.decode('utf-8')
-    text = fix_bad_unicode(text)
-    text = unescape_html(text)
-    text = text.translate(CONTROL_CHARS)
-    return unicodedata.normalize('NFKC', text)
+    return fix_text(text)
 
 HTML_ENTITY_RE = re.compile("&#?\w+;")
 def unescape_html(text):
