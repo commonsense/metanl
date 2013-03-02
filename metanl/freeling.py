@@ -89,7 +89,7 @@ class FreelingWrapper(ProcessWrapper):
             chunks = text.split('\n')
             results = []
             for chunk_text in chunks:
-                if chunk_text:
+                if chunk_text.strip():
                     text = chunk_text.encode('utf-8')
                     self.send_input(text + '\n')
                     #self.input_log.write(text+'\n')
