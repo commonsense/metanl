@@ -4,7 +4,7 @@ from metanl.wordlist import get_frequency
 from metanl.extprocess import ProcessWrapper, ProcessError
 import re
 
-UNSAFE_CHARS = ''.join(chr(n) for n in (range(0x00, 0x10) + range(0x11, 0x20) + range(0x7f, 0xa0)))
+UNSAFE_CHARS = ''.join(chr(n) for n in (range(0x00, 0x0a) + range(0x0b, 0x20) + range(0x7f, 0xa0)))
 UNSAFE_RE = re.compile('[' + UNSAFE_CHARS + ']')
 
 class FreelingWrapper(ProcessWrapper):
@@ -17,6 +17,9 @@ class FreelingWrapper(ProcessWrapper):
 
         >>> english.tag_and_stem("This is a test.\n\nIt has two paragraphs, and that's okay.")
         [(u'this', u'DT', u'This'), (u'be', u'VBZ', u'is'), (u'a', u'DT', u'a'), (u'test', u'NN', u'test'), (u'.', '.', u'.'), (u'it', u'PRP', u'It'), (u'have', u'VBZ', u'has'), (u'two', u'DT', u'two'), (u'paragraph', u'NNS', u'paragraphs'), (u',', '.', u','), (u'and', u'CC', u'and'), (u'that', u'PRP', u'that'), (u'be', u'VBZ', u"'s"), (u'okay', u'JJ', u'okay'), (u'.', '.', u'.')]
+
+        >>> english.tag_and_stem("this has\ntwo lines")
+        [(u'this', u'DT', u'this'), (u'have', u'VBZ', u'has'), (u'two', u'DT', u'two'), (u'line', u'NNS', u'lines')]
 
     """
     def __init__(self, lang):
@@ -86,20 +89,21 @@ class FreelingWrapper(ProcessWrapper):
             chunks = text.split('\n')
             results = []
             for chunk_text in chunks:
-                text = chunk_text.encode('utf-8')
-                self.send_input(text + '\n')
-                #self.input_log.write(text+'\n')
-                out_line = ''
-                while True:
-                    out_line = self.receive_output_line()
-                    #self.output_log.write(out_line)
-                    out_line = out_line.decode('utf-8')
+                if chunk_text:
+                    text = chunk_text.encode('utf-8')
+                    self.send_input(text + '\n')
+                    #self.input_log.write(text+'\n')
+                    out_line = ''
+                    while True:
+                        out_line = self.receive_output_line()
+                        #self.output_log.write(out_line)
+                        out_line = out_line.decode('utf-8')
 
-                    if out_line == u'\n':
-                        break
+                        if out_line == u'\n':
+                            break
 
-                    record = out_line.strip(u'\n').split(u' ')
-                    results.append(record)
+                        record = out_line.strip(u'\n').split(u' ')
+                        results.append(record)
             return results
         except ProcessError:
             self.restart_process()
