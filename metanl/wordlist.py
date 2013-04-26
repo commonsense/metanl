@@ -201,7 +201,7 @@ def get_frequency(word, lang, default_freq=0, scale=1e9):
                          "but %r contains a space" % word)
 
     lookup = preprocess_text(word).lower()
-    return factor * freqs[lookup] or default_freq
+    return factor * freqs[lookup] + default_freq
 
 def multilingual_word_frequency(multiword, default_freq=0):
     """
