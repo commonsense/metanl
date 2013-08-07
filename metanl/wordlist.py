@@ -3,6 +3,7 @@ from metanl.general import preprocess_text
 from collections import defaultdict
 import codecs
 import math
+import os
 CACHE = {}
 
 class Wordlist(object):
@@ -58,7 +59,10 @@ class Wordlist(object):
     def load(cls, filename):
         """
         Load a wordlist stored in metanl's data directory, and cache it so that
-        it only has to be loaded once.
+        it only has to be loaded once. Note that this will only work on files
+        in a standard format (comma-seaprated linear frequency values, text
+        already run through ftfy); to load other kinds of files, use "load_new"
+        instead.
         """
         if filename in CACHE:
             return CACHE[filename]
@@ -74,6 +78,30 @@ class Wordlist(object):
     @classmethod
     def _load_stream(cls, stream):
         worddict = {}
+        for line in stream:
+            word, freq = line.rstrip().split(',')
+            freq = float(freq)
+            word = preprocess_text(word).lower()
+            worddict[word] = freq
+        return cls(worddict)
+
+    @classmethod
+    def load_new(cls, path_and_filename):
+        """
+        Load a wordlist that is *not* stored in metanl's data directory. Save
+        it (in standardized form) in metanl's data directory, and cache it so
+        that it only has to be loaded once. The argument of this function must
+        """
+        filename = os.path.split(path_and_filename)[-1]
+        stream = open(path_and_filename, 'r')
+        wordlist = cls._load_new_stream(stream)
+        CACHE[filename] = wordlist
+        wordlist.save(filename)
+        return wordlist
+
+    @classmethod
+    def _load_new_stream(cls, stream):
+        worddict = defaultdict(int)
         mode = None
         # We need to distinguish between two modes, to handle old and new
         # files:
@@ -96,8 +124,8 @@ class Wordlist(object):
                 word, freq = line.rstrip().split('\t')
                 freq = 10**(float(freq)/10)
             word = preprocess_text(word).lower()
-            worddict[word] = freq
-        return cls(worddict)
+            worddict[word] += freq
+        return cls(dict(worddict))
 
     def save(self, filename):
         out = codecs.open(filename, 'w', encoding='utf-8')
