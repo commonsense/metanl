@@ -81,7 +81,6 @@ class Wordlist(object):
         for line in stream:
             word, freq = line.rstrip().split(',')
             freq = float(freq)
-            word = preprocess_text(word).lower()
             worddict[word] = freq
         return cls(worddict)
 
