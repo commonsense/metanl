@@ -81,6 +81,7 @@ AMBIGUOUS_EXCEPTIONS = {
     'tore': 'tear',
     'was': 'be',
     'won': 'win',
+    'feed': 'feed',
 }
 
 BRACKET_DIC = {
