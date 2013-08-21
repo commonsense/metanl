@@ -33,6 +33,7 @@ STOPWORD_CATEGORIES = set([
     u'接続詞',        # coarse: conjunction
     u'フィラー',      # coarse: filler
     u'記号',          # coarse: symbol
+    u'非自立',        # coarse: 'not independent'
     u'助詞類接続',    # fine: particle connection
     u'代名詞',        # fine: pronoun
     u'接尾',          # fine: suffix
@@ -51,6 +52,8 @@ STOPWORD_ROOTS = set([
     u'来る',          # kuru in kanji
     u'いく',          # iku: "to go"
     u'行く',          # iku in kanji
+    u'いる',          # iru: "to be" (animate)
+    u'居る',          # iru in kanji
     u'もの',          # mono: "thing"
     u'物',            # mono in kanji
     u'よう',          # yō: "way"
@@ -156,7 +159,7 @@ class MeCabWrapper(ProcessWrapper):
             self.restart_process()
             return self.analyze(text)
 
-    def is_stopword_record(self, record, common_words=False):
+    def is_stopword_record(self, record, common_words=True):
         """
         Determine whether a single MeCab record represents a stopword.
 
