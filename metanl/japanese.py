@@ -151,7 +151,7 @@ class MeCabWrapper(ProcessWrapper):
 
                     # special case for detecting nai -> n
                     if record[0] == u'ん' and record[5] == u'不変化型':
-                        record[7] = record[1] = u'ない'
+                        record[7] = u'ない'
 
                     results.append(record)
             return results
@@ -179,13 +179,10 @@ class MeCabWrapper(ProcessWrapper):
         Given a record, get the word's part of speech.
         
         Here we're going to return MeCab's part of speech (written in
-        Japanese), unless it's a stopword in which case we return STOP,
-        or a negation word in which case we return NEG.
+        Japanese), unless it's a stopword in which case we return STOP.
         """
         if self.is_stopword_record(record):
             return 'STOP'
-        elif record[1] == u'ない':
-            return 'NEG'
         else:
             return record[1]
 
