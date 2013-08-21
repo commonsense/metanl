@@ -28,7 +28,6 @@ class MeCabError(ProcessError):
 
 STOPWORD_CATEGORIES = set([
     u'助詞',          # coarse: particle
-    u'連体詞',        # coarse: adnominal adjective ("rentaishi")
     u'助動詞',        # coarse: auxiliary verb
     u'接続詞',        # coarse: conjunction
     u'フィラー',      # coarse: filler
