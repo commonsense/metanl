@@ -10,7 +10,7 @@ This requires mecab to be installed separately. On Ubuntu:
 >>> print normalize(u'これはテストです')
 テスト
 >>> tag_and_stem(u'これはテストです。')
-[(u'\\u3053\\u308c', 'STOP', u'\\u3053\\u308c'), (u'\\u306f', 'STOP', u'\\u306f'), (u'\\u30c6\\u30b9\\u30c8', 'TERM', u'\\u30c6\\u30b9\\u30c8'), (u'\\u3067\\u3059', 'STOP', u'\\u3067\\u3059'), (u'\\u3002', '.', u'\\u3002')]
+[(u'\\u3053\\u308c', 'STOP', u'\\u3053\\u308c'), (u'\\u306f', 'STOP', u'\\u306f'), (u'\\u30c6\\u30b9\\u30c8', u'\\u540d\\u8a5e', u'\\u30c6\\u30b9\\u30c8'), (u'\\u3067\\u3059', 'STOP', u'\\u3067\\u3059'), (u'\\u3002', '.', u'\\u3002')]
 """
 
 from metanl.general import preprocess_text, untokenize
@@ -173,6 +173,22 @@ class MeCabWrapper(ProcessWrapper):
         return (record[1] in STOPWORD_CATEGORIES or
                 record[2] in STOPWORD_CATEGORIES or
                 (common_words and record[7] in STOPWORD_ROOTS))
+
+    def get_record_pos(self, record):
+        """
+        Given a record, get the word's part of speech.
+        
+        Here we're going to return MeCab's part of speech (written in
+        Japanese), unless it's a stopword in which case we return STOP,
+        or a negation word in which case we return NEG.
+        """
+        if self.is_stopword_record(record):
+            return 'STOP'
+        elif record[1] == u'ない':
+            return 'NEG'
+        else:
+            return record[1]
+
 
 class NoStopwordMeCabWrapper(MeCabWrapper):
     """
