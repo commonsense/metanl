@@ -32,12 +32,15 @@ STOPWORD_CATEGORIES = set([
     u'接続詞',        # coarse: conjunction
     u'フィラー',      # coarse: filler
     u'記号',          # coarse: symbol
-    u'非自立',        # coarse: 'not independent'
+    u'非自立',        # fine: 'not independent'
+])
+
+MORE_STOPWORD_CATEGORIES = set([
+    u'連体詞',        # coarse: adnominal adjective ("rentaishi")
     u'助詞類接続',    # fine: particle connection
     u'代名詞',        # fine: pronoun
     u'接尾',          # fine: suffix
 ])
-
 
 # Forms of particular words should also be considered stopwords sometimes.
 #
@@ -57,6 +60,7 @@ STOPWORD_ROOTS = set([
     u'物',            # mono in kanji
     u'よう',          # yō: "way"
     u'様',            # yō in kanji
+    u'れる',          # passive suffix
 ])
 
 
@@ -158,20 +162,24 @@ class MeCabWrapper(ProcessWrapper):
             self.restart_process()
             return self.analyze(text)
 
-    def is_stopword_record(self, record, common_words=True):
+    def is_stopword_record(self, record, common_words=True, more_stopwords=False):
         """
         Determine whether a single MeCab record represents a stopword.
 
-        By default this only strips out particles and auxiliary verbs,
-        but if common_words is set to True it will also strip common verbs
-        and nouns such as くる and よう.
+        This mostly determines words to strip based on their parts of speech.
+        If common_words is set to True (default), it will also strip common verbs
+        and nouns such as くる and よう. If more_stopwords is True, it will look
+        at the sub-part of speech to remove more categories.
         """
         # preserve negations
         if record[7] == u'ない':
             return False
-        return (record[1] in STOPWORD_CATEGORIES or
-                record[2] in STOPWORD_CATEGORIES or
-                (common_words and record[7] in STOPWORD_ROOTS))
+        if record[1] in STOPWORD_CATEGORIES or record[2] in STOPWORD_CATEGORIES:
+            return True
+        if more_stopwords and (record[1] in MORE_STOPWORD_CATEGORIES or
+                               record[2] in MORE_STOPWORD_CATEGORIES):
+            return True
+        return (common_words and record[7] in STOPWORD_ROOTS)
 
     def get_record_pos(self, record):
         """
