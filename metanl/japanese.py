@@ -17,7 +17,7 @@ from metanl.general import preprocess_text, untokenize
 from metanl.wordlist import Wordlist, get_frequency
 from metanl.extprocess import ProcessWrapper, ProcessError
 import unicodedata
-
+import re
 
 class MeCabError(ProcessError):
     pass
@@ -313,9 +313,9 @@ def romanize(text, respell=respell_hepburn):
             else:
                 pieces.append(roman)
         elif group == SMALL:
-            # We don't respell other kinds of small vowels, because the result would
-            # be ambiguous. The word for "tea", which is "te" + small "i", will show
-            # up as "texi", which is what you'd type into a word processor anyway.
+            # Don't respell small vowels _yet_. We'll handle that at the end.
+            # This may be a bit ambiguous, but nobody expects to see "tea"
+            # spelled "texi".
             pieces.append(roman)
         elif group == PROLONG:
             if prevgroup in (KANA, SMALL_Y, SMALL):
@@ -339,7 +339,9 @@ def romanize(text, respell=respell_hepburn):
             pieces.append(roman)
         prevgroup = group
 
-    return untokenize(u''.join(respell(piece) for piece in pieces))
+    romantext = u''.join(respell(piece) for piece in pieces)
+    romantext = re.sub(r'[aeiou]x([aeiou])', r'\1', romantext)
+    return untokenize(romantext)
 
 
 # Hepburn romanization is the most familiar to English speakers. It involves
