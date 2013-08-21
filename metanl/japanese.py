@@ -61,6 +61,12 @@ STOPWORD_ROOTS = set([
     u'よう',          # yō: "way"
     u'様',            # yō in kanji
     u'れる',          # passive suffix
+    u'これ',          # kore: "this"
+    u'それ',          # sore: "that"
+    u'あれ',          # are: "that over there"
+    u'この',          # kono: "this"
+    u'その',          # sono: "that"
+    u'あの',          # ano: "that over there", "yon"
 ])
 
 
