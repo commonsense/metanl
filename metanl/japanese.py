@@ -56,6 +56,8 @@ STOPWORD_ROOTS = set([
     u'行く',          # iku in kanji
     u'いる',          # iru: "to be" (animate)
     u'居る',          # iru in kanji
+    u'ある',          # aru: "to exist" or "to have"
+    u'有る',          # aru in kanji
     u'もの',          # mono: "thing"
     u'物',            # mono in kanji
     u'よう',          # yō: "way"
@@ -139,7 +141,7 @@ class MeCabWrapper(ProcessWrapper):
         """
         try:
             self.process  # make sure things are loaded
-            text = preprocess_text(text).lower()
+            text = preprocess_text(text).replace('\n', '').lower()
             n_chunks = (len(text) + 1024) // 1024
             results = []
             for chunk in xrange(n_chunks):
