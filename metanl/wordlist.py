@@ -6,6 +6,23 @@ import math
 import os
 CACHE = {}
 
+
+class lazy_property(object):
+    """
+    Decorator for properties that you want to compute, lazily, just once.
+
+    From http://stackoverflow.com/a/6849299 and similar code in simplenlp.
+    See also http://docs.python.org/2/howto/descriptor.html for reference.
+    """
+    def __init__(self, func):
+        self.func = func
+
+    def __get__(self, instance, cls):
+        result = self.func(instance)
+        setattr(instance, self.func.__name__, result)
+        return result
+
+
 class Wordlist(object):
     """
     A list mapping words to frequencies, loaded from a .txt file on disk, and
@@ -15,12 +32,10 @@ class Wordlist(object):
         self.worddict = worddict
         self._sorted_words = None
 
-    @property
+    @lazy_property
     def sorted_words(self):
-        if self._sorted_words is None:
-            self._sorted_words = sorted(self.worddict.keys(),
-                key=lambda word: (-self.worddict[word], word))
-        return self._sorted_words
+        return sorted(self.worddict.keys(),
+                      key=lambda word: (-self.worddict[word], word))
 
     def __len__(self):
         return len(self.worddict)
@@ -47,13 +62,14 @@ class Wordlist(object):
     def __contains__(self, word):
         return word in self.worddict
 
+    @lazy_property
     def max_freq(self):
         """
-        Get the highest frequency in this wordlist.
+        The highest frequency in this wordlist.
         """
         if len(self) == 0:
             raise ValueError("This list is empty.")
-        return self.worddict[self.sorted_words[0]]
+        return max(self.worddict.itervalues())
 
     @classmethod
     def load(cls, filename):
@@ -138,7 +154,7 @@ class Wordlist(object):
         logarithmically.
         """
         out = codecs.open(filename, 'w', encoding='utf-8')
-        logmax = math.log10(self.max_freq())
+        logmax = math.log10(self.max_freq)
         for word in self.sorted_words:
             logfreq = math.log10(self.get(word))
             db = (logfreq - logmax) * 10
@@ -165,7 +181,7 @@ def merge_lists(weighted_lists):
     for sublist, suffix, weight in weighted_lists:
         factor = 1
         if weight is not None and len(sublist) > 0:
-            factor = weight / sublist.max_freq()
+            factor = weight / sublist.max_freq
         for word, freq in sublist.iteritems():
             totals[word + suffix] += freq * factor
     return Wordlist(totals)
@@ -221,7 +237,7 @@ def get_frequency(word, lang, default_freq=0, scale=1e9):
         freqs = get_wordlist(lang)
     except ZeroDivisionError:
         return default_freq
-    factor = scale / freqs.max_freq()
+    factor = scale / freqs.max_freq
 
     if " " in word:
         raise ValueError("get_frequency only can only look up single words, "
