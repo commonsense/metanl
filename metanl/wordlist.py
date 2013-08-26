@@ -81,6 +81,7 @@ class Wordlist(object):
         for line in stream:
             word, freq = line.rstrip().split(',')
             freq = float(freq)
+            word = word.decode('utf-8')
             worddict[word] = freq
         return cls(worddict)
 
@@ -92,7 +93,7 @@ class Wordlist(object):
         that it only has to be loaded once. The argument of this function must
         """
         filename = os.path.split(path_and_filename)[-1]
-        stream = open(path_and_filename, 'r')
+        stream = codecs.open(path_and_filename, 'r')
         wordlist = cls._load_new_stream(stream)
         CACHE[filename] = wordlist
         wordlist.save(filename)
@@ -122,7 +123,7 @@ class Wordlist(object):
             elif mode == 2:
                 word, freq = line.rstrip().split('\t')
                 freq = 10**(float(freq)/10)
-            word = preprocess_text(word).lower()
+            word = preprocess_text(word.decode('utf-8')).lower()
             worddict[word] += freq
         return cls(dict(worddict))
 
