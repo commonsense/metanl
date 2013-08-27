@@ -55,13 +55,9 @@ class ProcessWrapper(object):
         Create the process by running the specified command.
         """
         command = self._get_command()
-        try:
-            return subprocess.Popen(command, bufsize=1, close_fds=True,
-                                    stdout=subprocess.PIPE,
-                                    stdin=subprocess.PIPE)
-        except OSError:
-            raise ProcessError("Couldn't start the external process: %r" %
-                    command)
+        return subprocess.Popen(command, bufsize=1, close_fds=True,
+                                stdout=subprocess.PIPE,
+                                stdin=subprocess.PIPE)
 
     def get_record_root(self, record):
         """
