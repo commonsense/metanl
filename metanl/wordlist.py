@@ -104,10 +104,10 @@ class Wordlist(object):
         """
         Load a wordlist that is *not* stored in metanl's data directory. Save
         it (in standardized form) in metanl's data directory, and cache it so
-        that it only has to be loaded once. The argument of this function must
+        that it only has to be loaded once. File must be encoded in UTF-8.
         """
         filename = os.path.split(path_and_filename)[-1]
-        stream = codecs.open(path_and_filename, 'r')
+        stream = open(path_and_filename).read().decode('utf-8').splitlines()
         wordlist = cls._load_new_stream(stream)
         CACHE[filename] = wordlist
         wordlist.save(filename)
@@ -137,7 +137,7 @@ class Wordlist(object):
             elif mode == 2:
                 word, freq = line.rstrip().split('\t')
                 freq = 10**(float(freq)/10)
-            word = preprocess_text(word.decode('utf-8')).lower()
+            word = preprocess_text(word).lower()
             worddict[word] += freq
         return cls(dict(worddict))
 
