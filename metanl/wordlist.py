@@ -83,10 +83,10 @@ class Wordlist(object):
         if filename in CACHE:
             return CACHE[filename]
         else:
-            stream = pkg_resources.resource_stream(
+            stream = pkg_resources.resource_string(
                 __name__,
                 'data/wordlists/%s' % filename
-            )
+            ).decode('utf-8').splitlines()
             wordlist = cls._load_stream(stream)
             CACHE[filename] = wordlist
         return wordlist
@@ -96,9 +96,7 @@ class Wordlist(object):
         worddict = {}
         for line in stream:
             word, freq = line.rstrip().split(',')
-            freq = float(freq)
-            word = word.decode('utf-8')
-            worddict[word] = freq
+            worddict[word] = float(freq)
         return cls(worddict)
 
     @classmethod
