@@ -38,5 +38,5 @@ setup(
     long_description = "\n".join(doclines[2:]),
     packages=['metanl'],
     package_data = {'metanl': ['data/wordlists/*.txt', 'data/freeling/*.cfg', 'data/freeling/*.dat']},
-    install_requires=['nltk >= 2.0b9', 'setuptools', 'pystemmer', 'ftfy >= 2'],
+    install_requires=['nltk >= 2.0b9', 'setuptools', 'pystemmer', 'ftfy >= 3'],
 )
