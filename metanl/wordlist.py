@@ -2,7 +2,6 @@ import pkg_resources
 from metanl.general import preprocess_text
 from collections import defaultdict
 import codecs
-import math
 import os
 CACHE = {}
 
@@ -83,10 +82,10 @@ class Wordlist(object):
         if filename in CACHE:
             return CACHE[filename]
         else:
-            stream = pkg_resources.resource_stream(
+            stream = pkg_resources.resource_string(
                 __name__,
                 'data/wordlists/%s' % filename
-            )
+            ).decode('utf-8').splitlines()
             wordlist = cls._load_stream(stream)
             CACHE[filename] = wordlist
         return wordlist
@@ -96,9 +95,7 @@ class Wordlist(object):
         worddict = {}
         for line in stream:
             word, freq = line.rstrip().split(',')
-            freq = float(freq)
-            word = word.decode('utf-8')
-            worddict[word] = freq
+            worddict[word] = float(freq)
         return cls(worddict)
 
     @classmethod
@@ -106,40 +103,27 @@ class Wordlist(object):
         """
         Load a wordlist that is *not* stored in metanl's data directory. Save
         it (in standardized form) in metanl's data directory, and cache it so
-        that it only has to be loaded once. The argument of this function must
+        that it only has to be loaded once. File must be encoded in UTF-8.
         """
         filename = os.path.split(path_and_filename)[-1]
-        stream = codecs.open(path_and_filename, 'r')
+        stream = open(path_and_filename).read().decode('utf-8').splitlines()
         wordlist = cls._load_new_stream(stream)
         CACHE[filename] = wordlist
-        wordlist.save(filename)
+        out_filename = os.path.join(
+            pkg_resources.resource_filename('metanl', 'data/wordlists'),
+            filename
+        )
+
+        wordlist.save(out_filename)
         return wordlist
 
     @classmethod
     def _load_new_stream(cls, stream):
         worddict = defaultdict(int)
-        mode = None
-        # We need to distinguish between two modes, to handle old and new
-        # files:
-        # 1. comma-separated linear frequency values
-        # 2. tab-separated logarithmic values in dB
         for line in stream:
-            if mode is None:
-                if '\t' in line:
-                    mode = 2
-                elif ',' in line:
-                    mode = 1
-                else:
-                    raise ValueError(
-                        "I don't recognize the format of this wordlist file."
-                    )
-            if mode == 1:
-                word, freq = line.rstrip().split(',')
-                freq = float(freq)
-            elif mode == 2:
-                word, freq = line.rstrip().split('\t')
-                freq = 10**(float(freq)/10)
-            word = preprocess_text(word.decode('utf-8')).lower()
+            word, freq = line.split(',')
+            freq = float(freq)
+            word = preprocess_text(word).lower()
             worddict[word] += freq
         return cls(dict(worddict))
 
@@ -147,19 +131,6 @@ class Wordlist(object):
         out = codecs.open(filename, 'w', encoding='utf-8')
         for word in self.sorted_words:
             print >> out, "%s,%1.1f" % (word, self.get(word))
-        out.close()
-
-    def save_logarithmic(self, filename):
-        """
-        A format I'm experimenting with, representing the word frequency
-        logarithmically.
-        """
-        out = codecs.open(filename, 'w', encoding='utf-8')
-        logmax = math.log10(self.max_freq)
-        for word in self.sorted_words:
-            logfreq = math.log10(self.get(word))
-            db = (logfreq - logmax) * 10
-            print >> out, u"%s\t%3.1f" % (word, db)
         out.close()
 
 
@@ -174,9 +145,6 @@ def merge_lists(weighted_lists):
 
     `max` indicates what the maximum value in that list should be
     scaled to. If `max` is None, the scaling will not be changed.
-
-    >>> from metanl import english
-    >>> from metanl import freeling
     """
     totals = defaultdict(float)
     for sublist, suffix, weight in weighted_lists:
