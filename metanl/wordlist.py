@@ -121,10 +121,9 @@ class Wordlist(object):
     def _load_new_stream(cls, stream):
         worddict = defaultdict(int)
         for line in stream:
-            word, freq = line.split(',')
-            freq = float(freq)
+            word, freq = line.split(u',')
             word = preprocess_text(word).lower()
-            worddict[word] += freq
+            worddict[word] += float(freq)
         return cls(dict(worddict))
 
     def save(self, filename):
