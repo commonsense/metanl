@@ -94,7 +94,7 @@ class Wordlist(object):
     def _load_stream(cls, stream):
         worddict = {}
         for line in stream:
-            word, freq = line.split(',')
+            word, freq = line.split(u',')
             worddict[word] = float(freq)
         return cls(worddict)
 
