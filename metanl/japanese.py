@@ -16,11 +16,27 @@ This requires mecab to be installed separately. On Ubuntu:
 from metanl.general import preprocess_text, untokenize
 from metanl.wordlist import Wordlist, get_frequency
 from metanl.extprocess import ProcessWrapper, ProcessError
+from collections import namedtuple
 import unicodedata
 import re
 
 class MeCabError(ProcessError):
     pass
+
+MeCabRecord = namedtuple('MeCabRecord',
+    [
+        'surface',
+        'pos',
+        'subclass1',
+        'subclass2',
+        'subclass3',
+        'conjugation',
+        'form',
+        'root',
+        'reading',
+        'pronunciation'
+    ]
+)
 
 
 # MeCab outputs the part of speech of its terms. We can simply identify
@@ -125,13 +141,13 @@ class MeCabWrapper(ProcessWrapper):
         """
         Given a MeCab record, return the root word.
         """
-        if record[7] == '*':
-            return record[0]
+        if record.root == '*':
+            return record.surface
         else:
-            return record[7]
+            return record.root
 
     def get_record_token(self, record):
-        return record[0]
+        return record.surface
 
     def analyze(self, text):
         """
@@ -158,11 +174,27 @@ class MeCabWrapper(ProcessWrapper):
                         break
 
                     word, info = out_line.strip(u'\n').split(u'\t')
-                    record = [word] + info.split(u',')
+                    record_parts = [word] + info.split(u',')
+
+                    # Pad the record out to have 10 parts if it doesn't
+                    record_parts += [None] * (10 - len(record_parts))
+                    record = MeCabRecord(*record_parts)
 
                     # special case for detecting nai -> n
-                    if record[0] == u'ん' and record[5] == u'不変化型':
-                        record[7] = u'ない'
+                    if record.surface == u'ん' and record.conjugation == u'不変化型':
+                        # build a new record where the root is 'nai'
+                        record = MeCabRecord(
+                            record.surface,
+                            record.pos,
+                            record.subclass1,
+                            record.subclass2,
+                            record.subclass3,
+                            record.conjugation,
+                            record.form,
+                            u'ない',
+                            record.reading,
+                            record.pronunciation
+                        )
 
                     results.append(record)
             return results
@@ -180,14 +212,14 @@ class MeCabWrapper(ProcessWrapper):
         at the sub-part of speech to remove more categories.
         """
         # preserve negations
-        if record[7] == u'ない':
+        if record.root == u'ない':
             return False
-        if record[1] in STOPWORD_CATEGORIES or record[2] in STOPWORD_CATEGORIES:
+        if record.pos in STOPWORD_CATEGORIES or record.subclass1 in STOPWORD_CATEGORIES:
             return True
-        if more_stopwords and (record[1] in MORE_STOPWORD_CATEGORIES or
-                               record[2] in MORE_STOPWORD_CATEGORIES):
+        if more_stopwords and (record.pos in MORE_STOPWORD_CATEGORIES or
+                               record.subclass1 in MORE_STOPWORD_CATEGORIES):
             return True
-        return (common_words and record[7] in STOPWORD_ROOTS)
+        return (common_words and record.root in STOPWORD_ROOTS)
 
     def get_record_pos(self, record):
         """
@@ -199,12 +231,12 @@ class MeCabWrapper(ProcessWrapper):
         if self.is_stopword_record(record):
             return 'STOP'
         else:
-            return record[1]
+            return record.pos
 
 
 class NoStopwordMeCabWrapper(MeCabWrapper):
     """
-    This version of the MeCabWrapper doesn't label anything as a stopword. It'
+    This version of the MeCabWrapper doesn't label anything as a stopword. It's
     used in building ConceptNet because discarding stopwords based on MeCab
     categories loses too much information.
     """
@@ -234,12 +266,12 @@ def to_kana(text):
     records = MECAB.analyze(text)
     kana = []
     for record in records:
-        if len(record) > 9:
-            kana.append(record[9])
-        elif len(record) > 8:
-            kana.append(record[8])
+        if record.pronunciation:
+            kana.append(record.pronunciation)
+        elif record.reading:
+            kana.append(record.reading)
         else:
-            kana.append(record[0])
+            kana.append(record.surface)
     return ' '.join(k for k in kana if k)
 
 
