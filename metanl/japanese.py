@@ -141,7 +141,7 @@ class MeCabWrapper(ProcessWrapper):
         """
         try:
             self.process  # make sure things are loaded
-            text = preprocess_text(text).replace('\n', '').lower()
+            text = preprocess_text(text).replace('\n', ' ').lower()
             n_chunks = (len(text) + 1024) // 1024
             results = []
             for chunk in xrange(n_chunks):
