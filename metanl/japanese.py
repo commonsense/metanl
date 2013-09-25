@@ -182,19 +182,9 @@ class MeCabWrapper(ProcessWrapper):
 
                     # special case for detecting nai -> n
                     if record.surface == u'ん' and record.conjugation == u'不変化型':
-                        # build a new record where the root is 'nai'
-                        record = MeCabRecord(
-                            record.surface,
-                            record.pos,
-                            record.subclass1,
-                            record.subclass2,
-                            record.subclass3,
-                            record.conjugation,
-                            record.form,
-                            u'ない',
-                            record.reading,
-                            record.pronunciation
-                        )
+                        # rebuild the record so that record.root is 'nai'
+                        record_parts[MeCabRecord._fields.index('root')] = u'ない'
+                        record = MeCabRecord(*record_parts)
 
                     results.append(record)
             return results
