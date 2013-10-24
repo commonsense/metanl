@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 import nltk
 from nltk.corpus import wordnet
-from metanl.general import (preprocess_text, tokenize, untokenize,
-        tokenize_list, untokenize_list, un_camel_case)
+from metanl.general import preprocess_text, tokenize_list, untokenize_list
 from metanl.wordlist import Wordlist
 import re
 
@@ -171,7 +170,8 @@ def tag_and_stem(text):
     out = []
     for token, tag in tagged:
         if token.startswith('#'):
-            out.append((token, 'TAG', token))
+            stem = morphy_stem(token[1:], tag)
+            out.append((stem, tag, token))
         elif token in BRACKET_DIC:
             out.append((token, BRACKET_DIC[token], token))
         else:

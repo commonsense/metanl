@@ -182,6 +182,11 @@ class ProcessWrapper(object):
         appropriate for the reader. `pos` can be as general or specific as
         necessary (for example, it might label all parts of speech, or it might
         only distinguish function words from others).
+
+        Twitter-style hashtags and at-mentions have the stem and pos they would
+        have without the leading # or @. For instance, if the reader's triple
+        for "thing" is ('thing', 'NN', 'things'), then "#things" would come out
+        as ('thing', 'NN', '#things').
         """
         analysis = self.analyze(text)
         triples = []
@@ -193,8 +198,8 @@ class ProcessWrapper(object):
 
             if token:
                 if tag_next:
-                    triples.append((tag_next + token, 'TAG',
-                                    tag_next + token))
+                    pos = self.get_record_pos(record)
+                    triples.append((token, pos, tag_next + token))
                     tag_next = False
                 elif token == u'#' or token == u'@':
                     tag_next = token
