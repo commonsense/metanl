@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+
+## Status:
+# This does about the right thing and belongs in metanl.
+# Rob should possibly document the more esoteric parts better.
 u"""
 This module provides some basic Japanese NLP by wrapping the output of MeCab.
 It can tokenize and normalize Japanese words, detect and remove stopwords,

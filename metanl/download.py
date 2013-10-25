@@ -1,3 +1,6 @@
+## Status:
+# This module is completely abandoned. In fact, the http URL it tries to get is very broken.
+
 import urllib, os, sys
 import tarfile
 

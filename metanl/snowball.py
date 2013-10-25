@@ -1,4 +1,9 @@
 # -*- coding: utf-8 -*-
+
+## Status:
+# We don't use this at Luminoso.
+# We also don't use it in ConceptNet.
+# Maybe it shouldn't be here.
 """
 This module provides NLP functions for various European languages using the
 Snowball stemmer. The supported languages are identified in

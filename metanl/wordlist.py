@@ -1,3 +1,20 @@
+## Status:
+# This should be a separate package from metanl. It doesn't interact with
+# the rest of metanl, and it'll be easier to port on its own.
+#
+# data/source-data and data/wordlists should come with it. Some of its
+# input is produced by metanl.leeds_corpus_reader, so that should come with
+# it also.
+#
+# The one reference to metanl.general.preprocess_text can now be replaced
+# with ftfy, in all cases except the one where you're using bytestrings
+# for text. And in Python 3 you have to stop doing that anyway!
+#
+# It would be nice for there to be a way to download the data without
+# it being part of the Python package, because metanl has already
+# grown too big for PyPI. Maybe we should do something like download.py,
+# except less bad.
+
 import pkg_resources
 from metanl.general import preprocess_text
 from collections import defaultdict

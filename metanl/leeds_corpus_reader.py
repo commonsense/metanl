@@ -1,3 +1,6 @@
+## Status:
+# This belongs in the wordlist module, and possibly needs a better name.
+
 import codecs
 from collections import defaultdict
 from ftfy import ftfy

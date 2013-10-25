@@ -3,6 +3,14 @@
 Useful NLP functions that are not language-specific.
 """
 
+## Status:
+# This module is terribly named, and some stuff in it should probably be
+# refactored.
+#
+# Also, while we're talking about things that should be redone: the
+# tokenization is kind of dubious compared to nltk, and the untokenizer is
+# inefficient and also kind of dubious.
+
 import re
 import unicodedata
 import htmlentitydefs

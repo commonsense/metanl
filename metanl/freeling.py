@@ -4,6 +4,14 @@ from metanl.wordlist import get_frequency
 from metanl.extprocess import ProcessWrapper, ProcessError
 import re
 
+## Status:
+# This module is useful. But it's intertwined with the wordlist stuff in a way
+# that doesn't really work and that I don't think we use. That part should
+# be removed.
+#
+# We might want to reconsider the list of language definitions at the end,
+# particularly whether it makes any sense for Welsh to be there.
+
 UNSAFE_CHARS = ''.join(chr(n) for n in (range(0x00, 0x0a) + range(0x0b, 0x20) + range(0x7f, 0xa0)))
 UNSAFE_RE = re.compile('[' + UNSAFE_CHARS + ']')
 

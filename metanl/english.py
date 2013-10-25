@@ -1,4 +1,14 @@
 # -*- coding: utf-8 -*-
+
+## Status:
+# This module will port just fine as long as nltk does. However, it's
+# badly organized. Instead of "metanl.english", this module should be
+# metanl.nltk.
+# 
+# The word frequency stuff should be removed -- it's redundant with
+# the wordlist module. normalize_topic should either move into a set
+# of utility functions, or into conceptnet5.readers, because that's
+# where it's needed.
 import nltk
 from nltk.corpus import wordnet
 from metanl.general import (preprocess_text, tokenize, untokenize,

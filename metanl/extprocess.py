@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+
+## Status:
+# This module is useful and belongs here.
 """
 Tools for using an external program as an NLP pipe. See, for example,
 freeling.py.
