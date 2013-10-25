@@ -94,7 +94,7 @@ class Wordlist(object):
     def _load_stream(cls, stream):
         worddict = {}
         for line in stream:
-            word, freq = line.split(u',')
+            word, freq = line.rsplit(u',', 1)
             worddict[word] = float(freq)
         return cls(worddict)
 
@@ -165,6 +165,10 @@ def get_wordlist(lang):
         filename = 'google-unigrams.txt'
     elif lang == 'en-twitter':
         filename = 'twitter.txt'
+    elif lang == 'xx':
+        # a new collection of Twitter frequencies across all
+        # languages
+        filename = 'twitter2.txt'
     elif lang == 'multi':
         # this pre-combined wordlist is slow, and you're better off
         # loading languages separately
