@@ -7,7 +7,6 @@ Tools for using an external program as an NLP pipe. See, for example,
 freeling.py.
 """
 
-from metanl.general import unicode_is_punctuation
 import subprocess
 
 class ProcessError(IOError):
@@ -228,4 +227,33 @@ class ProcessWrapper(object):
                         phrase = ''.join(pieces)
                         yield term, phrase
                         break
+
+
+def unicode_is_punctuation(text):
+    u"""
+    Test if a token is made entirely of Unicode characters of the following
+    classes:
+
+    - P: punctuation
+    - S: symbols
+    - Z: separators
+    - M: combining marks
+    - C: control characters
+
+    >>> unicode_is_punctuation(u'word')
+    False
+    >>> unicode_is_punctuation(u'。')
+    True
+    >>> unicode_is_punctuation(u'-')
+    True
+    >>> unicode_is_punctuation(u'-3')
+    False
+    >>> unicode_is_punctuation(u'あ')
+    False
+    """
+    for char in unicode(text):
+        category = unicodedata.category(char)[0]
+        if category not in 'PSZMC':
+            return False
+    return True
 
