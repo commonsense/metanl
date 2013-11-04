@@ -121,37 +121,7 @@ class MeCabWrapper(ProcessWrapper):
             raise MeCabError("MeCab didn't start. See README.txt for details "
                              "about installing MeCab and other Japanese NLP "
                              "tools.")
-        self.mecab_encoding = self._detect_mecab_encoding(proc)
         return proc
-
-    def _detect_mecab_encoding(self, proc):
-        """
-        Once we've found a MeCab binary, it may be installed in UTF-8 or it
-        may be installed in EUC-JP. We need to determine which one by
-        experimentation.
-        """
-        proc.stdin.write(b'a\n')
-        proc.stdin.flush()
-        out = proc.stdout.readline()
-
-        # out is now a string in an unknown encoding, and might not even be
-        # valid in *any* encoding before the tab character. But after the
-        # tab, it should all be in the encoding of the installed dictionary.
-        encoding = 'utf-8'
-        try:
-            out.decode('utf-8')
-        except UnicodeDecodeError:
-            try:
-                out.decode('euc-jp')
-                encoding = 'euc-jp'
-            except UnicodeDecodeError:
-                raise MeCabError("I can't understand MeCab in either UTF-8 or "
-                                 "EUC-JP. Check the configuration of MeCab "
-                                 "and its dictionary.")
-        if proc.stdout.readline() != b'EOS\n':
-            raise MeCabError("Sorry! I got unexpected lines back from MeCab "
-                             "and don't know what to do next.")
-        return encoding
 
     def get_record_root(self, record):
         """
@@ -178,12 +148,12 @@ class MeCabWrapper(ProcessWrapper):
             results = []
             for chunk in range(n_chunks):
                 chunk_text = text[chunk*1024:(chunk+1)*1024]
-                chunk_text = (chunk_text + '\n').encode(self.mecab_encoding)
+                chunk_text = (chunk_text + '\n').encode('utf-8')
                 self.send_input(chunk_text)
                 out_line = ''
                 while True:
                     out_line = self.receive_output_line()
-                    out_line = out_line.decode(self.mecab_encoding)
+                    out_line = out_line.decode('utf-8')
 
                     if out_line == 'EOS\n':
                         break
