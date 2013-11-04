@@ -16,10 +16,10 @@ import re
 ## Has been updated for Py3. Wordlist removed. Probably not *hurting* anything
 ## to have Welsh on the list, but granted we don't use it much. (Ever.)
 
-UNSAFE_CHARS = ''.join(chr(n) for n in (list(range(0x00, 0x0a)) +
-                                        list(range(0x0b, 0x20)) +
-                                        list(range(0x7f, 0xa0))))
-UNSAFE_RE = re.compile('[' + UNSAFE_CHARS + ']')
+UNSAFE_CHARS = b''.join(chr(n) for n in (list(range(0x00, 0x0a)) +
+                                         list(range(0x0b, 0x20)) +
+                                         list(range(0x7f, 0xa0))))
+UNSAFE_RE = re.compile(b'[' + UNSAFE_CHARS + b']')
 
 class FreelingWrapper(ProcessWrapper):
     r"""
