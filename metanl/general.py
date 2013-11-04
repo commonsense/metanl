@@ -6,7 +6,7 @@ reduced in scope from its previous incarnation.
 """
 
 from ftfy import fix_text as preprocess_text
-
+import re
 
 def untokenize(text):
     """
