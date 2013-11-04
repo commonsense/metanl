@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
+from __future__ import print_function, unicode_literals
 
 ## Status:
 # This does about the right thing and belongs in metanl.
 # Rob should possibly document the more esoteric parts better.
-u"""
+#
+## Updated for Py3, with wordlist and word frequency parts removed.
+"""
 This module provides some basic Japanese NLP by wrapping the output of MeCab.
 It can tokenize and normalize Japanese words, detect and remove stopwords,
 and it can even respell words in kana or romaji.
@@ -11,14 +14,14 @@ and it can even respell words in kana or romaji.
 This requires mecab to be installed separately. On Ubuntu:
     sudo apt-get install mecab mecab-ipadic-utf8
 
->>> print normalize(u'これはテストです')
+>>> print normalize('これはテストです')
 テスト
->>> tag_and_stem(u'これはテストです。')
-[(u'\\u3053\\u308c', 'STOP', u'\\u3053\\u308c'), (u'\\u306f', 'STOP', u'\\u306f'), (u'\\u30c6\\u30b9\\u30c8', u'\\u540d\\u8a5e', u'\\u30c6\\u30b9\\u30c8'), (u'\\u3067\\u3059', 'STOP', u'\\u3067\\u3059'), (u'\\u3002', '.', u'\\u3002')]
+>>> tag_and_stem('これはテストです。')
+[('\\u3053\\u308c', 'STOP', '\\u3053\\u308c'), ('\\u306f', 'STOP', '\\u306f'), ('\\u30c6\\u30b9\\u30c8', '\\u540d\\u8a5e', '\\u30c6\\u30b9\\u30c8'), ('\\u3067\\u3059', 'STOP', '\\u3067\\u3059'), ('\\u3002', '.', '\\u3002')]
 """
 
-from metanl.general import preprocess_text, untokenize
-from metanl.wordlist import Wordlist, get_frequency
+from ftfy import fix_text
+from metanl.general import untokenize
 from metanl.extprocess import ProcessWrapper, ProcessError
 from collections import namedtuple
 import unicodedata
@@ -47,19 +50,19 @@ MeCabRecord = namedtuple('MeCabRecord',
 # particular (coarse or fine) parts of speech as containing stopwords.
 
 STOPWORD_CATEGORIES = set([
-    u'助詞',          # coarse: particle
-    u'助動詞',        # coarse: auxiliary verb
-    u'接続詞',        # coarse: conjunction
-    u'フィラー',      # coarse: filler
-    u'記号',          # coarse: symbol
-    u'非自立',        # fine: 'not independent'
+    '助詞',          # coarse: particle
+    '助動詞',        # coarse: auxiliary verb
+    '接続詞',        # coarse: conjunction
+    'フィラー',      # coarse: filler
+    '記号',          # coarse: symbol
+    '非自立',        # fine: 'not independent'
 ])
 
 MORE_STOPWORD_CATEGORIES = set([
-    u'連体詞',        # coarse: adnominal adjective ("rentaishi")
-    u'助詞類接続',    # fine: particle connection
-    u'代名詞',        # fine: pronoun
-    u'接尾',          # fine: suffix
+    '連体詞',        # coarse: adnominal adjective ("rentaishi")
+    '助詞類接続',    # fine: particle connection
+    '代名詞',        # fine: pronoun
+    '接尾',          # fine: suffix
 ])
 
 # Forms of particular words should also be considered stopwords sometimes.
@@ -68,27 +71,27 @@ MORE_STOPWORD_CATEGORIES = set([
 # I'll need to ask someone who knows more Japanese, but it may be
 # that if they're using the kanji it's for particular emphasis.
 STOPWORD_ROOTS = set([
-    u'する',          # suru: "to do"
-    u'為る',          # suru in kanji (very rare)
-    u'くる',          # kuru: "to come"
-    u'来る',          # kuru in kanji
-    u'いく',          # iku: "to go"
-    u'行く',          # iku in kanji
-    u'いる',          # iru: "to be" (animate)
-    u'居る',          # iru in kanji
-    u'ある',          # aru: "to exist" or "to have"
-    u'有る',          # aru in kanji
-    u'もの',          # mono: "thing"
-    u'物',            # mono in kanji
-    u'よう',          # yō: "way"
-    u'様',            # yō in kanji
-    u'れる',          # passive suffix
-    u'これ',          # kore: "this"
-    u'それ',          # sore: "that"
-    u'あれ',          # are: "that over there"
-    u'この',          # kono: "this"
-    u'その',          # sono: "that"
-    u'あの',          # ano: "that over there", "yon"
+    'する',          # suru: "to do"
+    '為る',          # suru in kanji (very rare)
+    'くる',          # kuru: "to come"
+    '来る',          # kuru in kanji
+    'いく',          # iku: "to go"
+    '行く',          # iku in kanji
+    'いる',          # iru: "to be" (animate)
+    '居る',          # iru in kanji
+    'ある',          # aru: "to exist" or "to have"
+    '有る',          # aru in kanji
+    'もの',          # mono: "thing"
+    '物',            # mono in kanji
+    'よう',          # yō: "way"
+    '様',            # yō in kanji
+    'れる',          # passive suffix
+    'これ',          # kore: "this"
+    'それ',          # sore: "that"
+    'あれ',          # are: "that over there"
+    'この',          # kono: "this"
+    'その',          # sono: "that"
+    'あの',          # ano: "that over there", "yon"
 ])
 
 
@@ -109,7 +112,8 @@ class MeCabWrapper(ProcessWrapper):
             proc = ProcessWrapper._get_process(self)
         except (OSError, ProcessError):
             raise MeCabError("MeCab didn't start. See README.txt for details "
-                             "about installing MeCab and other Japanese NLP tools.")
+                             "about installing MeCab and other Japanese NLP "
+                             "tools.")
         self.mecab_encoding = self._detect_mecab_encoding(proc)
         return proc
 
@@ -119,7 +123,7 @@ class MeCabWrapper(ProcessWrapper):
         may be installed in EUC-JP. We need to determine which one by
         experimentation.
         """
-        proc.stdin.write(u'a\n')
+        proc.stdin.write('a\n')
         out = proc.stdout.readline()
 
         # out is now a string in an unknown encoding, and might not even be
@@ -134,8 +138,8 @@ class MeCabWrapper(ProcessWrapper):
                 encoding = 'euc-jp'
             except UnicodeDecodeError:
                 raise MeCabError("I can't understand MeCab in either UTF-8 or "
-                                 "EUC-JP. Check the configuration of MeCab and "
-                                 "its dictionary.")
+                                 "EUC-JP. Check the configuration of MeCab "
+                                 "and its dictionary.")
         if proc.stdout.readline() != 'EOS\n':
             raise MeCabError("Sorry! I got unexpected lines back from MeCab "
                              "and don't know what to do next.")
@@ -161,33 +165,33 @@ class MeCabWrapper(ProcessWrapper):
         """
         try:
             self.process  # make sure things are loaded
-            text = preprocess_text(text).replace('\n', ' ').lower()
+            text = fix_text(text).replace('\n', ' ').lower()
             n_chunks = (len(text) + 1024) // 1024
             results = []
             for chunk in xrange(n_chunks):
-                chunk_text = text[chunk*1024:(chunk+1)*1024].encode(self.mecab_encoding)
+                chunk_text = text[chunk*1024:(chunk+1)*1024]
+                chunk_text = chunk_text.encode(self.mecab_encoding)
                 self.send_input(chunk_text+'\n')
-                #self.input_log.write(text+'\n')
                 out_line = ''
                 while True:
                     out_line = self.receive_output_line()
-                    #self.output_log.write(out_line)
                     out_line = out_line.decode(self.mecab_encoding)
 
-                    if out_line == u'EOS\n':
+                    if out_line == 'EOS\n':
                         break
 
-                    word, info = out_line.strip(u'\n').split(u'\t')
-                    record_parts = [word] + info.split(u',')
+                    word, info = out_line.strip('\n').split('\t')
+                    record_parts = [word] + info.split(',')
 
                     # Pad the record out to have 10 parts if it doesn't
                     record_parts += [None] * (10 - len(record_parts))
                     record = MeCabRecord(*record_parts)
 
                     # special case for detecting nai -> n
-                    if record.surface == u'ん' and record.conjugation == u'不変化型':
+                    if (record.surface == 'ん' and
+                        record.conjugation == '不変化型'):
                         # rebuild the record so that record.root is 'nai'
-                        record_parts[MeCabRecord._fields.index('root')] = u'ない'
+                        record_parts[MeCabRecord._fields.index('root')] = 'ない'
                         record = MeCabRecord(*record_parts)
 
                     results.append(record)
@@ -196,19 +200,21 @@ class MeCabWrapper(ProcessWrapper):
             self.restart_process()
             return self.analyze(text)
 
-    def is_stopword_record(self, record, common_words=True, more_stopwords=False):
+    def is_stopword_record(self, record, common_words=True,
+                           more_stopwords=False):
         """
         Determine whether a single MeCab record represents a stopword.
 
         This mostly determines words to strip based on their parts of speech.
-        If common_words is set to True (default), it will also strip common verbs
-        and nouns such as くる and よう. If more_stopwords is True, it will look
-        at the sub-part of speech to remove more categories.
+        If common_words is set to True (default), it will also strip common
+        verbs and nouns such as くる and よう. If more_stopwords is True, it
+        will look at the sub-part of speech to remove more categories.
         """
         # preserve negations
-        if record.root == u'ない':
+        if record.root == 'ない':
             return False
-        if record.pos in STOPWORD_CATEGORIES or record.subclass1 in STOPWORD_CATEGORIES:
+        if (record.pos in STOPWORD_CATEGORIES or
+            record.subclass1 in STOPWORD_CATEGORIES):
             return True
         if more_stopwords and (record.pos in MORE_STOPWORD_CATEGORIES or
                                record.subclass1 in MORE_STOPWORD_CATEGORIES):
@@ -236,17 +242,6 @@ class NoStopwordMeCabWrapper(MeCabWrapper):
     """
     def is_stopword_record(self, record, common_words=False):
         return False
-
-
-def word_frequency(word, default_freq=0):
-    """
-    Looks up the word's frequency in the Leeds Internet Japanese corpus.
-    """
-    return get_frequency(word, 'ja', default_freq)
-
-
-def get_wordlist():
-    return Wordlist.load('leeds-internet-ja.txt')
 
 
 # Define the classes of characters we'll be trying to transliterate
@@ -283,29 +278,30 @@ def get_kana_info(char):
 
     # The names we're dealing with will probably look like
     # "KATAKANA CHARACTER ZI".
-    if (name.startswith('HIRAGANA LETTER') or name.startswith('KATAKANA LETTER')
-    or name.startswith('KATAKANA-HIRAGANA')):
+    if (name.startswith('HIRAGANA LETTER') or
+        name.startswith('KATAKANA LETTER') or
+        name.startswith('KATAKANA-HIRAGANA')):
         names = name.split()
         syllable = unicode(names[-1].lower())
 
         if name.endswith('SMALL TU'):
             # The small tsu (っ) doubles the following consonant.
             # It'll show up as 't' on its own.
-            return u't', SMALL_TSU
+            return 't', SMALL_TSU
         elif names[-1] == 'N':
-            return u'n', NN
+            return 'n', NN
         elif names[1] == 'PROLONGED':
             # The prolongation marker doubles the previous vowel.
             # It'll show up as '_' on its own.
-            return u'_', PROLONG
+            return '_', PROLONG
         elif names[-2] == 'SMALL':
             # Small characters tend to modify the sound of the previous
             # kana. If they can't modify anything, they're appended to
             # the letter 'x' instead.
             if syllable.startswith('y'):
-                return u'x' + syllable, SMALL_Y
+                return 'x' + syllable, SMALL_Y
             else:
-                return u'x' + syllable, SMALL
+                return 'x' + syllable, SMALL
 
         return syllable, KANA
     else:
@@ -344,8 +340,8 @@ def romanize(text, respell=respell_hepburn):
             pieces.append(roman)
         elif group == SMALL_Y:
             if prevgroup == KANA:
-                # Modify the previous syllable, if that makes sense. For example,
-                # 'ni' + 'ya' becomes 'nya'.
+                # Modify the previous syllable, if that makes sense. For
+                # example, 'ni' + 'ya' becomes 'nya'.
                 if not pieces[-1].endswith('i'):
                     pieces.append(roman)
                 else:
@@ -381,7 +377,7 @@ def romanize(text, respell=respell_hepburn):
             pieces.append(roman)
         prevgroup = group
 
-    romantext = u''.join(respell(piece) for piece in pieces)
+    romantext = ''.join(respell(piece) for piece in pieces)
     romantext = re.sub(r'[aeiou]x([aeiou])', r'\1', romantext)
     return untokenize(romantext)
 
@@ -391,34 +387,34 @@ def romanize(text, respell=respell_hepburn):
 # pronunciation. For example, the name for Mount Fuji is respelled from
 # "huzi-san" to "fuji-san".
 HEPBURN_TABLE = {
-    u'si': u'shi',
-    u'sy': u'sh',
-    u'ti': u'chi',
-    u'ty': u'ch',
-    u'tu': u'tsu',
-    u'hu': u'fu',
-    u'zi': u'ji',
-    u'di': u'ji',
-    u'zy': u'j',
-    u'dy': u'j',
-    u'nm': u'mm',
-    u'nb': u'mb',
-    u'np': u'mp',
-    u'a_': u'aa',
-    u'e_': u'ee',
-    u'i_': u'ii',
-    u'o_': u'ou',
-    u'u_': u'uu'
+    'si': 'shi',
+    'sy': 'sh',
+    'ti': 'chi',
+    'ty': 'ch',
+    'tu': 'tsu',
+    'hu': 'fu',
+    'zi': 'ji',
+    'di': 'ji',
+    'zy': 'j',
+    'dy': 'j',
+    'nm': 'mm',
+    'nb': 'mb',
+    'np': 'mp',
+    'a_': 'aa',
+    'e_': 'ee',
+    'i_': 'ii',
+    'o_': 'ou',
+    'u_': 'uu'
 }
 ROMAN_PUNCTUATION_TABLE = {
-    u'・': u'.',
-    u'。': u'.',
-    u'、': u',',
-    u'！': u'!',
-    u'「': u'``',
-    u'」': u"''",
-    u'？': u'?',
-    u'〜': u'~'
+    '・': '.',
+    '。': '.',
+    '、': ',',
+    '！': '!',
+    '「': '``',
+    '」': "''",
+    '？': '?',
+    '〜': '~'
 }
 
 # Provide externally available functions.

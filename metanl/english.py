@@ -9,11 +9,12 @@
 # the wordlist module. normalize_topic should either move into a set
 # of utility functions, or into conceptnet5.readers, because that's
 # where it's needed.
+from __future__ import print_function, unicode_literals
+
 import nltk
 from nltk.corpus import wordnet
-from metanl.general import (preprocess_text, tokenize, untokenize,
-        tokenize_list, untokenize_list, un_camel_case)
-from metanl.wordlist import Wordlist
+from metanl.general import untokenize_list
+from ftfy import fix_text
 import re
 
 try:
@@ -176,7 +177,7 @@ def tag_and_stem(text):
     - tag: the word's part of speech
     - token: the original word, so we can reconstruct it later
     """
-    tokens = tokenize_list(preprocess_text(text))
+    tokens = nltk.wordpunct_tokenize(fix_text(text))
     tagged = nltk.pos_tag(tokens)
     out = []
     for token, tag in tagged:
@@ -204,8 +205,8 @@ def normalize_list(text):
     >>> normalize_list('the')
     [u'the']
     """
-    text = preprocess_text(text)
-    pieces = [morphy_stem(word) for word in tokenize_list(text)]
+    text = fix_text(text)
+    pieces = [morphy_stem(word) for word in nltk.wordpunct_tokenize(text)]
     pieces = [piece for piece in pieces if good_lemma(piece)]
     if not pieces:
         return [text]
@@ -239,44 +240,10 @@ def normalize_topic(topic):
 
 
 def word_frequency(word, default_freq=0):
-    """
-    Looks up the word's frequency in a modified version of the Google Books
-    1-grams list.
-
-    The characters may be in any case (they'll be case-smashed
-    to uppercase) and may include non-ASCII letters in UTF-8 or Unicode.
-
-    Words appear in the list if they meet these criteria, which improve the
-    compactness and accuracy of the list:
-
-    - They consist entirely of letters, digits and/or ampersands
-    - They contain at least one ASCII letter
-    - They appear at least 1000 times in Google Books OR
-      (they appear at least 40 times in Google Books and also appear in
-      Wiktionary or WordNet)
-
-    Apostrophes are assumed to be at the edge of the word,
-    in which case they'll be stripped like they were in the Google data, or
-    in the special token "n't" which is treated as "not". This matches the
-    output of the tokenize() function.
-
-    >>> word_frequency('normalization')
-    223058.0
-
-    >>> word_frequency('budap', default_freq=100.)
-    100.0
-    """
-    freqs = Wordlist.load('google-unigrams.txt')
-    if " " in word:
-        raise ValueError("word_frequency only can only look up single words, "
-                         "but %r contains a space" % word)
-    word = preprocess_text(word.strip("'")).lower()
-    if word == "n't":
-        word = 'not'
-    return freqs.get(word, default_freq)
+    raise NotImplementedError("Word frequency is now in the wordfreq package.")
 
 def get_wordlist():
-    return Wordlist.load('google-unigrams.txt')
+    raise NotImplementedError("Wordlists are now in the wordfreq package.")
 
 if __name__ == '__main__':
-    print normalize("this is a test")
+    print(normalize("this is a test"))

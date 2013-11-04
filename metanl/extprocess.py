@@ -2,6 +2,8 @@
 
 ## Status:
 # This module is useful and belongs here.
+#
+## Has been revised for Python 3.
 """
 Tools for using an external program as an NLP pipe. See, for example,
 freeling.py.
