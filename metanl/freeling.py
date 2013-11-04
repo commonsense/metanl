@@ -30,7 +30,7 @@ class FreelingWrapper(ProcessWrapper):
     language-specific config file, such as 'en.cfg'.
 
         >>> english.tag_and_stem("This is a test.\n\nIt has two paragraphs, and that's okay.")
-        [('this', 'DT', 'This'), ('be', 'VBZ', 'is'), ('a', 'DT', 'a'), ('test', 'NN', 'test'), ('.', '.', '.'), ('it', 'PRP', 'It'), ('have', 'VBZ', 'has'), ('two', 'DT', 'two'), ('paragraph', 'NNS', 'paragraphs'), (',', '.', ','), ('and', 'CC', 'and'), ('that', 'PRP', 'that'), ('be', 'VBZ', u"'s"), ('okay', 'JJ', 'okay'), ('.', '.', '.')]
+        [('this', 'DT', 'This'), ('be', 'VBZ', 'is'), ('a', 'DT', 'a'), ('test', 'NN', 'test'), ('.', '.', '.'), ('it', 'PRP', 'It'), ('have', 'VBZ', 'has'), ('two', 'DT', 'two'), ('paragraph', 'NNS', 'paragraphs'), (',', '.', ','), ('and', 'CC', 'and'), ('that', 'PRP', 'that'), ('be', 'VBZ', "'s"), ('okay', 'JJ', 'okay'), ('.', '.', '.')]
 
         >>> english.tag_and_stem("this has\ntwo lines")
         [('this', 'DT', 'this'), ('have', 'VBZ', 'has'), ('two', 'DT', 'two'), ('line', 'NNS', 'lines')]
@@ -103,8 +103,8 @@ class FreelingWrapper(ProcessWrapper):
             results = []
             for chunk_text in chunks:
                 if chunk_text.strip():
-                    text = chunk_text.encode('utf-8')
-                    self.send_input(text + '\n')
+                    text = (chunk_text + '\n').encode('utf-8')
+                    self.send_input(text)
                     out_line = ''
                     while True:
                         out_line = self.receive_output_line()

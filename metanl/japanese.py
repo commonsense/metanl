@@ -14,7 +14,7 @@ and it can even respell words in kana or romaji.
 This requires mecab to be installed separately. On Ubuntu:
     sudo apt-get install mecab mecab-ipadic-utf8
 
->>> print normalize('これはテストです')
+>>> print(normalize('これはテストです'))
 テスト
 >>> tag_and_stem('これはテストです。')
 [('\\u3053\\u308c', 'STOP', '\\u3053\\u308c'), ('\\u306f', 'STOP', '\\u306f'), ('\\u30c6\\u30b9\\u30c8', '\\u540d\\u8a5e', '\\u30c6\\u30b9\\u30c8'), ('\\u3067\\u3059', 'STOP', '\\u3067\\u3059'), ('\\u3002', '.', '\\u3002')]
@@ -26,6 +26,13 @@ from metanl.extprocess import ProcessWrapper, ProcessError
 from collections import namedtuple
 import unicodedata
 import re
+import sys
+if sys.version_info.major == 2:
+    range = xrange
+    str_func = unicode
+else:
+    str_func = str
+
 
 class MeCabError(ProcessError):
     pass
@@ -123,7 +130,8 @@ class MeCabWrapper(ProcessWrapper):
         may be installed in EUC-JP. We need to determine which one by
         experimentation.
         """
-        proc.stdin.write('a\n')
+        proc.stdin.write(b'a\n')
+        proc.stdin.flush()
         out = proc.stdout.readline()
 
         # out is now a string in an unknown encoding, and might not even be
@@ -140,7 +148,7 @@ class MeCabWrapper(ProcessWrapper):
                 raise MeCabError("I can't understand MeCab in either UTF-8 or "
                                  "EUC-JP. Check the configuration of MeCab "
                                  "and its dictionary.")
-        if proc.stdout.readline() != 'EOS\n':
+        if proc.stdout.readline() != b'EOS\n':
             raise MeCabError("Sorry! I got unexpected lines back from MeCab "
                              "and don't know what to do next.")
         return encoding
@@ -168,10 +176,10 @@ class MeCabWrapper(ProcessWrapper):
             text = fix_text(text).replace('\n', ' ').lower()
             n_chunks = (len(text) + 1024) // 1024
             results = []
-            for chunk in xrange(n_chunks):
+            for chunk in range(n_chunks):
                 chunk_text = text[chunk*1024:(chunk+1)*1024]
-                chunk_text = chunk_text.encode(self.mecab_encoding)
-                self.send_input(chunk_text+'\n')
+                chunk_text = (chunk_text + '\n').encode(self.mecab_encoding)
+                self.send_input(chunk_text)
                 out_line = ''
                 while True:
                     out_line = self.receive_output_line()
@@ -282,7 +290,7 @@ def get_kana_info(char):
         name.startswith('KATAKANA LETTER') or
         name.startswith('KATAKANA-HIRAGANA')):
         names = name.split()
-        syllable = unicode(names[-1].lower())
+        syllable = str_func(names[-1].lower())
 
         if name.endswith('SMALL TU'):
             # The small tsu (っ) doubles the following consonant.
@@ -320,7 +328,7 @@ def romanize(text, respell=respell_hepburn):
     if respell is None:
         respell = lambda x: x
 
-    kana = to_kana(unicode(text))
+    kana = to_kana(str_func(text))
     pieces = []
     prevgroup = NOT_KANA
 

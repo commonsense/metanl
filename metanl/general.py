@@ -1,4 +1,4 @@
-from future import unicode_literals
+from __future__ import unicode_literals
 
 """
 A file included primarily for backward compatibility, though it is greatly

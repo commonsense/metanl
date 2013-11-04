@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import unicode_literals
+
 ## Status:
 # This module is useful and belongs here.
 #
@@ -10,9 +12,14 @@ freeling.py.
 """
 
 import subprocess
+import unicodedata
 import sys
 if sys.version_info.major == 2:
     range = xrange
+    str_func = unicode
+else:
+    str_func = str
+
 
 class ProcessError(IOError):
     """
@@ -90,6 +97,7 @@ class ProcessWrapper(object):
 
     def send_input(self, data):
         self.process.stdin.write(data)
+        self.process.stdin.flush()
 
     def receive_output_line(self):
         line = self.process.stdout.readline()
@@ -203,7 +211,7 @@ class ProcessWrapper(object):
                     triples.append((tag_next + token, 'TAG',
                                     tag_next + token))
                     tag_next = False
-                elif token == u'#' or token == u'@':
+                elif token == '#' or token == '@':
                     tag_next = token
                 elif unicode_is_punctuation(token):
                     triples.append((token, '.', token))
@@ -235,7 +243,7 @@ class ProcessWrapper(object):
 
 
 def unicode_is_punctuation(text):
-    u"""
+    """
     Test if a token is made entirely of Unicode characters of the following
     classes:
 
@@ -245,18 +253,18 @@ def unicode_is_punctuation(text):
     - M: combining marks
     - C: control characters
 
-    >>> unicode_is_punctuation(u'word')
+    >>> unicode_is_punctuation('word')
     False
-    >>> unicode_is_punctuation(u'。')
+    >>> unicode_is_punctuation('。')
     True
-    >>> unicode_is_punctuation(u'-')
+    >>> unicode_is_punctuation('-')
     True
-    >>> unicode_is_punctuation(u'-3')
+    >>> unicode_is_punctuation('-3')
     False
-    >>> unicode_is_punctuation(u'あ')
+    >>> unicode_is_punctuation('あ')
     False
     """
-    for char in unicode(text):
+    for char in str_func(text):
         category = unicodedata.category(char)[0]
         if category not in 'PSZMC':
             return False

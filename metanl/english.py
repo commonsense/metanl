@@ -199,11 +199,11 @@ def normalize_list(text):
     'to' will be stripped, unless this leaves nothing in the stem.
 
     >>> normalize_list('the dog')
-    [u'dog']
+    ['dog']
     >>> normalize_list('big dogs')
-    [u'big', u'dog']
+    ['big', 'dog']
     >>> normalize_list('the')
-    [u'the']
+    ['the']
     """
     text = fix_text(text)
     pieces = [morphy_stem(word) for word in nltk.wordpunct_tokenize(text)]
