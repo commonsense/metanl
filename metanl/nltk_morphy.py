@@ -181,8 +181,9 @@ def tag_and_stem(text):
     tagged = nltk.pos_tag(tokens)
     out = []
     for token, tag in tagged:
-        if token.startswith('#'):
-            out.append((token, 'TAG', token))
+        if token.startswith('#') or token.startswith('@'):
+            stem = morphy_stem(token[1:], tag)
+            out.append((stem, tag, token))
         elif token in BRACKET_DIC:
             out.append((token, BRACKET_DIC[token], token))
         else:
