@@ -95,15 +95,6 @@ AMBIGUOUS_EXCEPTIONS = {
     'feed': 'feed',
 }
 
-BRACKET_DIC = {
-    # Turn brackets into what the treebank expects.
-    '(': '-LRB-',
-    ')': '-RRB-',
-    '[': '-LSB-',
-    ']': '-RSB-',
-    '{': '-LCB-',
-    '}': '-RCB-'
-}
 
 def _word_badness(word):
     """
@@ -181,14 +172,8 @@ def tag_and_stem(text):
     tagged = nltk.pos_tag(tokens)
     out = []
     for token, tag in tagged:
-        if token.startswith('#') or token.startswith('@'):
-            stem = morphy_stem(token[1:], tag)
-            out.append((stem, tag, token))
-        elif token in BRACKET_DIC:
-            out.append((token, BRACKET_DIC[token], token))
-        else:
-            stem = morphy_stem(token, tag)
-            out.append((stem, tag, token))
+        stem = morphy_stem(token, tag)
+        out.append((stem, tag, token))
     return out
 
 def good_lemma(lemma):
