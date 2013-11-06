@@ -23,3 +23,12 @@ def test_tag_and_stem():
                        (u'big', 'JJ', u'big'),
                        (u'dog', 'NN', u'dog')]
     eq_(tag_and_stem('the #big dog'), the_big_hashtag)
+
+    two_sentences = [(u'i', 'PRP', u'I'),
+                     (u'can', 'MD', u'ca'),
+                     (u'not', 'RB', u"n't"),
+                     (u'.', '.', u'.'),
+                     (u'avoid', 'NNP', u'Avoid'),
+                     (u'fragment', 'NNS', u'fragments'),
+                     (u'.', '.', u'.')]
+    eq_(tag_and_stem("I can't. Avoid fragments."), two_sentences)

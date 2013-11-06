@@ -168,7 +168,7 @@ def tag_and_stem(text):
     - tag: the word's part of speech
     - token: the original word, so we can reconstruct it later
     """
-    tokens = nltk.wordpunct_tokenize(fix_text(text))
+    tokens = sentword_tokenize(fix_text(text))
     tagged = nltk.pos_tag(tokens)
     out = []
     for token, tag in tagged:
@@ -192,7 +192,7 @@ def normalize_list(text):
     ['the']
     """
     text = fix_text(text)
-    pieces = [morphy_stem(word) for word in nltk.wordpunct_tokenize(text)]
+    pieces = [morphy_stem(word) for word in sentword_tokenize(text)]
     pieces = [piece for piece in pieces if good_lemma(piece)]
     if not pieces:
         return [text]
@@ -223,6 +223,12 @@ def normalize_topic(topic):
         return normalize(topic), None
     else:
         return normalize(match.group(1)), 'n/' + match.group(2).strip(' _')
+
+
+def sentword_tokenize(text):
+    sentences = nltk.sent_tokenize(text)
+    tokens = [nltk.word_tokenize(sentence) for sentence in sentences]
+    return sum(tokens, [])
 
 
 def word_frequency(word, default_freq=0):
