@@ -206,19 +206,12 @@ class ProcessWrapper(object):
         analysis = self.analyze(text)
         triples = []
 
-        tag_next = False
         for record in analysis:
             root = self.get_record_root(record)
             token = self.get_record_token(record)
 
             if token:
-                if tag_next:
-                    pos = self.get_record_pos(record)
-                    triples.append((token, pos, tag_next + token))
-                    tag_next = False
-                elif token == '#' or token == '@':
-                    tag_next = token
-                elif unicode_is_punctuation(token):
+                if unicode_is_punctuation(token):
                     triples.append((token, '.', token))
                 else:
                     pos = self.get_record_pos(record)
