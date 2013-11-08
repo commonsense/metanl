@@ -17,7 +17,7 @@ This requires mecab to be installed separately. On Ubuntu:
 >>> print(normalize('これはテストです'))
 テスト
 >>> tag_and_stem('これはテストです。')
-[('\\u3053\\u308c', 'STOP', '\\u3053\\u308c'), ('\\u306f', 'STOP', '\\u306f'), ('\\u30c6\\u30b9\\u30c8', '\\u540d\\u8a5e', '\\u30c6\\u30b9\\u30c8'), ('\\u3067\\u3059', 'STOP', '\\u3067\\u3059'), ('\\u3002', '.', '\\u3002')]
+[(u'\u3053\u308c', u'~\u540d\u8a5e', u'\u3053\u308c'), (u'\u306f', u'~\u52a9\u8a5e', u'\u306f'), (u'\u30c6\u30b9\u30c8', u'\u540d\u8a5e', u'\u30c6\u30b9\u30c8'), (u'\u3067\u3059', u'~\u52a9\u52d5\u8a5e', u'\u3067\u3059'), (u'\u3002', u'.', u'\u3002')]
 """
 
 from ftfy import fix_text
@@ -204,7 +204,8 @@ class MeCabWrapper(ProcessWrapper):
         Given a record, get the word's part of speech.
         
         Here we're going to return MeCab's part of speech (written in
-        Japanese), unless it's a stopword in which case we return STOP.
+        Japanese), though if it's a stopword we prefix the part of speech
+        with '~'.
         """
         if self.is_stopword_record(record):
             return '~' + record.pos
