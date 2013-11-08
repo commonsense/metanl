@@ -39,10 +39,10 @@ def test_spanish():
 
 def test_japanese():
     eq_(normalize('これはテストです'), 'テスト')
-    this_is_a_test = [('これ', 'STOP', 'これ'),
-                      ('は', 'STOP', 'は'),
+    this_is_a_test = [('これ', '~名詞', 'これ'),
+                      ('は', '~助詞', 'は'),
                       ('テスト', '名詞', 'テスト'),
-                      ('です', 'STOP', 'です'),
+                      ('です', '~助動詞', 'です'),
                       ('。', '.', '。')]
     eq_(tag_and_stem('これはテストです。'), this_is_a_test)
 

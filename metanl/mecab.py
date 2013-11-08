@@ -207,7 +207,7 @@ class MeCabWrapper(ProcessWrapper):
         Japanese), unless it's a stopword in which case we return STOP.
         """
         if self.is_stopword_record(record):
-            return 'STOP'
+            return '~' + record.pos
         else:
             return record.pos
 
@@ -342,8 +342,8 @@ def romanize(text, respell=respell_hepburn):
             if prevgroup == SMALL_TSU:
                 if roman[0] in 'aeiouy':
                     # wait, there's no consonant there; cope by respelling the
-                    # previous kana as 'xtu'
-                    pieces[-1] = 'xtu'
+                    # previous kana as 't-'
+                    pieces[-1] = 't-'
                 else:
                     # Turn the previous 't' into a copy of the first consonant
                     pieces[-1] = roman[0]
