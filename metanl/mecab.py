@@ -20,7 +20,7 @@ This requires mecab to be installed separately. On Ubuntu:
 [(u'\u3053\u308c', u'~\u540d\u8a5e', u'\u3053\u308c'), (u'\u306f', u'~\u52a9\u8a5e', u'\u306f'), (u'\u30c6\u30b9\u30c8', u'\u540d\u8a5e', u'\u30c6\u30b9\u30c8'), (u'\u3067\u3059', u'~\u52a9\u52d5\u8a5e', u'\u3067\u3059'), (u'\u3002', u'.', u'\u3002')]
 """
 
-from metanl.general import untokenize
+from metanl.token_utils import untokenize
 from metanl.extprocess import ProcessWrapper, ProcessError, render_safe
 from collections import namedtuple
 import unicodedata
@@ -357,7 +357,7 @@ def romanize(text, respell=respell_hepburn):
 
     romantext = ''.join(respell(piece) for piece in pieces)
     romantext = re.sub(r'[aeiou]x([aeiou])', r'\1', romantext)
-    return untokenize(romantext)
+    return ' '.join(untokenize(romantext))
 
 
 # Hepburn romanization is the most familiar to English speakers. It involves
