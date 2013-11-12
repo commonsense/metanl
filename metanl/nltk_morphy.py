@@ -13,7 +13,7 @@ from __future__ import print_function, unicode_literals
 
 import nltk
 from nltk.corpus import wordnet
-from metanl.general import untokenize_list
+from metanl.token_utils import untokenize, tokenize
 from ftfy import fix_text
 import re
 
@@ -96,7 +96,7 @@ AMBIGUOUS_EXCEPTIONS = {
 }
 
 
-def _word_badness(word):
+def _word_badness(word):    
     """
     Assign a heuristic to possible outputs from Morphy. Minimizing this
     heuristic avoids incorrect stems.
@@ -109,6 +109,7 @@ def _word_badness(word):
         return len(word) - 4
     else:
         return len(word)
+
 
 def _morphy_best(word, pos=None):
     """
@@ -124,6 +125,7 @@ def _morphy_best(word, pos=None):
         return None
     results.sort(key=lambda x: _word_badness(x))
     return results[0]
+
 
 def morphy_stem(word, pos=None):
     """
@@ -160,6 +162,7 @@ def morphy_stem(word, pos=None):
             return AMBIGUOUS_EXCEPTIONS[word]
     return _morphy_best(word, pos) or word
 
+
 def tag_and_stem(text):
     """
     Returns a list of (stem, tag, token) triples:
@@ -168,7 +171,7 @@ def tag_and_stem(text):
     - tag: the word's part of speech
     - token: the original word, so we can reconstruct it later
     """
-    tokens = sentword_tokenize(fix_text(text))
+    tokens = tokenize(fix_text(text))
     tagged = nltk.pos_tag(tokens)
     out = []
     for token, tag in tagged:
@@ -176,8 +179,10 @@ def tag_and_stem(text):
         out.append((stem, tag, token))
     return out
 
+
 def good_lemma(lemma):
     return lemma and lemma not in STOPWORDS and lemma[0].isalnum()
+
 
 def normalize_list(text):
     """
@@ -192,7 +197,7 @@ def normalize_list(text):
     ['the']
     """
     text = fix_text(text)
-    pieces = [morphy_stem(word) for word in sentword_tokenize(text)]
+    pieces = [morphy_stem(word) for word in tokenize(text)]
     pieces = [piece for piece in pieces if good_lemma(piece)]
     if not pieces:
         return [text]
@@ -200,12 +205,14 @@ def normalize_list(text):
         pieces = pieces[1:]
     return pieces
 
+
 def normalize(text):
     """
     Get a string made from the non-stopword word stems in the text. See
     normalize_list().
     """
-    return untokenize_list(normalize_list(text))
+    return untokenize(normalize_list(text))
+
 
 def normalize_topic(topic):
     """
@@ -225,17 +232,9 @@ def normalize_topic(topic):
         return normalize(match.group(1)), 'n/' + match.group(2).strip(' _')
 
 
-def sentword_tokenize(text):
-    sentences = nltk.sent_tokenize(text)
-    tokens = [nltk.word_tokenize(sentence) for sentence in sentences]
-    return sum(tokens, [])
-
-
 def word_frequency(word, default_freq=0):
     raise NotImplementedError("Word frequency is now in the wordfreq package.")
 
+
 def get_wordlist():
     raise NotImplementedError("Wordlists are now in the wordfreq package.")
-
-if __name__ == '__main__':
-    print(normalize("this is a test"))

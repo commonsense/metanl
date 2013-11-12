@@ -1,15 +1,30 @@
 # coding: utf-8
 from __future__ import unicode_literals
-
 """
-A file included primarily for backward compatibility, though it is greatly
-reduced in scope from its previous incarnation.
+This file contains some generally useful operations you would perform to
+separate and join tokens. The tools apply most to English, but should also
+be able to do their job in any Western language that uses spaces.
 """
 
-from ftfy import fix_text as preprocess_text
 import re
 
-def untokenize(text):
+
+def tokenize(text):
+    """
+    Split a text into tokens (words, morphemes we can separate such as
+    "n't", and punctuation).
+    """
+    return list(_tokenize_gen(text))
+
+
+def _tokenize_gen(text):
+    import nltk
+    for sent in nltk.sent_tokenize(text):
+        for word in nltk.word_tokenize(sent):
+            yield word
+
+
+def untokenize(words):
     """
     Untokenizing a text undoes the tokenizing operation, restoring
     punctuation and spaces to the places that people expect them to be.
@@ -17,6 +32,7 @@ def untokenize(text):
     Ideally, `untokenize(tokenize(text))` should be identical to `text`,
     except for line breaks.
     """
+    text = ' '.join(words)
     step1 = text.replace("`` ", '"').replace(" ''", '"').replace('. . .', '...')
     step2 = step1.replace(" ( ", " (").replace(" ) ", ") ")
     step3 = re.sub(r' ([.,:;?!%]+)([ \'"`])', r"\1\2", step2)
@@ -25,14 +41,6 @@ def untokenize(text):
       "can not", "cannot")
     step6 = step5.replace(" ` ", " '")
     return step6.strip()
-
-
-def untokenize_list(words):
-    """
-    Combine a list of tokens into a single string, with spaces in the
-    places you would expect for English or sufficiently similar languages.
-    """
-    return untokenize(' '.join(words))
 
 
 # This expression scans through a reversed string to find segments of
