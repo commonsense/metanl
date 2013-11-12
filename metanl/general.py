@@ -6,7 +6,6 @@ A file included primarily for backward compatibility, though it is greatly
 reduced in scope from its previous incarnation.
 """
 
-from ftfy import fix_text as preprocess_text
 import re
 
 def untokenize(text):

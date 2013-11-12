@@ -20,9 +20,8 @@ This requires mecab to be installed separately. On Ubuntu:
 [(u'\u3053\u308c', u'~\u540d\u8a5e', u'\u3053\u308c'), (u'\u306f', u'~\u52a9\u8a5e', u'\u306f'), (u'\u30c6\u30b9\u30c8', u'\u540d\u8a5e', u'\u30c6\u30b9\u30c8'), (u'\u3067\u3059', u'~\u52a9\u52d5\u8a5e', u'\u3067\u3059'), (u'\u3002', u'.', u'\u3002')]
 """
 
-from ftfy import fix_text
 from metanl.general import untokenize
-from metanl.extprocess import ProcessWrapper, ProcessError
+from metanl.extprocess import ProcessWrapper, ProcessError, render_safe
 from collections import namedtuple
 import unicodedata
 import re
@@ -143,7 +142,7 @@ class MeCabWrapper(ProcessWrapper):
         """
         try:
             self.process  # make sure things are loaded
-            text = fix_text(text).replace('\n', ' ').lower()
+            text = render_safe(text).replace('\n', ' ').lower()
             n_chunks = (len(text) + 1024) // 1024
             results = []
             for chunk in range(n_chunks):

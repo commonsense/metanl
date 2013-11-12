@@ -1,9 +1,7 @@
 from __future__ import unicode_literals
 
 import pkg_resources
-from ftfy import fix_text
-from metanl.extprocess import ProcessWrapper, ProcessError
-import re
+from metanl.extprocess import ProcessWrapper, ProcessError, render_safe
 import sys
 
 ## Status:
@@ -16,18 +14,6 @@ import sys
 #
 ## Has been updated for Py3. Wordlist removed. Probably not *hurting* anything
 ## to have Welsh on the list, but granted we don't use it much. (Ever.)
-
-if sys.version_info.major == 2:
-    UNSAFE_CHARS = b''.join(chr(n) for n in (range(0x00, 0x0a) +
-                                             range(0x0b, 0x20) +
-                                             range(0x7f, 0xa0)))
-    UNSAFE_RE = re.compile(b'[' + UNSAFE_CHARS + b']')
-else:
-    UNSAFE_CHARS = ''.join(chr(n) for n in (list(range(0x00, 0x0a)) +
-                                            list(range(0x0b, 0x20)) +
-                                            list(range(0x7f, 0xa0))))
-    UNSAFE_RE = re.compile('[' + UNSAFE_CHARS + ']')
-
 
 class FreelingWrapper(ProcessWrapper):
     r"""
@@ -104,7 +90,7 @@ class FreelingWrapper(ProcessWrapper):
         ("records") that contain the analysis of each word.
         """
         try:
-            text = UNSAFE_RE.sub('', fix_text(text)).strip()
+            text = render_safe(text).strip()
             if not text:
                 return []
             chunks = text.split('\n')
