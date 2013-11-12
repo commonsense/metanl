@@ -1,11 +1,5 @@
 # -*- coding: utf-8 -*-
-
 from __future__ import unicode_literals
-
-## Status:
-# This module is useful and belongs here.
-#
-## Has been revised for Python 3.
 """
 Tools for using an external program as an NLP pipe. See, for example,
 freeling.py.
@@ -35,11 +29,12 @@ class ProcessError(IOError):
     """
     pass
 
+
 class ProcessWrapper(object):
     """
     A ProcessWrapper uses the `subprocess` module to keep a process open that
     we can pipe stuff through to get NLP results.
-    
+
     Instead of every instance immediately opening a process, however, it waits
     until the first time it is needed, then starts the process.
 
@@ -64,7 +59,7 @@ class ProcessWrapper(object):
         else:
             self._process = self._get_process()
             return self._process
-    
+
     def _get_command(self):
         """
         This method should return the command to run, as a list
@@ -236,7 +231,7 @@ class ProcessWrapper(object):
             rec1 = analysis[pos1]
             if not self.is_stopword_record(rec1):
                 yield self.get_record_root(rec1), rec1[0]
-                for pos2 in range(pos1+1, len(analysis)):
+                for pos2 in range(pos1 + 1, len(analysis)):
                     rec2 = analysis[pos2]
                     if not self.is_stopword_record(rec2):
                         roots = [self.get_record_root(rec1),
@@ -275,4 +270,3 @@ def unicode_is_punctuation(text):
         if category not in 'PSZMC':
             return False
     return True
-

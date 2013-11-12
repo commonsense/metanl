@@ -38,7 +38,7 @@ def untokenize(words):
     step3 = re.sub(r' ([.,:;?!%]+)([ \'"`])', r"\1\2", step2)
     step4 = re.sub(r' ([.,:;?!%]+)$', r"\1", step3)
     step5 = step4.replace(" '", "'").replace(" n't", "n't").replace(
-      "can not", "cannot")
+        "can not", "cannot")
     step6 = step5.replace(" ` ", " '")
     return step6.strip()
 
@@ -58,6 +58,8 @@ CAMEL_RE = re.compile(r"""
                               #   letters after them
      )
 """, re.VERBOSE)
+
+
 def un_camel_case(text):
     r"""
     Splits apart words that are written in CamelCase.
@@ -102,6 +104,6 @@ def un_camel_case(text):
         else:
             pieces.append(revtext)
             revtext = ''
-    revstr = ' '.join(piece.strip(' _') for piece in pieces if piece.strip(' _'))
+    revstr = ' '.join(piece.strip(' _') for piece in pieces
+                      if piece.strip(' _'))
     return revstr[::-1].replace('- ', '-')
-

@@ -2,18 +2,7 @@ from __future__ import unicode_literals
 
 import pkg_resources
 from metanl.extprocess import ProcessWrapper, ProcessError, render_safe
-import sys
 
-## Status:
-# This module is useful. But it's intertwined with the wordlist stuff in a way
-# that doesn't really work and that I don't think we use. That part should
-# be removed.
-#
-# We might want to reconsider the list of language definitions at the end,
-# particularly whether it makes any sense for Welsh to be there.
-#
-## Has been updated for Py3. Wordlist removed. Probably not *hurting* anything
-## to have Welsh on the list, but granted we don't use it much. (Ever.)
 
 class FreelingWrapper(ProcessWrapper):
     r"""

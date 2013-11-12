@@ -1,11 +1,5 @@
 # -*- coding: utf-8 -*-
 from __future__ import print_function, unicode_literals
-
-## Status:
-# This does about the right thing and belongs in metanl.
-# Rob should possibly document the more esoteric parts better.
-#
-## Updated for Py3, with wordlist and word frequency parts removed.
 """
 This module provides some basic Japanese NLP by wrapping the output of MeCab.
 It can tokenize and normalize Japanese words, detect and remove stopwords,
@@ -17,7 +11,7 @@ This requires mecab to be installed separately. On Ubuntu:
 >>> print(normalize('これはテストです'))
 テスト
 >>> tag_and_stem('これはテストです。')
-[(u'\u3053\u308c', u'~\u540d\u8a5e', u'\u3053\u308c'), (u'\u306f', u'~\u52a9\u8a5e', u'\u306f'), (u'\u30c6\u30b9\u30c8', u'\u540d\u8a5e', u'\u30c6\u30b9\u30c8'), (u'\u3067\u3059', u'~\u52a9\u52d5\u8a5e', u'\u3067\u3059'), (u'\u3002', u'.', u'\u3002')]
+[('\u3053\u308c', '~\u540d\u8a5e', '\u3053\u308c'), ('\u306f', '~\u52a9\u8a5e', '\u306f'), ('\u30c6\u30b9\u30c8', '\u540d\u8a5e', '\u30c6\u30b9\u30c8'), ('\u3067\u3059', '~\u52a9\u52d5\u8a5e', '\u3067\u3059'), ('\u3002', '.', '\u3002')]
 """
 
 from metanl.token_utils import untokenize
@@ -146,7 +140,7 @@ class MeCabWrapper(ProcessWrapper):
             n_chunks = (len(text) + 1024) // 1024
             results = []
             for chunk in range(n_chunks):
-                chunk_text = text[chunk*1024:(chunk+1)*1024]
+                chunk_text = text[chunk * 1024:(chunk + 1) * 1024]
                 chunk_text = (chunk_text + '\n').encode('utf-8')
                 self.send_input(chunk_text)
                 out_line = ''
@@ -201,7 +195,7 @@ class MeCabWrapper(ProcessWrapper):
     def get_record_pos(self, record):
         """
         Given a record, get the word's part of speech.
-        
+
         Here we're going to return MeCab's part of speech (written in
         Japanese), though if it's a stopword we prefix the part of speech
         with '~'.
@@ -224,6 +218,7 @@ class NoStopwordMeCabWrapper(MeCabWrapper):
 
 # Define the classes of characters we'll be trying to transliterate
 NOT_KANA, KANA, NN, SMALL, SMALL_Y, SMALL_TSU, PROLONG = range(7)
+
 
 def to_kana(text):
     """
