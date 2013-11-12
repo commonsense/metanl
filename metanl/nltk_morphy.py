@@ -14,7 +14,6 @@ from __future__ import print_function, unicode_literals
 import nltk
 from nltk.corpus import wordnet
 from metanl.token_utils import untokenize, tokenize
-from ftfy import fix_text
 import re
 
 try:
@@ -171,7 +170,7 @@ def tag_and_stem(text):
     - tag: the word's part of speech
     - token: the original word, so we can reconstruct it later
     """
-    tokens = tokenize(fix_text(text))
+    tokens = tokenize(text)
     tagged = nltk.pos_tag(tokens)
     out = []
     for token, tag in tagged:
@@ -196,7 +195,6 @@ def normalize_list(text):
     >>> normalize_list('the')
     ['the']
     """
-    text = fix_text(text)
     pieces = [morphy_stem(word) for word in tokenize(text)]
     pieces = [piece for piece in pieces if good_lemma(piece)]
     if not pieces:

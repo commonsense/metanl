@@ -14,11 +14,19 @@ freeling.py.
 import subprocess
 import unicodedata
 import sys
+from ftfy.fixes import remove_control_chars, remove_unsafe_private_use
 if sys.version_info.major == 2:
     range = xrange
     str_func = unicode
 else:
     str_func = str
+
+
+def render_safe(text):
+    '''
+    Make sure the given text is safe to pass to an external process.
+    '''
+    return remove_control_chars(remove_unsafe_private_use(text))
 
 
 class ProcessError(IOError):
