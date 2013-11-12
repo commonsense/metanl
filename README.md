@@ -1,7 +1,7 @@
 Multilingual natural language tools, wrapping NLTK and other systems.
 
 `metanl` contains wrappers for a few different NLP tools that are used for
-various purposes in various languages.
+various purposes in various languages. It works in Python 2.7 or Python >= 3.3.
 
 It does *not* provide a single abstraction that works in every language. That's
 hard and nobody agrees on how to do it. These tools have different purposes
