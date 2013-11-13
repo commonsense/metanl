@@ -37,5 +37,5 @@ setup(
     long_description = "\n".join(doclines[2:]),
     packages=['metanl'],
     package_data = {'metanl': ['data/freeling/*.cfg', 'data/freeling/*.dat']},
-    install_requires=['nltk >= 3.0a3', 'ftfy >= 3'],
+    install_requires=['nltk', 'ftfy >= 3'],
 )
