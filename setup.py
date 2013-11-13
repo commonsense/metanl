@@ -21,7 +21,7 @@ classifiers=[
     'Topic :: Text Processing :: Linguistic',]
 
 import os
-README_contents = open(os.path.join(os.path.dirname(__file__), 'README.txt')).read()
+README_contents = open(os.path.join(os.path.dirname(__file__), 'README.md')).read()
 doclines = README_contents.split("\n")
 
 setup(
