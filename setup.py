@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-version_str = '0.6'
+version_str = '1.0b1'
 
 from setuptools import setup
 
@@ -14,9 +14,8 @@ classifiers=[
     'Operating System :: POSIX',
     'Operating System :: Unix',
     'Programming Language :: C',
-    'Programming Language :: Python :: 2.5',
-    'Programming Language :: Python :: 2.6',
     'Programming Language :: Python :: 2.7',
+    'Programming Language :: Python :: 3.3',
     'Topic :: Scientific/Engineering',
     'Topic :: Software Development',
     'Topic :: Text Processing :: Linguistic',]
@@ -28,8 +27,8 @@ doclines = README_contents.split("\n")
 setup(
     name="metanl",
     version=version_str,
-    maintainer='MIT Media Lab, Digital Intuition group',
-    maintainer_email='conceptnet@media.mit.edu',     
+    maintainer='Luminoso Technologies, Inc.',
+    maintainer_email='dev@luminoso.com',
     url='http://github.com/commonsense/metanl/',
     license = "MIT",
     platforms = ["any"],
@@ -37,6 +36,6 @@ setup(
     classifiers = classifiers,
     long_description = "\n".join(doclines[2:]),
     packages=['metanl'],
-    package_data = {'metanl': ['data/wordlists/*.txt', 'data/freeling/*.cfg', 'data/freeling/*.dat']},
-    install_requires=['nltk >= 2.0b9', 'setuptools', 'pystemmer', 'ftfy >= 3'],
+    package_data = {'metanl': ['data/freeling/*.cfg', 'data/freeling/*.dat']},
+    install_requires=['nltk >= 3.0a3', 'ftfy >= 3'],
 )

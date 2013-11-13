@@ -1,11 +1,27 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 """
 Tools for using an external program as an NLP pipe. See, for example,
 freeling.py.
 """
 
-from metanl.general import unicode_is_punctuation
 import subprocess
+import unicodedata
+import sys
+from ftfy.fixes import remove_control_chars, remove_unsafe_private_use
+if sys.version_info.major == 2:
+    range = xrange
+    str_func = unicode
+else:
+    str_func = str
+
+
+def render_safe(text):
+    '''
+    Make sure the given text is safe to pass to an external process.
+    '''
+    return remove_control_chars(remove_unsafe_private_use(text))
+
 
 class ProcessError(IOError):
     """
@@ -13,11 +29,12 @@ class ProcessError(IOError):
     """
     pass
 
+
 class ProcessWrapper(object):
     """
     A ProcessWrapper uses the `subprocess` module to keep a process open that
     we can pipe stuff through to get NLP results.
-    
+
     Instead of every instance immediately opening a process, however, it waits
     until the first time it is needed, then starts the process.
 
@@ -42,7 +59,7 @@ class ProcessWrapper(object):
         else:
             self._process = self._get_process()
             return self._process
-    
+
     def _get_command(self):
         """
         This method should return the command to run, as a list
@@ -55,7 +72,7 @@ class ProcessWrapper(object):
         Create the process by running the specified command.
         """
         command = self._get_command()
-        return subprocess.Popen(command, bufsize=1, close_fds=True,
+        return subprocess.Popen(command, bufsize=-1, close_fds=True,
                                 stdout=subprocess.PIPE,
                                 stdin=subprocess.PIPE)
 
@@ -83,6 +100,7 @@ class ProcessWrapper(object):
 
     def send_input(self, data):
         self.process.stdin.write(data)
+        self.process.stdin.flush()
 
     def receive_output_line(self):
         line = self.process.stdout.readline()
@@ -209,18 +227,46 @@ class ProcessWrapper(object):
         and map their normalized form to the complete phrase.
         """
         analysis = self.analyze(text)
-        for pos1 in xrange(len(analysis)):
+        for pos1 in range(len(analysis)):
             rec1 = analysis[pos1]
             if not self.is_stopword_record(rec1):
                 yield self.get_record_root(rec1), rec1[0]
-                for pos2 in xrange(pos1+1, len(analysis)):
+                for pos2 in range(pos1 + 1, len(analysis)):
                     rec2 = analysis[pos2]
                     if not self.is_stopword_record(rec2):
                         roots = [self.get_record_root(rec1),
                                  self.get_record_root(rec2)]
-                        pieces = [analysis[i][0] for i in xrange(pos1, pos2+1)]
+                        pieces = [analysis[i][0] for i in range(pos1, pos2+1)]
                         term = ' '.join(roots)
                         phrase = ''.join(pieces)
                         yield term, phrase
                         break
 
+
+def unicode_is_punctuation(text):
+    """
+    Test if a token is made entirely of Unicode characters of the following
+    classes:
+
+    - P: punctuation
+    - S: symbols
+    - Z: separators
+    - M: combining marks
+    - C: control characters
+
+    >>> unicode_is_punctuation('word')
+    False
+    >>> unicode_is_punctuation('。')
+    True
+    >>> unicode_is_punctuation('-')
+    True
+    >>> unicode_is_punctuation('-3')
+    False
+    >>> unicode_is_punctuation('あ')
+    False
+    """
+    for char in str_func(text):
+        category = unicodedata.category(char)[0]
+        if category not in 'PSZMC':
+            return False
+    return True
