@@ -58,12 +58,6 @@ STOPWORD_CATEGORIES = set([
     '非自立',        # fine: 'not independent'
 ])
 
-MORE_STOPWORD_CATEGORIES = set([
-    '連体詞',        # coarse: adnominal adjective ("rentaishi")
-    '助詞類接続',    # fine: particle connection
-    '代名詞',        # fine: pronoun
-    '接尾',          # fine: suffix
-])
 
 # Forms of particular words should also be considered stopwords sometimes.
 #
