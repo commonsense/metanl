@@ -352,7 +352,7 @@ def romanize(text, respell=respell_hepburn):
 
     romantext = ''.join(respell(piece) for piece in pieces)
     romantext = re.sub(r'[aeiou]x([aeiou])', r'\1', romantext)
-    return ' '.join(untokenize(romantext))
+    return romantext
 
 
 # Hepburn romanization is the most familiar to English speakers. It involves
