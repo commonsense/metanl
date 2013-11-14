@@ -171,8 +171,7 @@ class MeCabWrapper(ProcessWrapper):
             self.restart_process()
             return self.analyze(text)
 
-    def is_stopword_record(self, record, common_words=True,
-                           more_stopwords=False):
+    def is_stopword_record(self, record):
         """
         Determine whether a single MeCab record represents a stopword.
 
@@ -184,13 +183,11 @@ class MeCabWrapper(ProcessWrapper):
         # preserve negations
         if record.root == 'ない':
             return False
-        if (record.pos in STOPWORD_CATEGORIES or
-            record.subclass1 in STOPWORD_CATEGORIES):
-            return True
-        if more_stopwords and (record.pos in MORE_STOPWORD_CATEGORIES or
-                               record.subclass1 in MORE_STOPWORD_CATEGORIES):
-            return True
-        return (common_words and record.root in STOPWORD_ROOTS)
+        return (
+            record.pos in STOPWORD_CATEGORIES or
+            record.subclass1 in STOPWORD_CATEGORIES or
+            record.root in STOPWORD_ROOTS
+        )
 
     def get_record_pos(self, record):
         """
