@@ -86,8 +86,8 @@ class FreelingWrapper(ProcessWrapper):
             results = []
             for chunk_text in chunks:
                 if chunk_text.strip():
-                    text = (chunk_text + '\n').encode('utf-8')
-                    self.send_input(text)
+                    textbytes = (chunk_text + '\n').encode('utf-8')
+                    self.send_input(textbytes)
                     out_line = ''
                     while True:
                         out_line = self.receive_output_line()
