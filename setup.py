@@ -1,8 +1,13 @@
 #!/usr/bin/env python
 
 version_str = '1.0b1'
-
 from setuptools import setup
+import sys
+
+if sys.version_info.major == 2:
+    nltk_version = 'nltk'
+else:
+    nltk_version = 'nltk >= 3.0'
 
 classifiers=[
     'Intended Audience :: Developers',
@@ -37,5 +42,5 @@ setup(
     long_description = "\n".join(doclines[2:]),
     packages=['metanl'],
     package_data = {'metanl': ['data/freeling/*.cfg', 'data/freeling/*.dat']},
-    install_requires=['nltk', 'ftfy >= 3'],
+    install_requires=[nltk_version, 'ftfy >= 3'],
 )
