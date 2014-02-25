@@ -7,6 +7,7 @@ be able to do their job in any Western language that uses spaces.
 """
 
 import re
+import unicodedata
 
 
 def tokenize(text):
@@ -107,3 +108,44 @@ def un_camel_case(text):
     revstr = ' '.join(piece.strip(' _') for piece in pieces
                       if piece.strip(' _'))
     return revstr[::-1].replace('- ', '-')
+
+
+# see http://www.fileformat.info/info/unicode/category/index.htm
+BOUNDARY_CATEGORIES = {'Cc',  # control characters
+                       'Cf',  # format characters
+                       'Cn',  # "other, not assigned"
+                       'Pc',  # connector punctuation
+                       'Pd',  # dash
+                       'Pe',  # close-punctuation
+                       'Pf',  # final-quote
+                       'Pi',  # initial-quote
+                       'Po',  # other punctuation
+                       'Zl',  # line separator
+                       'Zp',  # paragraph separator
+                       'Zs',  # space separator
+                       }
+
+def string_pieces(s, maxlen=1024):
+    """
+    Takes a (unicode) string and yields pieces of it that are at most `maxlen`
+    characters, trying to break it at punctuation/whitespace. This is an
+    important step before using a tokenizer with a maximum buffer size.
+    """
+    if not s:
+        return
+    i = 0
+    while True:
+        j = i + maxlen
+        if j >= len(s):
+            yield s[i:]
+            return
+        # Using "j - 1" keeps boundary characters with the left chunk
+        while unicodedata.category(s[j - 1]) not in BOUNDARY_CATEGORIES:
+            j -= 1
+            if j == i:
+                # No boundary available; oh well.
+                j = i + maxlen
+                break
+        yield s[i:j]
+        i = j
+
