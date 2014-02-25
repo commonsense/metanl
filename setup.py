@@ -7,7 +7,7 @@ import sys
 if sys.version_info.major == 2:
     nltk_version = 'nltk'
 else:
-    nltk_version = 'nltk >= 3.0'
+    nltk_version = 'nltk >= 3.0a'
 
 classifiers=[
     'Intended Audience :: Developers',
