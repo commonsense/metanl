@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-version_str = '1.0b1'
+version_str = '1.0b2'
 from setuptools import setup
 import sys
 
