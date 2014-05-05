@@ -14,7 +14,7 @@ This requires mecab to be installed separately. On Ubuntu:
 [('\u3053\u308c', '~\u540d\u8a5e', '\u3053\u308c'), ('\u306f', '~\u52a9\u8a5e', '\u306f'), ('\u30c6\u30b9\u30c8', '\u540d\u8a5e', '\u30c6\u30b9\u30c8'), ('\u3067\u3059', '~\u52a9\u52d5\u8a5e', '\u3067\u3059'), ('\u3002', '.', '\u3002')]
 """
 
-from metanl.token_utils import untokenize
+from metanl.token_utils import string_pieces
 from metanl.extprocess import ProcessWrapper, ProcessError, render_safe
 from collections import namedtuple
 import unicodedata
@@ -131,17 +131,11 @@ class MeCabWrapper(ProcessWrapper):
         try:
             self.process  # make sure things are loaded
             text = render_safe(text).replace('\n', ' ').lower()
-            n_chunks = (len(text) + 1024) // 1024
             results = []
-            for chunk in range(n_chunks):
-                chunk_text = text[chunk * 1024:(chunk + 1) * 1024]
-                chunk_text = (chunk_text + '\n').encode('utf-8')
-                self.send_input(chunk_text)
-                out_line = ''
+            for chunk in string_pieces(text):
+                self.send_input((chunk + '\n').encode('utf-8'))
                 while True:
-                    out_line = self.receive_output_line()
-                    out_line = out_line.decode('utf-8')
-
+                    out_line = self.receive_output_line().decode('utf-8')
                     if out_line == 'EOS\n':
                         break
 
