@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from metanl.token_utils import tokenize, untokenize, un_camel_case
+from metanl.token_utils import (tokenize, untokenize, un_camel_case,
+                                string_pieces)
 from nose.tools import eq_
 import nltk
 
@@ -36,3 +37,10 @@ def test_camel_case():
         'Anne Blunt, 15th Baroness Wentworth')
     eq_(un_camel_case('Hindi-Urdu'),
         'Hindi-Urdu')
+
+
+def test_string_pieces():
+    # Break as close to whitespace as possible
+    text = "12 12 12345 123456 1234567-12345678"
+    eq_(list(string_pieces(text, 6)),
+        ['12 12 ', '12345 ', '123456', ' ', '123456', '7-', '123456', '78'])
