@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-version_str = '1.0b2'
+version_str = '1.0c'
 from setuptools import setup
 import sys
 
@@ -28,6 +28,21 @@ classifiers=[
 import os
 README_contents = open(os.path.join(os.path.dirname(__file__), 'README.md')).read()
 doclines = README_contents.split("\n")
+
+
+deprecation_warning = """
+
+    Note: metanl is no longer actively developed or supported.
+
+    metanl was created to support the language-processing needs that ConceptNet
+    5 shared with code developed at Luminoso. Those needs have diverged, to the
+    point where it made the most sense to split the functionality again.
+
+    A simplified version of metanl has been moved into the `conceptnet5`
+    package, as `conceptnet5.language`.
+
+"""
+sys.stderr.write(deprecation_warning)
 
 setup(
     name="metanl",
