@@ -1,19 +1,16 @@
 Multilingual natural language tools, wrapping NLTK and other systems.
 
-`metanl` contains wrappers for a few different NLP tools that are used for
-various purposes in various languages. It works in Python 2.7 or Python >= 3.3.
+## Deprecated as of June 2014
 
-It does *not* provide a single abstraction that works in every language. That's
-hard and nobody agrees on how to do it. These tools have different purposes
-and different strengths, and combining them into one multi-tool would probably
-be futile.
+`metanl` is no longer actively developed or supported.
 
-What `metanl` provides is ways to access these different tools in concise
-Python code. It doesn't try to hide them under an abstraction, but it does
-smooth over their rough edges.
+This package was created to support the language-processing needs that
+[ConceptNet 5](http://conceptnet5.media.mit.edu) shared with code developed at
+Luminoso. Those needs have diverged, to the point where it made the most sense
+to split the functionality again.
 
-`metanl` is written and maintained by Rob Speer, Lance Nathan, and Andrew Lin
-at Luminoso (http://luminoso.com).
+A simplified version of metanl has been moved into the `conceptnet5`
+package, as `conceptnet5.language`.
 
 
 ## metanl.token_utils
